@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:notes_app/layout/add_note.dart';
 import 'package:notes_app/layout/home_layout.dart';
 import 'package:notes_app/shared/bloc_observer.dart';
+import 'package:notes_app/shared/styles/theme.dart';
 
 void main() {
   Bloc.observer = MyBlocObserver();
@@ -13,10 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(),
+      theme: lightTheme,
+      home: AddNote(),
     );
   }
 }

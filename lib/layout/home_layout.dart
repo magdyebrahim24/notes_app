@@ -39,7 +39,18 @@ class MyHomePage extends StatelessWidget {
               onPressed:()=> cubit.plusCounter(),
               tooltip: 'Increment',
               child: Icon(Icons.add),
-            ), // This trailing comma makes auto-formatting nicer for build methods.
+            ), //
+            bottomNavigationBar: BottomNavigationBar(
+
+type: BottomNavigationBarType.fixed,
+              currentIndex: 0,
+
+              items: [
+                BottomNavigationBarItem(icon: Icon(Icons.done),label: '.',activeIcon: Icon(Icons.circle)),
+                BottomNavigationBarItem(icon: Icon(Icons.done),label: ''),
+                BottomNavigationBarItem(icon: Icon(Icons.done),label: ''),
+              ],
+            ),
           );
         },
 
