@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/shared/components/circle_tab_Indicator.dart';
+import 'package:notes_app/shared/constants.dart';
 import 'package:notes_app/shared/cubit/cubit.dart';
 import 'package:notes_app/shared/cubit/states.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -29,17 +31,37 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           AppCubit cubit = AppCubit.get(context);
           return Scaffold(
             appBar: AppBar(
+              actions: [
+                IconButton(onPressed: (){},  icon: SvgPicture.asset('assets/icons/search.svg',color: greyColor,)),
+                // IconButton(onPressed: (){}, icon:Icon(Icons.more_vert,color: greyColor,)),
+                DropdownButton<String>(
+                  onChanged: (String? newValue) {
+                    setState(() {
+
+                    });
+                  },
+
+                  items: <String>['One', 'Two', 'Free', 'Four']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  icon: Icon(Icons.more_vert),),
+              ],
               title: Text('Notes'),
               bottom: TabBar(
+
                 controller:controller ,
                 tabs: [
-                Tab(icon:Icon(Icons.memory)),
-                Tab(icon:Icon(Icons.memory)),
-                Tab(icon:Icon(Icons.memory)),
+                Tab(icon:Icon(Icons.note_add_outlined,size: 40,)),
+                Tab(icon:Icon(Icons.task_outlined,size: 40,)),
+                Tab(icon:Icon(Icons.event_available_outlined,size: 40,)),
               ],
 
                 isScrollable: true,
-                indicatorPadding: EdgeInsets.only(bottom: 5),
+                indicatorPadding: EdgeInsets.only(bottom: 0),
               ),
             ),
             body: TabBarView(

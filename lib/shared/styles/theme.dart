@@ -22,11 +22,12 @@ ThemeData lightTheme = ThemeData(
 );
 
 ThemeData darkTheme = ThemeData(
+  fontFamily: 'PT_Sans',
     tabBarTheme: TabBarTheme(
       labelStyle:TextStyle(color: yellowColor),
       labelColor: yellowColor,
       indicator: CircleTabIndicator(color: yellowColor,radius: 3),
-      unselectedLabelColor: Colors.grey[400],
+      unselectedLabelColor: greyColor,
 
     ),
     primaryColor: blackColor,
