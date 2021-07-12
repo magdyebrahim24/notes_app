@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/shared/components/circle_tab_Indicator.dart';
 import 'package:notes_app/shared/cubit/cubit.dart';
 import 'package:notes_app/shared/cubit/states.dart';
 
-class MyHomePage extends StatelessWidget {
 
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin{
+     TabController? controller;
+     @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    controller =TabController(length: 3, vsync: this);
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -16,41 +29,48 @@ class MyHomePage extends StatelessWidget {
           AppCubit cubit = AppCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              title: Text('test'),
-            ),
-            body: Center(
-              // Center is a layout widget. It takes a single child and positions it
-              // in the middle of the parent.
-              child: Column(
+              title: Text('Notes'),
+              bottom: TabBar(
+                controller:controller ,
+                tabs: [
+                Tab(icon:Icon(Icons.memory)),
+                Tab(icon:Icon(Icons.memory)),
+                Tab(icon:Icon(Icons.memory)),
+              ],
 
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'You have pushed the button this many times:',
-                  ),
-                  Text(
-                    cubit.counter.toString(),
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                ],
+                isScrollable: true,
+                indicatorPadding: EdgeInsets.only(bottom: 5),
               ),
             ),
+            body: TabBarView(
+              controller: controller,
+              children: [
+                Text('data'),Text('data'),Text('data')
+              ],
+            ),
+            // body: Center(
+            //   // Center is a layout widget. It takes a single child and positions it
+            //   // in the middle of the parent.
+            //   child: Column(
+            //
+            //     mainAxisAlignment: MainAxisAlignment.center,
+            //     children: <Widget>[
+            //       Text(
+            //         'You have pushed the button this many times:',
+            //       ),
+            //       Text(
+            //         cubit.counter.toString(),
+            //         style: Theme.of(context).textTheme.headline4,
+            //       ),
+            //     ],
+            //   ),
+            // ),
             floatingActionButton: FloatingActionButton(
               onPressed:()=> cubit.plusCounter(),
               tooltip: 'Increment',
-              child: Icon(Icons.add),
-            ), //
-            bottomNavigationBar: BottomNavigationBar(
-
-type: BottomNavigationBarType.fixed,
-              currentIndex: 0,
-
-              items: [
-                BottomNavigationBarItem(icon: Icon(Icons.done),label: '.',activeIcon: Icon(Icons.circle)),
-                BottomNavigationBarItem(icon: Icon(Icons.done),label: ''),
-                BottomNavigationBarItem(icon: Icon(Icons.done),label: ''),
-              ],
+              child: Icon(Icons.add,size: 30,),
             ),
+// This trailing comma makes auto-formatting nicer for build methods.
           );
         },
 

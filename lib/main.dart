@@ -14,9 +14,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Notes App',
+      debugShowCheckedModeBanner: false,
       theme: lightTheme,
-      home: AddNote(),
+      darkTheme: darkTheme,
+      themeMode: ThemeMode.dark,
+      home: MyHomePage(),
     );
   }
 }
