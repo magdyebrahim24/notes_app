@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:notes_app/shared/components/gridvoew.dart';
 import 'package:notes_app/shared/components/note_card.dart';
 
 class TaskScreen extends StatelessWidget {
@@ -13,14 +14,6 @@ class TaskScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StaggeredGridView.countBuilder(
-      crossAxisCount: 2,
-      itemCount: 4,
-      itemBuilder: (BuildContext context, int index) => x[index],
-      staggeredTileBuilder: (int index) =>
-      new StaggeredTile.fit(1),
-      mainAxisSpacing: 4.0,
-      crossAxisSpacing: 4.0,
-    );
+    return GridViewComponents();
   }
 }
