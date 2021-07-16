@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/layout/search_screen/search_screen.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class NoteCard extends StatelessWidget {
- final SearchScreen mohamed=new SearchScreen();
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -15,16 +12,7 @@ class NoteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: Container(
-        // height: 300.0,
         decoration: BoxDecoration(
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.grey.withOpacity(0.4),
-          //     spreadRadius: 2,
-          //     blurRadius: 4,
-          //     offset: Offset(.5, 2), // changes position of shadow
-          //   ),
-          // ],
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -33,7 +21,6 @@ class NoteCard extends StatelessWidget {
               Color(0xff2e2e3e),
             ],
           ),
-          // borderRadius: BorderRadius.circular(10)
         ),
         padding: EdgeInsets.all(15),
         height: 200,
@@ -41,7 +28,7 @@ class NoteCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '${mohamed.x[0]['title']}',
+              'Tittle',
               style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,

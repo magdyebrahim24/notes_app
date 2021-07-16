@@ -14,11 +14,13 @@ ThemeData lightTheme = ThemeData(
   primaryColor: whiteColor,
   accentColor: blueColor,
   scaffoldBackgroundColor: whiteColor,
+
   appBarTheme: AppBarTheme(
     backgroundColor: whiteColor,
     elevation: 0.0,
 
-  )
+  ),
+
 );
 
 ThemeData darkTheme = ThemeData(

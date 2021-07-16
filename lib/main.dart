@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:notes_app/layout/add_note.dart';
-import 'package:notes_app/layout/home_layout.dart';
+import 'package:notes_app/layout/home/home.dart';
 import 'package:notes_app/shared/bloc_observer.dart';
 import 'package:notes_app/shared/styles/theme.dart';
 
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.dark,
-      home: MyHomePage(),
+      home: Home(),
     );
   }
 }
