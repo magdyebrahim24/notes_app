@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:notes_app/shared/bloc/cubit/add_note_cubit.dart';
+// import 'package:notes_app/shared/bloc/cubit/add_task_cubit.dart';
 // import 'package:notes_app/shared/bloc/states/add_note_states.dart';
 // import 'package:notes_app/shared/constants.dart';
 //

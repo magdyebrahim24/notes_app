@@ -1,13 +1,29 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/shared/bloc/states/add_note_states.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:undo/undo.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {
   AddNoteCubit() : super(AddNoteInitialState());
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
+
+  FocusNode bodyFocus = new FocusNode();
+  FocusNode titleFocus = new FocusNode();
+
+  void onFocusBodyChange(){
+    titleFocus.unfocus();
+    bodyFocus.requestFocus();
+    emit(AddNoteFocusBodyChangeState());
+  }
+  void onFocusTitleChange(){
+    bodyFocus.unfocus();
+    titleFocus.requestFocus();
+    emit(AddNoteFocusTitleChangeState());
+  }
 
   SimpleStack? stackController = SimpleStack<dynamic>(
     '',
@@ -41,4 +57,18 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     stackController!.modify(value);
     emit(AddNoteOnNoteTextChangedState());
   }
+
+  List addedImages = [];
+  XFile? image;
+  pickImage(ImageSource src) async {
+    XFile? _image = await ImagePicker().pickImage(source: src);
+    if (_image != null) {
+      image = _image ;
+      addedImages.add(_image.path);
+      emit(AddNoteAddImageState());
+    } else {
+      print('No Image Selected');
+    }
+  }
+
 }

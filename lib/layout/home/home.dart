@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
+import 'package:notes_app/layout/secret/secret.dart';
+import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/modules/tab_bar_screens/memories.dart';
 import 'package:notes_app/modules/tab_bar_screens/notes.dart';
@@ -48,26 +50,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       'assets/icons/search.svg',
                       color: greyColor,
                     )),
-                Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: DropdownButton(
-                    underline: SizedBox(),
-                    onChanged: (String? newValue) {
-                      setState(() {});
-                    },
-                    items: ['Setting', 'Secret']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                    icon: Icon(
-                      Icons.more_vert,
-                      color: greyColor,
-                    ),
-                  ),
-                ),
+                _offsetPopup()
               ],
               title: Text('Notes'),
               bottom: TabBar(
@@ -121,4 +104,43 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
     );
   }
+  Widget _offsetPopup() => PopupMenuButton<int>(
+    tooltip: 'More' ,
+      enableFeedback: true,
+      onSelected: (value){
+       if(value == 1){
+         Navigator.push(
+             context, MaterialPageRoute(builder: (context) => Secret()));
+       }else{
+         Navigator.push(
+             context, MaterialPageRoute(builder: (context) => Setting()));
+       }
+      },
+      // offset: Offset(-10,45),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+
+          value: 1,
+          child: Text(
+            "Setting",
+            style: TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w700),
+          ),
+        ),
+        PopupMenuItem(
+          // padding: EdgeInsets.symmetric(horizontal: 50),
+
+          value: 2,
+          child: Text(
+            "Secret",
+            style: TextStyle(
+                color: Colors.black, fontWeight: FontWeight.w700),
+          ),
+        ),
+      ],
+      icon: Icon(Icons.more_vert,
+      color:greyColor,
+      )
+  );
 }
