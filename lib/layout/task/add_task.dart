@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'bloc/cubit/add_task_cubit.dart';
 import 'bloc/states/states.dart';
@@ -32,23 +33,34 @@ class AddTask extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
+                    DefaultFormField(
                       controller: _titleController,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800
-                      ),
                       maxLines: null,
                       minLines: null,
-                      decoration: InputDecoration(
-                        hintText: 'Title',
-                        disabledBorder: InputBorder.none,
-                        hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
-                        fillColor: Theme.of(context).primaryColor,
-                        border: InputBorder.none,
-                      ),
+                      fillColor: Theme.of(context).primaryColor,
+                      hintText: 'Title',
+                      hintStyle: TextStyle(
+                          color: greyColor,
+                          fontSize: 28,
+                          fontWeight: FontWeight.normal),
                     ),
+                    // TextFormField(
+                    //   controller: _titleController,
+                    //   style: TextStyle(
+                    //       color: Colors.white,
+                    //       fontSize: 28,
+                    //       fontWeight: FontWeight.w800
+                    //   ),
+                    //   maxLines: null,
+                    //   minLines: null,
+                    //   decoration: InputDecoration(
+                    //     hintText: 'Title',
+                    //     disabledBorder: InputBorder.none,
+                    //     hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
+                    //     fillColor: Theme.of(context).primaryColor,
+                    //     border: InputBorder.none,
+                    //   ),
+                    // ),
                     Container(
                       margin: EdgeInsets.only(bottom: 10,),
                       height: 2,width: MediaQuery.of(context).size.width,

@@ -1,34 +1,60 @@
-//
-// import 'package:flutter/material.dart';
-// import 'package:notes_app/shared/constants.dart';
-//
-//
-// Widget titleFormField({
-//   final focusNode,
-//   final onTap,
-//   required final controller,
-//   final  style : const TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w800),
-//   final maxLines,
-//   final minLines,
-//   final decoration : const InputDecoration(
-//     hintText: 'Title',
-//     disabledBorder: InputBorder.none,
-//     hintStyle: TextStyle(
-//         color: greyColor,
-//         fontSize: 28,
-//         fontWeight: FontWeight.normal),
-//     fillColor: Theme.of(context).primaryColor,
-//     border: InputBorder.none,
-//   ),
-// }){
-//   return TextFormField(
-//     focusNode: focusNode,
-//     onTap: onTap,
-//     controller: controller,
-//     style: style,
-//     maxLines: maxLines,
-//     minLines: minLines,
-//     decoration:
-//   );
-// }
+
+import 'package:flutter/material.dart';
+import 'package:notes_app/shared/constants.dart';
+
+class DefaultFormField extends StatelessWidget {
+  final focusNode;
+  final onTap;
+  final controller;
+  final style;
+  final keyboardType;
+  final maxLines;
+  final minLines;
+  final hintText;
+  final disableBorder;
+  final hintStyle;
+  final fillColor;
+  final border;
+  final onChanged;
+  DefaultFormField({
+    this.focusNode,
+    this.onTap,
+    this.onChanged,
+    this.keyboardType,
+    this.controller,
+    this.style = const TextStyle(
+      color: Colors.white,
+      fontSize: 28,
+      fontWeight: FontWeight.w800),
+    this.maxLines,
+    this.minLines,
+    this.hintText,
+    this.disableBorder=InputBorder.none,
+    this.hintStyle,
+    this.fillColor ,
+    this.border = InputBorder.none,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      focusNode: focusNode,
+      onTap: onTap,
+      onChanged: onChanged,
+      controller: controller,
+      keyboardType: keyboardType,
+      style: style,
+      maxLines: maxLines,
+      minLines: minLines,
+      decoration: InputDecoration(
+        hintText: hintText,
+        disabledBorder: disableBorder,
+        hintStyle: hintStyle,
+        fillColor: fillColor,
+        border: border,
+      ),
+    );
+  }
+}
+
 

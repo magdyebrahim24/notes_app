@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/cubit.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
+import 'package:notes_app/shared/components/bottom_navigation_bar.dart';
+import 'package:notes_app/shared/components/image_list.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddMemory extends StatelessWidget {
@@ -31,22 +35,33 @@ class AddMemory extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextFormField(
+                DefaultFormField(
                   controller: _titleController,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800
-                  ),
                   maxLines: null,
                   minLines: null,
-                  decoration: InputDecoration(
-                    hintText: 'Title',
-                    disabledBorder: InputBorder.none,
-                    hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
-                    fillColor: Theme.of(context).primaryColor,
-                    border: InputBorder.none,
-                  ),),
+                  fillColor: Theme.of(context).primaryColor,
+                  hintText: 'Title',
+                  hintStyle: TextStyle(
+                      color: greyColor,
+                      fontSize: 28,
+                      fontWeight: FontWeight.normal),
+                ),
+                // TextFormField(
+                //   controller: _titleController,
+                //   style: TextStyle(
+                //       color: Colors.white,
+                //       fontSize: 28,
+                //       fontWeight: FontWeight.w800
+                //   ),
+                //   maxLines: null,
+                //   minLines: null,
+                //   decoration: InputDecoration(
+                //     hintText: 'Title',
+                //     disabledBorder: InputBorder.none,
+                //     hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
+                //     fillColor: Theme.of(context).primaryColor,
+                //     border: InputBorder.none,
+                //   ),),
                 Container(
                   margin: EdgeInsets.only(bottom: 10,),
                   height: 2,width: MediaQuery.of(context).size.width,
@@ -55,6 +70,7 @@ class AddMemory extends StatelessWidget {
                       color: Colors.white24
                   ),
                 ),
+                SizedBox(height: 15,),
                 Container(
                   decoration: BoxDecoration(
                       color: Colors.white10,
@@ -86,6 +102,9 @@ class AddMemory extends StatelessWidget {
                     ],
                   ),
                 ),
+                // ),
+                SizedBox(height: 15,),
+                ImageList(imageList: cubit.addedImages),
                 // ListView.builder(
                 //     physics: NeverScrollableScrollPhysics(),
                 //     shrinkWrap: true,
@@ -138,6 +157,9 @@ class AddMemory extends StatelessWidget {
             ),
           ),
         ),
+          bottomNavigationBar: MyBottomNavigationBar(
+            onPressed: () => cubit.pickImage(ImageSource.gallery),
+          )
       );
         },),
 
