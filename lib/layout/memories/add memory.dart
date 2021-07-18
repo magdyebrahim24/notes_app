@@ -23,12 +23,25 @@ class AddMemory extends StatelessWidget {
         builder: (context,state){
           AddMemoryCubit cubit = AddMemoryCubit.get(context);
       return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: ()=>Navigator.pop(context),
-            icon: Icon(Icons.arrow_back_ios),
+          appBar: AppBar(
+
+            actions: [
+              cubit.bodyFocus.hasFocus ?    IconButton(
+                tooltip: 'Undo',
+                icon: Icon(Icons.undo,),
+                onPressed: cubit.stackController!.state == '' &&
+                    !(cubit.stackController!.canUndo)
+                    ? null
+                    : cubit.undoFun,
+              ) : SizedBox(),
+              cubit.bodyFocus.hasFocus ?  IconButton(
+                tooltip: 'Redo',
+                icon: Icon(Icons.redo),
+                onPressed:
+                !cubit.stackController!.canRedo ? null : cubit.redoFun,
+              ) : SizedBox(),
+            ],
           ),
-        ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: SingleChildScrollView(
@@ -37,6 +50,8 @@ class AddMemory extends StatelessWidget {
               children: [
                 DefaultFormField(
                   controller: _titleController,
+                  focusNode: cubit.titleFocus,
+                  onTap:  (){cubit.onFocusTitleChange();},
                   maxLines: null,
                   minLines: null,
                   fillColor: Theme.of(context).primaryColor,
@@ -102,7 +117,21 @@ class AddMemory extends StatelessWidget {
                     ],
                   ),
                 ),
-                // ),
+                SizedBox(height: 15,),
+                DefaultFormField(
+                  focusNode: cubit.bodyFocus,
+                  controller: cubit.noteTextController,
+                  onTap: (){cubit.onFocusBodyChange();},
+                  style: TextStyle(color: Colors.white, fontSize: 20,),
+                  onChanged: (value) {cubit.onNoteTextChanged(value);},
+                  maxLines: null,
+                  minLines: null,
+                  keyboardType: TextInputType.multiline,
+                  hintText: 'Start typing your Memory ...',
+                  fillColor: Theme.of(context).primaryColor,
+                  hintStyle: TextStyle(color: greyColor, fontSize: 20),
+
+                ),
                 SizedBox(height: 15,),
                 ImageList(imageList: cubit.addedImages),
                 // ListView.builder(

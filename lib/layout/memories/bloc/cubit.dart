@@ -4,11 +4,59 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
 import 'package:intl/intl.dart';
+import 'package:undo/undo.dart';
 
 class AddMemoryCubit extends Cubit<AppMemoryStates> {
   AddMemoryCubit() : super(AppMemoryInitialState());
 
   static AddMemoryCubit get(context) => BlocProvider.of(context);
+
+  FocusNode bodyFocus = new FocusNode();
+  FocusNode titleFocus = new FocusNode();
+
+  void onFocusBodyChange(){
+    titleFocus.unfocus();
+    bodyFocus.requestFocus();
+    emit(AddMemoryFocusBodyChangeState());
+  }
+  void onFocusTitleChange(){
+    bodyFocus.unfocus();
+    titleFocus.requestFocus();
+    emit(AddMemoryFocusTitleChangeState());
+  }
+
+  SimpleStack? stackController = SimpleStack<dynamic>(
+    '',
+    onUpdate: (val) {
+      print('New Value -> $val');
+    },
+  );
+
+  void clearStack() {
+    stackController!.clearHistory();
+    emit(AddMemoryClearStackState());
+  }
+
+  TextEditingController noteTextController = TextEditingController();
+
+
+  undoFun()  {
+    stackController!.undo();
+    noteTextController.text = stackController!.state;
+    emit(AddMemoryUndoState());
+  }
+
+  redoFun() {
+    stackController!.redo();
+    noteTextController.text = stackController!.state;
+    emit(AddMemoryRedoState());
+
+  }
+
+  onNoteTextChanged(value){
+    stackController!.modify(value);
+    emit(AddMemoryOnNoteTextChangedState());
+  }
 
   String? dateController;
   void datePicker(context){

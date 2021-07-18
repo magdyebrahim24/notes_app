@@ -69,6 +69,71 @@ class AddTask extends StatelessWidget {
                           color: Colors.white24
                       ),
                     ),
+                    SizedBox(height: 15,),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white10,
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      width: double.infinity,
+
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              SizedBox(width: 10,),
+                              Text('Memory Date',style: TextStyle(fontSize: 18,color: Colors.white),),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MaterialButton(
+                                  padding: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                                  color: Colors.white24,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  onPressed: (){
+                                    cubit.datePicker(context);},
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: Text(cubit.dateController ?? 'Add',style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      ),
+                                      Icon(Icons.expand_more,color: Colors.white,)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              SizedBox(width: 10,),
+                              Text('Memory Time',style: TextStyle(fontSize: 18,color: Colors.white),),
+                              Spacer(),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: MaterialButton(
+                                  padding: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
+                                  color: Colors.white24,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  onPressed: (){
+                                    cubit.timePicker(context);},
+                                  child: Row(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                                        child: Text(cubit.timeController ?? 'Add',style: TextStyle(fontSize: 16,color: Colors.white),),
+                                      ),
+                                      Icon(Icons.expand_more,color: Colors.white,)
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -111,7 +176,7 @@ class AddTask extends StatelessWidget {
                         onPressed: (){cubit.addNewTask();},
                        style: ButtonStyle(
                        ),
-                        child: Text('+  Add new task',
+                        child: Text('+  Add sub task',
                           style: TextStyle(
                             color: Colors.white60,
                             fontSize: 18
