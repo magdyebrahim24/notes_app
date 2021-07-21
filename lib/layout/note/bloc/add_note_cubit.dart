@@ -1,9 +1,10 @@
-
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:undo/undo.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {
@@ -58,17 +59,64 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteOnNoteTextChangedState());
   }
 
-  List addedImages = [];
+  List selectedGalleryImagesList = [];
   XFile? image;
   pickImage(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
     if (_image != null) {
       image = _image ;
-      addedImages.add(_image.path);
+      selectedGalleryImagesList.add(_image.path);
       emit(AddNoteAddImageState());
     } else {
       print('No Image Selected');
     }
+  }
+
+// Future saveImagesToPhone() async{
+  //
+  //   Directory appDocDir = await getApplicationDocumentsDirectory();
+  //   String appDocPath = appDocDir.path;
+  //   XFile? _currentImageToSave ;
+  //
+  //   print('pre loop');
+  //
+  //   new File('$appDocPath/notes_images').create(recursive: true)
+  //       .then((File directoryPath) {
+  //
+  //     for(int index = 0 ; index < selectedGalleryImagesList.length ; index++ ){
+  //       String imageName = selectedGalleryImagesList[index].split('/').last;
+  //       final String filePath = '${directoryPath.path}/$imageName';
+  //       _currentImageToSave = XFile(selectedGalleryImagesList[index]);
+  //       final  savedImage =  _currentImageToSave!.saveTo(filePath);
+  //       print('inside loop');
+  //
+  //       print('image saved success $savedImage .');
+  //     }    });
+  //   print(appDocPath);
+  //   print('after loop');
+  //
+  //
+  // }
+  Future saveImagesToPhone() async{
+    // get app path
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+
+    // create new folder
+    Directory directoryPath = await Directory('$appDocPath/notes_images').create(recursive: true);
+    XFile? _currentImageToSave ;
+    print('pre loop');
+    for(int index = 0 ; index < selectedGalleryImagesList.length ; index++ ){
+      String imageName = selectedGalleryImagesList[index].split('/').last;
+      final String filePath = '${directoryPath.path}/$imageName';
+      _currentImageToSave = XFile(selectedGalleryImagesList[index]);
+       await _currentImageToSave.saveTo(filePath);
+      print('inside loop');
+    }
+    print('after loop');
+
+    var listOfFiles = await directoryPath.list(recursive: true).toList();
+    print(listOfFiles[0].path);
   }
 
 }

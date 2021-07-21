@@ -6,7 +6,6 @@ import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_navigation_bar.dart';
 import 'package:notes_app/shared/components/image_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'package:notes_app/shared/components/show_full_image.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddNote extends StatelessWidget {
@@ -23,22 +22,29 @@ class AddNote extends StatelessWidget {
           return Scaffold(
               key: _scaffoldKey,
               appBar: AppBar(
-
                 actions: [
-              cubit.bodyFocus.hasFocus ?    IconButton(
-                    tooltip: 'Undo',
-                    icon: Icon(Icons.undo,),
-                    onPressed: cubit.stackController!.state == '' &&
-                            !(cubit.stackController!.canUndo)
-                        ? null
-                        : cubit.undoFun,
-                  ) : SizedBox(),
-                  cubit.bodyFocus.hasFocus ?  IconButton(
-                    tooltip: 'Redo',
-                    icon: Icon(Icons.redo),
-                    onPressed:
-                        !cubit.stackController!.canRedo ? null : cubit.redoFun,
-                  ) : SizedBox(),
+                  IconButton(onPressed: (){cubit.saveImagesToPhone();}, icon: Icon(Icons.done)),
+                  cubit.bodyFocus.hasFocus
+                      ? IconButton(
+                          tooltip: 'Undo',
+                          icon: Icon(
+                            Icons.undo,
+                          ),
+                          onPressed: cubit.stackController!.state == '' &&
+                                  !(cubit.stackController!.canUndo)
+                              ? null
+                              : cubit.undoFun,
+                        )
+                      : SizedBox(),
+                  cubit.bodyFocus.hasFocus
+                      ? IconButton(
+                          tooltip: 'Redo',
+                          icon: Icon(Icons.redo),
+                          onPressed: !cubit.stackController!.canRedo
+                              ? null
+                              : cubit.redoFun,
+                        )
+                      : SizedBox(),
                 ],
               ),
               body: Padding(
@@ -49,7 +55,9 @@ class AddNote extends StatelessWidget {
                       DefaultFormField(
                         controller: _titleController,
                         focusNode: cubit.titleFocus,
-                        onTap:  (){cubit.onFocusTitleChange();},
+                        onTap: () {
+                          cubit.onFocusTitleChange();
+                        },
                         maxLines: null,
                         minLines: null,
                         fillColor: Theme.of(context).primaryColor,
@@ -96,17 +104,23 @@ class AddNote extends StatelessWidget {
                       DefaultFormField(
                         focusNode: cubit.bodyFocus,
                         controller: cubit.noteTextController,
-                        onTap: (){cubit.onFocusBodyChange();},
-                        style: TextStyle(color: Colors.white, fontSize: 20,),
-                        onChanged: (value) {cubit.onNoteTextChanged(value);},
+                        onTap: () {
+                          cubit.onFocusBodyChange();
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                        onChanged: (value) {
+                          cubit.onNoteTextChanged(value);
+                        },
                         maxLines: null,
                         minLines: null,
                         keyboardType: TextInputType.multiline,
                         hintText: 'Start typing your note ...',
                         fillColor: Theme.of(context).primaryColor,
                         hintStyle: TextStyle(color: greyColor, fontSize: 20),
-
-                        ),
+                      ),
                       // TextFormField(
                       //   focusNode: cubit.bodyFocus,
                       //   onTap: (){
@@ -133,7 +147,7 @@ class AddNote extends StatelessWidget {
                       //   ),
                       // ),
                       SizedBox(),
-                      ImageList(imageList: cubit.addedImages),
+                      ImageList(imageList: cubit.selectedGalleryImagesList),
                       // ListView.builder(
                       //     physics: NeverScrollableScrollPhysics(),
                       //     shrinkWrap: true,
@@ -199,7 +213,6 @@ class AddNote extends StatelessWidget {
                       //         ],
                       //       );
                       //     }),
-
                     ],
                   ),
                 ),

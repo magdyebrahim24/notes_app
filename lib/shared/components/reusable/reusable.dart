@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class DefaultFormField extends StatelessWidget {
   final focusNode;

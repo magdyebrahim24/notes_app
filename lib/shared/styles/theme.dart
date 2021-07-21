@@ -7,7 +7,7 @@ ThemeData lightTheme = ThemeData(
   tabBarTheme: TabBarTheme(
     labelStyle:TextStyle(color: blueColor),
     labelColor: blueColor,
-    indicator: CircleTabIndicator(color: blueColor,radius: 3),
+    // indicator: CircleTabIndicator(color: blueColor,radius: 3),
     unselectedLabelColor: Colors.grey[400],
 
   ),
@@ -28,7 +28,7 @@ ThemeData darkTheme = ThemeData(
     tabBarTheme: TabBarTheme(
       labelStyle:TextStyle(color: yellowColor),
       labelColor: yellowColor,
-      indicator: CircleTabIndicator(color: yellowColor,radius: 3),
+      // indicator: CircleTabIndicator(color: yellowColor,radius: 3),
       unselectedLabelColor: greyColor,
 
     ),
