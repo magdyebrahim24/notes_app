@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
+import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:undo/undo.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {
@@ -12,6 +14,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
 
+  DateTime dateTime=DateTime.now();
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
 
@@ -119,23 +122,44 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     print(listOfFiles[0].path );
   }
 
-//
-//   final pickedFile = await picker.getImage(source: ImageSource.camera);
-//   _image = File(pickedFile.path);
-//
-// // getting a directory path for saving
-//   final Directory extDir = await getApplicationDocumentsDirectory();
-//   String dirPath = extDir.path;
-//   final String filePath = '$dirPath/image.png';
-//
-// // copy the file to a new path
-//   final File newImage = await _image.copy(filePath);
-//   setState(() {
-//   if (pickedFile != null) {
-//   _image = newImage;
-//   } else {
-//   print('No image selected.');
-//   }
-  // });
+  int? notId;
+  Future insertDatabase(
+      database,
+          {
+        required String title,
+        required String body,
+        required String image,
+        required String voice,
+      }
+      ) async{
+    String createdTime = dateTime.toString().split(' ').first;
+    String time =dateTime.toString().split(' ').last;
+  String createdDate=time.toString().split('.').first;
+    await database!.transaction((txn) {
+      txn
+          .rawInsert(
+          'INSERT INTO notes (title ,body ,image ,voice ,createdTime ,createdDate) VALUES ("$title","$body","$image","$voice","$createdTime","$createdDate")')
+          .then((value) {
+            notId=value;
+            print(value);
+        emit(AddNoteInsertDatabaseState());
+      }).catchError((error)  {print(error.toString());});
+      return Future.value(false);
+    });
+  }
 
+  void deleteData(
+  database,context,{
+
+    required int id
+  }
+      ){
+    database!.rawDelete('DELETE FROM notes WHERE id = ?', [id])
+        .then((value)  {
+          Navigator.pop(context);
+          // print('dddddddd');
+      // getDataFromDatabase(database);
+      // emit(AppDeleteDatabaseState());
+    }).ctactError((error){print(error);});
+  }
 }

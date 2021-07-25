@@ -37,7 +37,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => AppCubit(),
+      create: (BuildContext context) => AppCubit()..creatDatabase(),
       child: BlocConsumer<AppCubit, AppStates>(
         listener: (BuildContext context, AppStates state) {},
         builder: (BuildContext context, AppStates state) {
@@ -109,7 +109,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               onPressed: () {
                 tabBarController!.index == 0
                     ? Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AddNote()))
+                        MaterialPageRoute(builder: (context) => AddNote(cubit.database)))
                     : tabBarController!.index == 1
                         ? Navigator.push(context,
                             MaterialPageRoute(builder: (context) => AddTask()))
