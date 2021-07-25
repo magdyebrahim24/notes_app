@@ -16,6 +16,7 @@ class AddNoteRedoState extends AddNoteState {}
 class AddNoteOnNoteTextChangedState extends AddNoteState {}
 
 class AddNoteAddImageState extends AddNoteState {}
+class AddNoteInsertDatabaseState extends AddNoteState {}
 
 
 
