@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class NoteCard extends StatelessWidget {
+  final bodyMaxLines ;
+
+  const NoteCard({this.bodyMaxLines = 4 });
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -43,7 +46,7 @@ class NoteCard extends StatelessWidget {
               child: Text(
                 "He'd have you all unravel at the ;alsdkfja;lsd falsdkfja;lsdkfj sda;lkfja;lskdfj asdf lasdkfjal;skdfj ;asldkfja ;sdlkfja l;sdkfja;l sdkfj sdlfkjasd;lfkjas;ldf j;lsdkfj ;alsdkfj ; ",
                 style: TextStyle(fontSize: 17, color: Colors.white),
-                maxLines: 4,
+                maxLines: bodyMaxLines,
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
               ),

@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,6 +7,7 @@ import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_navigation_bar.dart';
 import 'package:notes_app/shared/components/image_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/components/show_full_image.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddNote extends StatelessWidget {
@@ -23,7 +25,6 @@ class AddNote extends StatelessWidget {
               key: _scaffoldKey,
               appBar: AppBar(
                 actions: [
-                  IconButton(onPressed: (){cubit.saveImagesToPhone();}, icon: Icon(Icons.done)),
                   cubit.bodyFocus.hasFocus
                       ? IconButton(
                           tooltip: 'Undo',
@@ -45,63 +46,45 @@ class AddNote extends StatelessWidget {
                               : cubit.redoFun,
                         )
                       : SizedBox(),
+                  IconButton(onPressed: (){cubit.saveImagesToPhone();}, icon: Icon(Icons.done)),
+
                 ],
+
               ),
-              body: Padding(
+              body: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      DefaultFormField(
-                        controller: _titleController,
-                        focusNode: cubit.titleFocus,
-                        onTap: () {
-                          cubit.onFocusTitleChange();
-                        },
-                        maxLines: null,
-                        minLines: null,
-                        fillColor: Theme.of(context).primaryColor,
-                        hintText: 'Title',
-                        hintStyle: TextStyle(
-                            color: greyColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.normal),
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    DefaultFormField(
+                      controller: _titleController,
+                      focusNode: cubit.titleFocus,
+                      onTap: () {
+                        cubit.onFocusTitleChange();
+                      },
+                      maxLines: null,
+                      minLines: null,
+                      fillColor: Theme.of(context).primaryColor,
+                      hintText: 'Title',
+                      hintStyle: TextStyle(
+                          color: greyColor,
+                          fontSize: 28,
+                          fontWeight: FontWeight.normal),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(
+                        bottom: 10,
                       ),
-                      // TextFormField(
-                      //   focusNode: cubit.titleFocus,
-                      //   onTap: (){
-                      //     cubit.onFocusTitleChange();
-                      //
-                      //   },
-                      //   controller: _titleController,
-                      //   style: TextStyle(
-                      //       color: Colors.white,
-                      //       fontSize: 28,
-                      //       fontWeight: FontWeight.w800),
-                      //   maxLines: null,
-                      //   minLines: null,
-                      //   decoration: InputDecoration(
-                      //     hintText: 'Title',
-                      //     disabledBorder: InputBorder.none,
-                      //     hintStyle: TextStyle(
-                      //         color: greyColor,
-                      //         fontSize: 28,
-                      //         fontWeight: FontWeight.normal),
-                      //     fillColor: Theme.of(context).primaryColor,
-                      //     border: InputBorder.none,
-                      //   ),
-                      // ),
-                      Container(
-                        margin: EdgeInsets.only(
-                          bottom: 10,
-                        ),
-                        height: 2,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white24),
-                      ),
-                      DefaultFormField(
+                      height: 2,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.white24),
+                    ),
+                    Center(
+                      child: DefaultFormField(
                         focusNode: cubit.bodyFocus,
                         controller: cubit.noteTextController,
                         onTap: () {
@@ -121,100 +104,12 @@ class AddNote extends StatelessWidget {
                         fillColor: Theme.of(context).primaryColor,
                         hintStyle: TextStyle(color: greyColor, fontSize: 20),
                       ),
-                      // TextFormField(
-                      //   focusNode: cubit.bodyFocus,
-                      //   onTap: (){
-                      //     cubit.onFocusBodyChange();
-                      //
-                      //   },
-                      //   // expands: true,
-                      //   style: TextStyle(
-                      //     color: Colors.white,
-                      //     fontSize: 20,
-                      //   ),
-                      //   onChanged: (value) {
-                      //     cubit.onNoteTextChanged(value);
-                      //   },
-                      //   maxLines: null,
-                      //   minLines: null,
-                      //   keyboardType: TextInputType.multiline,
-                      //   decoration: InputDecoration(
-                      //     hintText: 'Start typing your note ...',
-                      //     disabledBorder: InputBorder.none,
-                      //     hintStyle: TextStyle(color: greyColor, fontSize: 20),
-                      //     fillColor: Theme.of(context).primaryColor,
-                      //     border: InputBorder.none,
-                      //   ),
-                      // ),
-                      SizedBox(),
-                      ImageList(imageList: cubit.selectedGalleryImagesList),
-                      // ListView.builder(
-                      //     physics: NeverScrollableScrollPhysics(),
-                      //     shrinkWrap: true,
-                      //     itemCount: cubit.addedImages.length,
-                      //     itemBuilder: (ctx, index) {
-                      //       return InkWell(
-                      //         onTap:()=> Navigator.push(context, MaterialPageRoute(fullscreenDialog: true,builder: (context) => FullImage(fullImagePath: cubit.addedImages[index],),)),
-                      //         child: Container(
-                      //           margin: EdgeInsets.symmetric(vertical: 7),
-                      //           decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(8),
-                      //             border: Border.all(color: Colors.grey),
-                      //           ),
-                      //           padding: EdgeInsets.symmetric(
-                      //               vertical: 4, horizontal: 10),
-                      //           child: Row(
-                      //             children: [
-                      //               // SizedBox(width: 5,),
-                      //               Icon(
-                      //                 Icons.image_rounded,
-                      //                 color: Colors.grey,
-                      //                 size: 30,
-                      //               ),
-                      //               SizedBox(
-                      //                 width: 5,
-                      //               ),
-                      //               Expanded(
-                      //                   child: Text(
-                      //                 '${cubit.addedImages[index].split('/').last}',
-                      //                 maxLines: 1,
-                      //                 style: TextStyle(
-                      //                     color: Colors.grey, fontSize: 17),
-                      //               )),
-                      //               IconButton(
-                      //                   onPressed: () {},
-                      //                   icon: Icon(
-                      //                     Icons.delete_outline_rounded,
-                      //                     color: Colors.grey,
-                      //                   ))
-                      //               // Image.file(File(cubit.image!.path),width: 50,height: 50 ,fit: BoxFit.cover ,),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       );
-                      //     }),
-                      // ListView.builder(
-                      //     physics: NeverScrollableScrollPhysics(),
-                      //     shrinkWrap: true,
-                      //     itemCount: cubit.addedImages.length,
-                      //     itemBuilder: (ctx, index) {
-                      //       return Column(
-                      //         children: [
-                      //           Image.file(File(cubit.addedImages[index])),
-                      //           Container(
-                      //             height: 200,
-                      //             decoration: BoxDecoration(
-                      //                 borderRadius: BorderRadius.circular(10),
-                      //                 image: DecorationImage(fit: BoxFit.scaleDown,
-                      //                     image: FileImage(File(cubit.addedImages[index]))
-                      //                 )
-                      //             ),
-                      //           )
-                      //         ],
-                      //       );
-                      //     }),
-                    ],
-                  ),
+                    ),
+                    SizedBox(),
+                    // Image.file(File('/data/user/0/com.example.notes_app/app_flutter/notes_images/image_picker1167855316673724244.jpg'),height: 50,width: 100,cacheHeight: 100,cacheWidth: 100,),
+                    SizedBox(height: 100,child: ImageList(imageList: cubit.selectedGalleryImagesList)),
+
+                  ],
                 ),
               ),
               bottomNavigationBar: MyBottomNavigationBar(

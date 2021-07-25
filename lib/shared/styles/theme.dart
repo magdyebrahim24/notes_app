@@ -30,7 +30,6 @@ ThemeData darkTheme = ThemeData(
       labelColor: yellowColor,
       // indicator: CircleTabIndicator(color: yellowColor,radius: 3),
       unselectedLabelColor: greyColor,
-
     ),
     primaryColor: blackColor,
     accentColor: yellowColor,

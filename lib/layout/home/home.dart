@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
@@ -19,12 +20,18 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   TabController? tabBarController;
+  AnimationController? controller;
+
+  final Duration? duration = const Duration(milliseconds: 200);
+
   @override
   void initState() {
     super.initState();
+
     tabBarController = TabController(length: 3, vsync: this);
+    controller = AnimationController(vsync: this, duration: duration);
   }
 
   @override
@@ -65,7 +72,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       bottom: TabBar(
                         controller: tabBarController,
                         tabs: [
-
                           Tab(
                             text: 'Notes',
                           ),
@@ -76,6 +82,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                               text: 'Memories',
                           ),
                         ],
+                        onTap: (x){
+                          controller!.forward(from: 0);
+                        },
+
+
                         labelStyle: TextStyle(fontSize: 15),
                         isScrollable: true,
                         indicatorSize: TabBarIndicatorSize.label,
@@ -108,9 +119,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                                 builder: (context) => AddMemory()));
               },
               tooltip: 'Increment',
-              child: Icon(
-                Icons.add,
-                size: 30,
+              child: RotationTransition(
+                turns: Tween<double>(begin: 0 , end: 1).animate(controller!),
+                child: Icon(
+                  tabBarController!.index == 0 ?
+                  Icons.note_add_outlined : tabBarController!.index == 1 ?
+                  Icons.task_alt_rounded
+                  :                     Icons.event_available_outlined,
+
+                  size: 30,
+                ),
               ),
             ),
 

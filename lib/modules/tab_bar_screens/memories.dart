@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/shared/components/gridvoew.dart';
+import 'package:notes_app/shared/components/gridview.dart';
 
 class MemoriesScreen extends StatelessWidget {
 
