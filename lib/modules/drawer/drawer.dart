@@ -1,27 +1,9 @@
 import 'package:flutter/material.dart';
-
-class HomeDrawer extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/layout/home/home.dart';
+import 'package:notes_app/shared/bloc/cubit/cubit.dart';
+import 'package:notes_app/shared/bloc/states/states.dart';
 
 final Color backgroundColor = Color(0xFF4A4A58);
 
@@ -30,52 +12,46 @@ class MenuDashboardPage extends StatefulWidget {
   _MenuDashboardPageState createState() => _MenuDashboardPageState();
 }
 
-class _MenuDashboardPageState extends State<MenuDashboardPage> with SingleTickerProviderStateMixin {
-  bool isCollapsed = true;
+class _MenuDashboardPageState extends State<MenuDashboardPage>
+    with TickerProviderStateMixin {
+  // @override
+  // void dispose() {
+  //   _controller!.dispose();
+  //   super.dispose();
+  // }
+
   double? screenWidth, screenHeight;
-  final Duration? duration = const Duration(milliseconds: 200);
-  AnimationController? _controller;
-  Animation<double>? _scaleAnimation;
-  Animation<double>? _menuScaleAnimation;
-  Animation<Offset>? _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this, duration: duration);
-    _scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(_controller!);
-    _menuScaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(_controller!);
-    _slideAnimation = Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0)).animate(_controller!);
-  }
-
-  @override
-  void dispose() {
-    _controller!.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     screenHeight = size.height;
     screenWidth = size.width;
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Stack(
-        children: <Widget>[
-          menu(context),
-          dashboard(context),
-        ],
-      ),
-    );
+    return BlocProvider(
+        create: (BuildContext context) => AppCubit()..onBuildPage(this),
+        child: BlocConsumer<AppCubit, AppStates>(
+            listener: (BuildContext context, AppStates state) {},
+            builder: (BuildContext context, AppStates state) {
+              AppCubit cubit = AppCubit.get(context);
+              return Scaffold(
+                backgroundColor: backgroundColor,
+                body: Stack(
+                  children: [
+                    menu(context,
+                        menuScaleAnimation: cubit.drawerMenuScaleAnimation,
+                        slideAnimation: cubit.drawerSlideAnimation),
+                    dashboard(context, cubit: cubit),
+                  ],
+                ),
+              );
+            }));
   }
 
-  Widget menu(context) {
+  Widget menu(context, {slideAnimation, menuScaleAnimation}) {
     return SlideTransition(
-      position: _slideAnimation!,
+      position: slideAnimation,
       child: ScaleTransition(
-        scale: _menuScaleAnimation!,
+        scale: menuScaleAnimation,
         child: Padding(
           padding: const EdgeInsets.only(left: 16.0),
           child: Align(
@@ -85,14 +61,16 @@ class _MenuDashboardPageState extends State<MenuDashboardPage> with SingleTicker
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-
-                Text("Setting", style: TextStyle(color: Colors.white, fontSize: 22)),
+                Text("Setting",
+                    style: TextStyle(color: Colors.white, fontSize: 22)),
                 SizedBox(height: 10),
-                Text("Secret", style: TextStyle(color: Colors.white, fontSize: 22)),
+                Text("Secret",
+                    style: TextStyle(color: Colors.white, fontSize: 22)),
                 SizedBox(height: 10),
                 Text("", style: TextStyle(color: Colors.white, fontSize: 22)),
                 SizedBox(height: 10),
-                Text("Branches", style: TextStyle(color: Colors.white, fontSize: 22)),
+                Text("Branches",
+                    style: TextStyle(color: Colors.white, fontSize: 22)),
               ],
             ),
           ),
@@ -101,114 +79,41 @@ class _MenuDashboardPageState extends State<MenuDashboardPage> with SingleTicker
     );
   }
 
-  Widget dashboard(context) {
+  Widget dashboard(context, {cubit}) {
     return AnimatedPositioned(
-      duration: duration!,
+      duration: cubit.drawerDuration,
       top: 0,
       bottom: 0,
-      left: isCollapsed ? 0 : 0.5 * screenWidth!,
-      right: isCollapsed ? 0 : -0.2 * screenWidth!,
+      left: cubit.isDrawerCollapsed ? 0 : 0.5 * screenWidth!,
+      right: cubit.isDrawerCollapsed ? 0 : -0.2 * screenWidth!,
       child: ScaleTransition(
-        scale: _scaleAnimation!,
+        scale: cubit.drawerScaleAnimation!,
         child: Material(
-          animationDuration: duration!,
-          borderRadius: isCollapsed ? null : BorderRadius.all(Radius.circular(40)),
+          animationDuration: cubit.drawerDuration!,
+          borderRadius:
+              cubit.isDrawerCollapsed ? null : BorderRadius.all(Radius.circular(40)),
           elevation: 8,
-          color: backgroundColor,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            physics: ClampingScrollPhysics(),
-            child: GestureDetector(
-              onTap: isCollapsed ? null :(){
-                setState(() {
-                  if (isCollapsed)
-                    _controller!.forward();
-                  else
-                    _controller!.reverse();
-
-                  isCollapsed = !isCollapsed;
-                });
-              },
-              onHorizontalDragUpdate:isCollapsed ?null : (e){
-                setState(() {
-                  if (isCollapsed)
-                    _controller!.forward();
-                  else
-                    _controller!.reverse();
-
-                  isCollapsed = !isCollapsed;
-                });
-
-              },
-              child: Container(
-                padding: const EdgeInsets.only(left: 16, right: 16, top: 48),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        InkWell(
-                          child: Icon(Icons.menu, color: Colors.white),
-                          onTap: () {
-                            setState(() {
-                              if (isCollapsed)
-                                _controller!.forward();
-                              else
-                                _controller!.reverse();
-
-                              isCollapsed = !isCollapsed;
-                            });
-                          },
-                        ),
-                        Text("My Cards", style: TextStyle(fontSize: 24, color: Colors.white)),
-                        Icon(Icons.settings, color: Colors.white),
-                      ],
-                    ),
-                    SizedBox(height: 50),
-                    Container(
-                      height: 200,
-                      child: PageView(
-                        controller: PageController(viewportFraction: 0.8),
-                        scrollDirection: Axis.horizontal,
-                        pageSnapping: true,
-                        children: <Widget>[
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            color: Colors.redAccent,
-                            width: 100,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            color: Colors.blueAccent,
-                            width: 100,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                            color: Colors.greenAccent,
-                            width: 100,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text("Transactions", style: TextStyle(color: Colors.white, fontSize: 20),),
-                    ListView.separated(
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text("Macbook"),
-                            subtitle: Text("Apple"),
-                            trailing: Text("-2900"),
-                          );
-                        }, separatorBuilder: (context, index) {
-                      return Divider(height: 16);
-                    }, itemCount: 10)
-                  ],
-                ),
-              ),
+          // color: Theme.of(context).primaryColor,
+          child: ClipRRect(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: Stack(
+              children: [
+                Home(cubit),
+                GestureDetector(
+                  onTap: cubit.isDrawerCollapsed
+                      ? null
+                      : cubit.openDrawer,
+                  onHorizontalDragUpdate: cubit.isDrawerCollapsed
+                      ? null
+                      : (e) {
+                    cubit.openDrawer();
+                  },
+                )
+              ],
             ),
+            borderRadius: cubit.isDrawerCollapsed
+                ? BorderRadius.all(Radius.circular(0))
+                : BorderRadius.all(Radius.circular(40)),
           ),
         ),
       ),

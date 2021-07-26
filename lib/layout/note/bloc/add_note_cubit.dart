@@ -4,9 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
-import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:undo/undo.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {

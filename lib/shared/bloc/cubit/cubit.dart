@@ -1,4 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/shared/bloc/states/states.dart';
 import 'package:sqflite/sqflite.dart';
@@ -8,9 +11,39 @@ class AppCubit extends Cubit<AppStates>{
 
   static AppCubit get(context) => BlocProvider.of(context);
 
+  TabController? tabBarController;
+  AnimationController? fABController;
+  bool isDrawerCollapsed = true;
+  final Duration? drawerDuration = const Duration(milliseconds: 200);
+  AnimationController? drawerController;
+  Animation<double>? drawerScaleAnimation;
+  Animation<double>? drawerMenuScaleAnimation;
+  Animation<Offset>? drawerSlideAnimation;
   Database? database;
 
-  void creatDatabase() {
+  // init state function
+  void onBuildPage(x) {
+    drawerController = AnimationController(vsync: x, duration: drawerDuration);
+    drawerScaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(drawerController!);
+    drawerMenuScaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(drawerController!);
+    drawerSlideAnimation = Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0)).animate(drawerController!);
+    tabBarController = TabController(length: 3, vsync: x);
+    fABController = AnimationController(vsync: x, duration: Duration(milliseconds: 200));
+  }
+
+  // open drawer function
+  openDrawer(){
+    if (isDrawerCollapsed)
+      drawerController!.forward();
+    else
+      drawerController!.reverse();
+
+    isDrawerCollapsed = !isDrawerCollapsed;
+
+    emit(OpenDrawerState());
+  }
+
+  void createDatabase() {
     openDatabase(
       'database.db',
       version: 1,
@@ -49,6 +82,7 @@ class AppCubit extends Cubit<AppStates>{
     }
     );
   }
+
   void getDataFromDatabase(database)  {
     // newTasks=[];
     // doneTasks=[];
@@ -88,7 +122,7 @@ class AppCubit extends Cubit<AppStates>{
   //   required String date,
   // }
   ) async{
-    await database!.transaction((txn) {
+    await database!.transaction((txn) async {
       txn
           .rawInsert(
           'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime) VALUES ("asdfalsdkfj","asdfa","asdfa","asdf3e","asdfasd")')
@@ -96,7 +130,7 @@ class AppCubit extends Cubit<AppStates>{
         print('$value inserted successfully');
         // emit(AppInsertDatabaseState());
         // getDataFromDatabase(database);
-      }).catchError((error) => print(error.toString()));
+      }).catchError((error){print(error.toString());});
       txn
           .rawInsert(
           'INSERT INTO subTasks (body ,isDone ,tasks_id ) VALUES ("asdfalsdkfj",false,1)')
@@ -104,22 +138,9 @@ class AppCubit extends Cubit<AppStates>{
         print('$value inserted successfully');
         // emit(AppInsertDatabaseState());
         getDataFromDatabase(database);
-      }).catchError((error) => print(error.toString()));
+      }).catchError((error){print(error.toString());});
+    });}
 
 
-      return Future.value(false);
-    });
+
   }
-  void deleteData({
-    required int id
-  }
-      ){
-    database!.rawDelete('DELETE FROM tasks WHERE id = ?', [id])
-        .then((value)  {
-      getDataFromDatabase(database);
-      // emit(AppDeleteDatabaseState());
-    });
-  }
-
-
-}

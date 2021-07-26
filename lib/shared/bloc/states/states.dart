@@ -2,4 +2,4 @@ abstract class AppStates {}
 
 class AppInitialState extends AppStates {}
 
-class AppPlusCounterState extends AppStates {}
+class OpenDrawerState extends AppStates {}
