@@ -1,6 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:notes_app/shared/components/circle_tab_Indicator.dart';
 import 'package:notes_app/shared/constants.dart';
 
 ThemeData lightTheme = ThemeData(
