@@ -12,6 +12,15 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
 
+  onBuildAddNoteScreen(id,data){
+    if(id != null){
+      noteId = id ;
+    }
+
+    titleController.text = data['title'];
+    noteTextController.text = data['body'];
+    // emit(state);
+  }
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
 
@@ -119,7 +128,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     }
     selectedGalleryImagesList = [];
     insertCachedImagedToDatabase(db,images: cachedImagesPaths);
-    List listOfFiles = await directoryPath.list(recursive: true).toList();
+    // List listOfFiles = await directoryPath.list(recursive: true).toList();
     emit(AddNoteAddImagesToCacheState());
   }
 

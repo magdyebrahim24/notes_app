@@ -85,9 +85,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           body: TabBarView(
               controller: widget.cubit.tabBarController,
               children: [
-                GridViewComponents(widget.cubit.noteList),
-                GridViewComponents(widget.cubit.noteList),
-                GridViewComponents(widget.cubit.noteList),
+                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
+                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
+                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
 
               ]),
         ),
