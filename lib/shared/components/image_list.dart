@@ -35,7 +35,7 @@ class ImageList extends StatelessWidget {
                   ),
                   Expanded(
                       child: Text(
-                        '${imageList[index].split('/').last}',
+                        '${imageList[index].toString().split('/').last}',
                         maxLines: 1,
                         style: TextStyle(
                             color: Colors.grey, fontSize: 17),

@@ -15,12 +15,14 @@ class DefaultFormField extends StatelessWidget {
   final fillColor;
   final border;
   final onChanged;
+  final validator;
   DefaultFormField({
     this.focusNode,
     this.onTap,
     this.onChanged,
     this.keyboardType,
     this.controller,
+    this.validator,
     this.style = const TextStyle(
       color: Colors.white,
       fontSize: 28,
@@ -37,6 +39,7 @@ class DefaultFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      validator: validator,
       focusNode: focusNode,
       onTap: onTap,
       onChanged: onChanged,

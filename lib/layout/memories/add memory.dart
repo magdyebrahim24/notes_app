@@ -187,7 +187,8 @@ class AddMemory extends StatelessWidget {
           ),
         ),
           bottomNavigationBar: MyBottomNavigationBar(
-            onPressed: () => cubit.pickImage(ImageSource.gallery),
+            onPressedForAddImage: () => cubit.pickImage(ImageSource.gallery),
+            onPressedForDeleteNote: (){}
           )
       );
         },),

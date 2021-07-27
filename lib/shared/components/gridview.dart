@@ -3,13 +3,16 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notes_app/shared/components/note_card.dart';
 
 class GridViewComponents extends StatelessWidget {
+  final List body;
+
+  GridViewComponents(this.body);
 
   @override
   Widget build(BuildContext context) {
     return StaggeredGridView.countBuilder(
       crossAxisCount: 2,
-      itemCount: 10,
-      itemBuilder: (BuildContext context, int index) => NoteCard(),
+      itemCount: body.length,
+      itemBuilder: (BuildContext context, int index) => NoteCard(body: body[index]),
       staggeredTileBuilder: (int index) =>
       new StaggeredTile.fit(1),
       mainAxisSpacing: 4.0,

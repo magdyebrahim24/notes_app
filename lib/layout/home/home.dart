@@ -5,9 +5,7 @@ import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/layout/task/add_task.dart';
-import 'package:notes_app/modules/tab_bar_screens/memories.dart';
-import 'package:notes_app/modules/tab_bar_screens/notes.dart';
-import 'package:notes_app/modules/tab_bar_screens/tasks.dart';
+import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -47,6 +45,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SearchScreen()));
+                        widget.cubit.getDataFromDatabase(widget.cubit.database);
                       },
                       icon: SvgPicture.asset(
                         'assets/icons/search.svg',
@@ -71,7 +70,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     ),
                   ],
                   onTap: (x) {
-                    widget.cubit.fABController!.forward(from: 0);
+                    widget.cubit.fABController!.forward(from: 0.0);
                   },
 
 
@@ -86,9 +85,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           body: TabBarView(
               controller: widget.cubit.tabBarController,
               children: [
-                NotesScreen(),
-                TaskScreen(),
-                MemoriesScreen(),
+                GridViewComponents(widget.cubit.noteList),
+                GridViewComponents(widget.cubit.noteList),
+                GridViewComponents(widget.cubit.noteList),
+
               ]),
         ),
       ),
@@ -98,7 +98,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           widget.cubit.tabBarController!.index == 0
               ? Navigator.push(context,
               MaterialPageRoute(
-                  builder: (context) => AddNote(widget.cubit.database)))
+                  builder: (context) => AddNote(database: widget.cubit.database,)))
               : widget.cubit.tabBarController!.index == 1
               ? Navigator.push(context,
               MaterialPageRoute(builder: (context) => AddTask()))

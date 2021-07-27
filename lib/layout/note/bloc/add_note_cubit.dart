@@ -12,16 +12,16 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
 
-  DateTime dateTime=DateTime.now();
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
 
-  void onFocusBodyChange(){
+  void onFocusBodyChange() {
     titleFocus.unfocus();
     bodyFocus.requestFocus();
     emit(AddNoteFocusBodyChangeState());
   }
-  void onFocusTitleChange(){
+
+  void onFocusTitleChange() {
     bodyFocus.unfocus();
     titleFocus.requestFocus();
     emit(AddNoteFocusTitleChangeState());
@@ -29,9 +29,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   SimpleStack? stackController = SimpleStack<dynamic>(
     '',
-    onUpdate: (val) {
-      print('New Value -> $val');
-    },
+    onUpdate: (val) {},
   );
 
   void clearStack() {
@@ -40,32 +38,34 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   TextEditingController noteTextController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
-
-  undoFun()  {
-      stackController!.undo();
-      noteTextController.text = stackController!.state;
-      emit(AddNoteUndoState());
+  undoFun() {
+    stackController!.undo();
+    noteTextController.text = stackController!.state;
+    emit(AddNoteUndoState());
   }
 
   redoFun() {
-      stackController!.redo();
-      noteTextController.text = stackController!.state;
-      emit(AddNoteRedoState());
-
+    stackController!.redo();
+    noteTextController.text = stackController!.state;
+    emit(AddNoteRedoState());
   }
 
-  onNoteTextChanged(value){
+  onNoteTextChanged(value) {
     stackController!.modify(value);
     emit(AddNoteOnNoteTextChangedState());
   }
+  onTitleChange(){
+    emit(AddNoteTitleChangedState());
+  }
 
   List selectedGalleryImagesList = [];
-  XFile? image;
-  pickImage(ImageSource src) async {
+  List cachedImagesList = [];
+
+  pickImageFromGallery(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
     if (_image != null) {
-      image = _image ;
       selectedGalleryImagesList.add(_image.path);
       emit(AddNoteAddImageState());
     } else {
@@ -98,66 +98,151 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   //
   //
   // }
-  Future saveImagesToPhone() async{
+  Future saveSelectedImagesToPhoneCache(db) async {
     // get app path
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
 
     // create new folder
-    Directory directoryPath = await Directory('$appDocPath/notes_images').create(recursive: true);
-    XFile? _currentImageToSave ;
-    print('pre loop');
-    for(int index = 0 ; index < selectedGalleryImagesList.length ; index++ ){
+    Directory directoryPath =
+        await Directory('$appDocPath/notes_images').create(recursive: true);
+
+    XFile? _currentImageToSave;
+
+    List cachedImagesPaths = [];
+    for (int index = 0; index < selectedGalleryImagesList.length; index++) {
       String imageName = selectedGalleryImagesList[index].split('/').last;
       final String filePath = '${directoryPath.path}/$imageName';
       _currentImageToSave = XFile(selectedGalleryImagesList[index]);
-       await _currentImageToSave.saveTo(filePath);
-      print('inside loop');
+      await _currentImageToSave.saveTo(filePath);
+      cachedImagesPaths.add(filePath);
     }
-    print('after loop');
-
-    var listOfFiles = await directoryPath.list(recursive: true).toList();
-    print(listOfFiles[0].path );
+    selectedGalleryImagesList = [];
+    insertCachedImagedToDatabase(db,images: cachedImagesPaths);
+    List listOfFiles = await directoryPath.list(recursive: true).toList();
+    emit(AddNoteAddImagesToCacheState());
   }
 
-  int? notId;
-  Future insertDatabase(
-      database,
-          {
-        required String title,
-        required String body,
-        required String image,
-        required String voice,
-      }
-      ) async{
-    String createdTime = dateTime.toString().split(' ').first;
-    String time =dateTime.toString().split(' ').last;
-  String createdDate=time.toString().split('.').first;
-    await database!.transaction((txn) {
+  // add cached images path to database
+
+  Future insertCachedImagedToDatabase(
+      database, {
+        required List images
+      }) async {
+    await database.transaction((txn) {
+
+      for(int i = 0 ; i < images.length ; i++){
       txn
           .rawInsert(
-          'INSERT INTO notes (title ,body ,image ,voice ,createdTime ,createdDate) VALUES ("$title","$body","$image","$voice","$createdTime","$createdDate")')
+          'INSERT INTO images (link ,note_id) VALUES ("${images[i]}","$noteId")')
           .then((value) {
-            notId=value;
-            print(value);
-        emit(AddNoteInsertDatabaseState());
-      }).catchError((error)  {print(error.toString());});
-      return Future.value(false);
+        print(value);
+      }).catchError((error) {
+        print(error.toString());
+      });}
+      getNoteImagesFromDatabase(database,noteId);
+      return Future.value(true);
+    });
+
+    emit(AddNoteAddCachedImagesPathToDatabaseState());
+  }
+
+  void getNoteImagesFromDatabase(db,id) async {
+    cachedImagesList = [];
+    db.rawQuery('SELECT * FROM images WHERE note_id = ?', [id]).then((value) {
+      value.forEach((element) {
+        cachedImagesList.add(element['link']);
+        print(element);
+      });
+    });
+    emit(AddNoteGetCachedImagesPathsFromDatabaseState());
+  }
+
+  void deleteAllNoteCachedImages(){
+    for(int i = 0 ; i < cachedImagesList.length ; i++){
+      File('${cachedImagesList[i]}').delete(recursive: true);
+    }
+  }
+
+  // start coding database
+
+  int? noteId;
+
+  Future insertNewNote(
+    database, {
+    required String title,
+    required String body,
+  }) async {
+    // var db = await openDatabase('database.db');
+    DateTime dateTime = DateTime.now();
+    String createdDate = dateTime.toString().split(' ').first;
+    String time = dateTime.toString().split(' ').last;
+    String createdTime = time.toString().split('.').first;
+    await database.transaction((txn) {
+      txn
+          .rawInsert(
+              'INSERT INTO notes (title ,body ,createdTime ,createdDate) VALUES ("$title","$body","$createdTime","$createdDate")')
+          .then((value) {
+        noteId = value;
+        saveSelectedImagesToPhoneCache(database);
+        getNoteImagesFromDatabase(database, noteId);
+        print(value);
+      }).catchError((error) {
+        print(error.toString());
+      });
+
+
+      return Future.value(true);
+    });
+    titleFocus.unfocus();
+    bodyFocus.unfocus();
+    emit(AddNoteInsertDatabaseState());
+  }
+
+  List noteList = [];
+
+  void getNoteDataFromDatabase(db) async {
+    noteList = [];
+    // emit(AppLoaderState());
+    db.rawQuery('SELECT * FROM notes').then((value) {
+      value.forEach((element) {
+        print(element);
+        noteList.add(element);
+      });
+      emit(AddNoteGetDatabaseState());
     });
   }
 
-  void deleteData(
-  database,context,{
+  void deleteNote(db, context, {required int id}) async {
+    print(id);
+    await db.rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) {
+      deleteAllNoteCachedImages();
+      Navigator.pop(context);
+      getNoteDataFromDatabase(db);
+    }).catchError((error) {
+      print(error);
+    });
+    emit(AddNoteDeleteOneNoteState());
+  }
 
-    required int id
+  void updateNote(db,
+      {required String title, required String body, required int id}) async {
+    DateTime dateTime = DateTime.now();
+    String createdDate = dateTime.toString().split(' ').first;
+    String time = dateTime.toString().split(' ').last;
+    String createdTime = time.toString().split('.').first;
+
+    db.rawUpdate(
+        'UPDATE notes SET title = ? , body = ? , createdTime = ? ,createdDate = ? WHERE id = ?',
+        ['$title', '$body', '$createdTime', '$createdDate', id]).then((value) {
+      saveSelectedImagesToPhoneCache(db);
+      getNoteImagesFromDatabase(db, noteId);
+      getNoteDataFromDatabase(db);
+      titleFocus.unfocus();
+      bodyFocus.unfocus();
+    });
+    emit(AddNoteUpdateTitleAndBodyState());
   }
-      ){
-    database!.rawDelete('DELETE FROM notes WHERE id = ?', [id])
-        .then((value)  {
-          Navigator.pop(context);
-          // print('dddddddd');
-      // getDataFromDatabase(database);
-      // emit(AppDeleteDatabaseState());
-    }).ctactError((error){print(error);});
-  }
+
+
 }

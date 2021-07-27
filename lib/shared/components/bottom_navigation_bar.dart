@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class MyBottomNavigationBar extends StatelessWidget {
-  final onPressed;
-  MyBottomNavigationBar({required this.onPressed});
+  final onPressedForAddImage;
+  final onPressedForDeleteNote;
+  MyBottomNavigationBar({required this.onPressedForAddImage,required this.onPressedForDeleteNote});
   @override
   Widget build(BuildContext context) {
     return BottomAppBar(color: Colors.transparent,
@@ -14,7 +15,7 @@ class MyBottomNavigationBar extends StatelessWidget {
           children: [
             MaterialButton(
               minWidth: MediaQuery.of(context).size.width * .4,
-              onPressed: onPressed,
+              onPressed: onPressedForAddImage,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               color: Colors.grey.withOpacity(.3),
@@ -30,7 +31,7 @@ class MyBottomNavigationBar extends StatelessWidget {
                   horizontal: 25,
                   vertical: 10
               ),
-              onPressed: () {},
+              onPressed: onPressedForDeleteNote,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
               color: Colors.redAccent.withOpacity(.1),

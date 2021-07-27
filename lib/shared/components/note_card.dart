@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class NoteCard extends StatelessWidget {
   final bodyMaxLines ;
+  final Map body;
 
-  const NoteCard({this.bodyMaxLines = 4 });
+  const NoteCard({this.bodyMaxLines = 4 ,this.body=const{}});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -26,12 +27,11 @@ class NoteCard extends StatelessWidget {
           ),
         ),
         padding: EdgeInsets.all(15),
-        height: 200,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tittle',
+              body['title'] ?? 'Title' ,
               style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -42,19 +42,21 @@ class NoteCard extends StatelessWidget {
               height: 1,
               margin: EdgeInsets.symmetric(vertical: 10),
             ),
-            Expanded(
-              child: Text(
-                "He'd have you all unravel at the ;alsdkfja;lsd falsdkfja;lsdkfj sda;lkfja;lskdfj asdf lasdkfjal;skdfj ;asldkfja ;sdlkfja l;sdkfja;l sdkfj sdlfkjasd;lfkjas;ldf j;lsdkfj ;alsdkfj ; ",
-                style: TextStyle(fontSize: 17, color: Colors.white),
-                maxLines: bodyMaxLines,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-              ),
+            Text(
+              '${body['body']}',
+              style: TextStyle(fontSize: 17, color: Colors.white),
+              maxLines: bodyMaxLines,
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
             ),
             Row(
               children: [
                 Text(
-                  'jon 17',
+                  '${body['createdTime']}',
+                  style: TextStyle(color: Colors.white),
+                ),
+                Text(
+                  '${body['createdDate']}',
                   style: TextStyle(color: Colors.white),
                 ),
                 Spacer(),

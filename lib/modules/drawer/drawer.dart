@@ -28,7 +28,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
     screenHeight = size.height;
     screenWidth = size.width;
     return BlocProvider(
-        create: (BuildContext context) => AppCubit()..onBuildPage(this),
+        create: (BuildContext context) => AppCubit()..onBuildPage(this)..createDatabase(),
         child: BlocConsumer<AppCubit, AppStates>(
             listener: (BuildContext context, AppStates state) {},
             builder: (BuildContext context, AppStates state) {

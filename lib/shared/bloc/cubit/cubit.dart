@@ -29,6 +29,7 @@ class AppCubit extends Cubit<AppStates>{
     drawerSlideAnimation = Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0)).animate(drawerController!);
     tabBarController = TabController(length: 3, vsync: x);
     fABController = AnimationController(vsync: x, duration: Duration(milliseconds: 200));
+    // getNoteDataFromDatabase(database);
   }
 
   // open drawer function
@@ -43,7 +44,7 @@ class AppCubit extends Cubit<AppStates>{
     emit(OpenDrawerState());
   }
 
-  void createDatabase() {
+  void createDatabase() async{
     openDatabase(
       'database.db',
       version: 1,
@@ -51,12 +52,12 @@ class AppCubit extends Cubit<AppStates>{
         print('database is created');
         database
             .execute(
-            'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,image TEXT,voice TEXT,createdTime TEXT ,createdDate TEXT)')
+            'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT)')
             .then((value) => print('notes table created'))
             .catchError((error) => print('note error'+error.toString()));
         database
             .execute(
-            'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,image TEXT,createdTime TEXT ,createdDate TEXT,memoryDate TEXT)')
+            'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT)')
             .then((value) => print('memory table created'))
             .catchError((error) => print('memory error'+error.toString()));
         database
@@ -69,6 +70,16 @@ class AppCubit extends Cubit<AppStates>{
             'CREATE TABLE subTasks (id INTEGER PRIMARY KEY ,body TEXT ,isDone BOOLEAN,tasks_id INTEGER,FOREIGN KEY (tasks_id) REFERENCES tasks (id) ON DELETE CASCADE)')
             .then((value) => print('subtask table created'))
             .catchError((error) => print('subtask error'+error.toString()));
+        database
+            .execute(
+            'CREATE TABLE images (id INTEGER PRIMARY KEY ,link TEXT ,note_id INTEGER,memory_id INTEGER,FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE,FOREIGN KEY (memory_id) REFERENCES memories (id) ON DELETE CASCADE)')
+            .then((value) => print('images table created'))
+            .catchError((error) => print('subtask error'+error.toString()));
+        database
+            .execute(
+            'CREATE TABLE voices (id INTEGER PRIMARY KEY ,link TEXT ,note_id INTEGER,FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE)')
+            .then((value) => print('voices table created'))
+            .catchError((error) => print('subtask error'+error.toString()));
 
       },
       onConfigure: (Database db) async {
@@ -78,7 +89,8 @@ class AppCubit extends Cubit<AppStates>{
       },
     ).then((value) {
       database = value;
-      // emit(AppCreatDatabaseState());
+      getNoteDataFromDatabase(value);
+      emit(AppCreatDatabaseState());
     }
     );
   }
@@ -113,6 +125,22 @@ class AppCubit extends Cubit<AppStates>{
       // });
       // emit(AppGetDatabaseState());
     });
+  }
+  List noteList = [];
+  void getNoteDataFromDatabase(db){
+    noteList = [];
+    // emit(AppLoaderState());
+    db.rawQuery('SELECT * FROM notes').then((value) {
+      value.forEach((element) {
+        print(element);
+        noteList.add(element);
+      });
+      print('_____________________________________________________________________');
+      print(noteList.length);
+      emit(AppNoteGetDatabaseState());
+
+   });
+
   }
 
   Future insertDatabase(
