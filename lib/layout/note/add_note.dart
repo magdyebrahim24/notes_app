@@ -1,10 +1,9 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
+import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:notes_app/shared/components/bottom_navigation_bar.dart';
 import 'package:notes_app/shared/components/image_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
@@ -13,17 +12,30 @@ import 'package:notes_app/shared/constants.dart';
 class AddNote extends StatelessWidget {
   final database;
   final id;
-  final data ;
+  final data;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  AddNote({this.database,this.id,this.data});
+
+  AddNote({this.database, this.id, this.data});
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context)=>AddNoteCubit()..onBuildAddNoteScreen(id, data),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (BuildContext context) =>
+                AddNoteCubit()..onBuildAddNoteScreen(id, data, database)),
+        BlocProvider(
+            create: (BuildContext context) => AppCubit()),
+      ],
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
-        listener: (context, AddNoteState state) {},
+        listener: (context, AddNoteState state) {
+
+          if(state.toString() == 'AddNoteCubit' ){
+            print('done --------------------------');
+          }
+        },
         builder: (context, state) {
+          // AppCubit appCubit = AppCubit.get(context);
           AddNoteCubit cubit = AddNoteCubit.get(context);
           return Scaffold(
               key: _scaffoldKey,
@@ -50,21 +62,27 @@ class AddNote extends StatelessWidget {
                               : cubit.redoFun,
                         )
                       : SizedBox(),
-                  cubit.titleController.text.isNotEmpty || cubit.noteTextController.text.isNotEmpty || cubit.selectedGalleryImagesList.isNotEmpty ? IconButton(onPressed: (){
-                    if(cubit.noteId == null){
-                      cubit.insertNewNote(
-                        database,
-                          title: cubit.titleController.text,
-                          body: cubit.noteTextController.text,
-                      );
-                    }else{
-                      cubit.updateNote(database,id: cubit.noteId!,body: cubit.noteTextController.text,title: cubit.titleController.text);
-                    }
-                    }, icon: Icon(Icons.done)) :SizedBox(),
-
-
+                  cubit.titleController.text.isNotEmpty ||
+                          cubit.noteTextController.text.isNotEmpty ||
+                          cubit.selectedGalleryImagesList.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            if (cubit.noteId == null) {
+                              cubit.insertNewNote(
+                                database,
+                                title: cubit.titleController.text,
+                                body: cubit.noteTextController.text,
+                              );
+                            } else {
+                              cubit.updateNote(database,
+                                  id: cubit.noteId!,
+                                  body: cubit.noteTextController.text,
+                                  title: cubit.titleController.text);
+                            }
+                          },
+                          icon: Icon(Icons.done))
+                      : SizedBox(),
                 ],
-
               ),
               body: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -79,7 +97,9 @@ class AddNote extends StatelessWidget {
                       onTap: () {
                         cubit.onFocusTitleChange();
                       },
-                      onChanged: (value){cubit.onTitleChange();},
+                      onChanged: (value) {
+                        cubit.onTitleChange();
+                      },
                       maxLines: null,
                       minLines: null,
                       fillColor: Theme.of(context).primaryColor,
@@ -123,17 +143,46 @@ class AddNote extends StatelessWidget {
                     ),
                     SizedBox(),
                     // Image.file(File('/data/user/0/com.example.notes_app/app_flutter/notes_images/image_picker7464063783057228289.jpg'),height: 50,width: 100,cacheHeight: 100,cacheWidth: 100,),
-                    ImageList(imageList: cubit.selectedGalleryImagesList),
-                    ImageList(imageList: cubit.cachedImagesList),
+                    ImageList(imageList: cubit.selectedGalleryImagesList,),
+                    ImageList(imageList: cubit.cachedImagesList,cubit: cubit,database: database,),
 
+                    Material(
+                      elevation: 15,
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.lock_open_outlined))),
+                            Expanded(
+                                child: IconButton(
+                                    onPressed: () {}, icon: Icon(Icons.star))),
+                            Expanded(
+                                child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.delete_outline_outlined))),
+                            Expanded(
+                                child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                        Icons.add_photo_alternate_outlined))),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),
               bottomNavigationBar: MyBottomNavigationBar(
-                onPressedForAddImage: () => cubit.pickImageFromGallery(ImageSource.gallery),
-                  onPressedForDeleteNote: (){cubit.deleteNote(database , context , id: cubit.noteId!);},
-              )
-          );
+                onPressedForAddImage: () =>
+                    cubit.pickImageFromGallery(ImageSource.gallery),
+                onPressedForDeleteNote: () {
+                  cubit.deleteNote(database, context, id: cubit.noteId!);
+                },
+              ));
         },
       ),
     );

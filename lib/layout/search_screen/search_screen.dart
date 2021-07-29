@@ -5,6 +5,7 @@ import 'package:notes_app/shared/constants.dart';
 class SearchScreen extends StatelessWidget {
   final searchController = TextEditingController();
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

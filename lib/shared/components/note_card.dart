@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 
 class NoteCard extends StatelessWidget {
-  final bodyMaxLines ;
-  final Map body;
+  final funForRebuild;
+  final bodyMaxLines;
+  final Map data;
   final database;
 
-  NoteCard({this.bodyMaxLines = 4 ,this.body=const{}, this.database});
+  NoteCard({this.bodyMaxLines = 4, this.data = const {}, this.database, this.funForRebuild});
+
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -18,7 +21,22 @@ class NoteCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.0),
       ),
       child: InkWell(
-        onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNote(id: body['id'].toInt(),data: body,database: database,)));},
+        onTap: (){
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddNote(
+                        id: data['id'].toInt(),
+                        data: data,
+                        database: database,
+                      ))).then((value) {
+          funForRebuild();
+
+        });
+        // print('pop out now ---------------------');
+
+
+        },
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -35,7 +53,7 @@ class NoteCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                body['title'] ?? 'Title' ,
+                data['title'] ?? 'Title',
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -47,7 +65,7 @@ class NoteCard extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 10),
               ),
               Text(
-                '${body['body']}',
+                '${data['body']}',
                 style: TextStyle(fontSize: 17, color: Colors.white),
                 maxLines: bodyMaxLines,
                 softWrap: true,
@@ -56,11 +74,11 @@ class NoteCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    '${body['createdTime']}',
+                    '${data['createdTime']}',
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    '${body['createdDate']}',
+                    '${data['createdDate']}',
                     style: TextStyle(color: Colors.white),
                   ),
                   Spacer(),

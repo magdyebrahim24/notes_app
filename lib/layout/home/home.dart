@@ -13,7 +13,8 @@ class Home extends StatefulWidget {
 
   final cubit;
 
-  const Home( this.cubit);
+  final database;
+  Home( this.cubit, this.database);
   @override
   _HomeState createState() => _HomeState();
 }
@@ -28,15 +29,18 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       body: DefaultTabController(
         length: 3,
         child: NestedScrollView(
-          headerSliverBuilder:
-              (BuildContext context, bool innerBoxIsScrolled) {
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
             return [
               SliverAppBar(
                 elevation: 0.0,
                 title: Text('Notes'),
-                leading: InkWell(
-                  child: Icon(Icons.menu, color: Colors.white),
-                  onTap: () => widget.cubit.openDrawer(),
+                leading: IconButton(
+                  icon: AnimatedIcon(
+                    icon: AnimatedIcons.menu_close,
+                    progress: widget.cubit.drawerController,
+                    semanticLabel: 'Show menu',
+                  ),
+                  onPressed: () => widget.cubit.openDrawer(),
                 ),
                 actions: [
                   IconButton(
@@ -45,7 +49,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             context,
                             MaterialPageRoute(
                                 builder: (context) => SearchScreen()));
-                        widget.cubit.getDataFromDatabase(widget.cubit.database);
                       },
                       icon: SvgPicture.asset(
                         'assets/icons/search.svg',
@@ -62,18 +65,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     Tab(
                       text: 'Notes',
                     ),
-                    Tab(
-                        text: 'Tasks'
-                    ),
+                    Tab(text: 'Tasks'),
                     Tab(
                       text: 'Memories',
                     ),
                   ],
-                  onTap: (x) {
-                    widget.cubit.fABController!.forward(from: 0.0);
-                  },
-
-
+                  // onTap: (x) {
+                  //   widget.cubit.fABController!.forward(from: 0.0);
+                  // },
                   labelStyle: TextStyle(fontSize: 15),
                   isScrollable: true,
                   indicatorSize: TabBarIndicatorSize.label,
@@ -84,38 +83,28 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           },
           body: TabBarView(
               controller: widget.cubit.tabBarController,
+              physics: BouncingScrollPhysics(),
               children: [
-                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
-                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
-                GridViewComponents(widget.cubit.noteList,widget.cubit.database),
+                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
               ]),
         ),
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          widget.cubit.tabBarController!.index == 0
-              ? Navigator.push(context,
-              MaterialPageRoute(
-                  builder: (context) => AddNote(database: widget.cubit.database,)))
-              : widget.cubit.tabBarController!.index == 1
-              ? Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddTask()))
-              : Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AddMemory()));
-        },
+        onPressed: () => widget.cubit.addFABBtnRoutes(context),
         tooltip: 'Increment',
         child: RotationTransition(
-          turns: Tween<double>(begin: 0, end: 1).animate(widget.cubit.fABController!),
+          turns: Tween<double>(begin: 0.0, end: 1.0)
+              .animate(widget.cubit.fABController!),
           child: Icon(
-            widget.cubit.tabBarController!.index == 0 ?
-            Icons.note_add_outlined : widget.cubit.tabBarController!.index == 1 ?
-            Icons.task_alt_rounded
-                : Icons.event_available_outlined,
-
+            widget.cubit.tabBarController!.index == 0
+                ? Icons.note_add_outlined
+                : widget.cubit.tabBarController!.index == 1
+                    ? Icons.task_alt_rounded
+                    : Icons.event_available_outlined,
             size: 30,
           ),
         ),
@@ -216,5 +205,4 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         Icons.more_vert,
         color: greyColor,
       ));
-
-  }
+}

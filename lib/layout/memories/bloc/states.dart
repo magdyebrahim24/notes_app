@@ -9,3 +9,5 @@ class AddMemoryClearStackState extends AppMemoryStates {}
 class AddMemoryUndoState extends AppMemoryStates {}
 class AddMemoryRedoState extends AppMemoryStates {}
 class AddMemoryOnNoteTextChangedState extends AppMemoryStates {}
+class AddMemoryInsertDatabaseState extends AppMemoryStates {}
+class AddMemoryGetDatabaseState extends AppMemoryStates {}

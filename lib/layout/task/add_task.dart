@@ -22,10 +22,10 @@ class AddTask extends StatelessWidget {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              leading: IconButton(
-                onPressed: ()=>Navigator.pop(context),
-                icon: Icon(Icons.arrow_back_ios),
-              ),
+              // leading: IconButton(
+              //   onPressed: ()=>Navigator.pop(context),
+              //   icon: Icon(Icons.arrow_back_ios),
+              // ),
             ),
             body: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),

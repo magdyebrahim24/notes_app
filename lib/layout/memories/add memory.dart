@@ -9,9 +9,9 @@ import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddMemory extends StatelessWidget {
-  final TextEditingController _titleController = TextEditingController();
+  final database;
 
-
+  AddMemory({this.database});
 
   @override
   Widget build(BuildContext context) {
@@ -26,20 +26,38 @@ class AddMemory extends StatelessWidget {
           appBar: AppBar(
 
             actions: [
-              cubit.bodyFocus.hasFocus ?    IconButton(
-                tooltip: 'Undo',
-                icon: Icon(Icons.undo,),
-                onPressed: cubit.stackController!.state == '' &&
-                    !(cubit.stackController!.canUndo)
-                    ? null
-                    : cubit.undoFun,
-              ) : SizedBox(),
-              cubit.bodyFocus.hasFocus ?  IconButton(
-                tooltip: 'Redo',
-                icon: Icon(Icons.redo),
-                onPressed:
-                !cubit.stackController!.canRedo ? null : cubit.redoFun,
-              ) : SizedBox(),
+              // cubit.bodyFocus.hasFocus ?    IconButton(
+              //   tooltip: 'Undo',
+              //   icon: Icon(Icons.undo,),
+              //   onPressed: cubit.stackController!.state == '' &&
+              //       !(cubit.stackController!.canUndo)
+              //       ? null
+              //       : cubit.undoFun,
+              // ) : SizedBox(),
+              // cubit.bodyFocus.hasFocus ?  IconButton(
+              //   tooltip: 'Redo',
+              //   icon: Icon(Icons.redo),
+              //   onPressed:
+              //   !cubit.stackController!.canRedo ? null : cubit.redoFun,
+              // ) : SizedBox(),
+              IconButton(
+                  onPressed: () {
+                    if (cubit.memoryID == null) {
+                      cubit.insertNewMemory(
+                        database,
+                        memoryDate: cubit.dateController!,
+                        title: cubit.titleController.text,
+                        body: cubit.memoryTextController.text,
+                      );
+                    }
+                    // else {
+                    //   cubit.updateNote(database,
+                    //       id: cubit.noteId!,
+                    //       body: cubit.memoryTextController.text,
+                    //       title: cubit.titleController.text);
+                    // }
+                  },
+                  icon: Icon(Icons.done))
             ],
           ),
         body: Padding(
@@ -49,7 +67,7 @@ class AddMemory extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 DefaultFormField(
-                  controller: _titleController,
+                  controller: cubit.titleController,
                   focusNode: cubit.titleFocus,
                   onTap:  (){cubit.onFocusTitleChange();},
                   maxLines: null,
@@ -120,7 +138,7 @@ class AddMemory extends StatelessWidget {
                 SizedBox(height: 15,),
                 DefaultFormField(
                   focusNode: cubit.bodyFocus,
-                  controller: cubit.noteTextController,
+                  controller: cubit.memoryTextController,
                   onTap: (){cubit.onFocusBodyChange();},
                   style: TextStyle(color: Colors.white, fontSize: 20,),
                   onChanged: (value) {cubit.onNoteTextChanged(value);},
@@ -134,54 +152,6 @@ class AddMemory extends StatelessWidget {
                 ),
                 SizedBox(height: 15,),
                 ImageList(imageList: cubit.addedImages),
-                // ListView.builder(
-                //     physics: NeverScrollableScrollPhysics(),
-                //     shrinkWrap: true,
-                //     itemCount: cubit.newTask.length,
-                //     itemBuilder: (context,index)=>Row(
-                //       children: [
-                //         Checkbox(
-                //           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-                //           onChanged: (value){
-                //             cubit.changeCheckbox(index);
-                //           },
-                //           value: cubit.newTask[index]['isChecked'],
-                //           fillColor: MaterialStateProperty.resolveWith((states) => blueColor),
-                //         ),
-                //         Expanded(
-                //           child: TextFormField(
-                //             controller: cubit.newTask[index]['task'],
-                //             style: TextStyle(
-                //               decoration: cubit.newTask[index]['isChecked'] ?TextDecoration.lineThrough:null,
-                //               color: cubit.newTask[index]['isChecked'] ?Colors.white60:Colors.white,
-                //               fontSize: 16,
-                //               fontWeight: FontWeight.w800,
-                //             ),
-                //             decoration: InputDecoration(
-                //               hintText: 'Add Task',
-                //               disabledBorder: InputBorder.none,
-                //               hintStyle: TextStyle(color: greyColor, fontSize: 20,fontWeight: FontWeight.normal),
-                //               fillColor: Theme.of(context).primaryColor,
-                //               border: InputBorder.none,
-                //             ),
-                //           ),
-                //         ),
-                //         IconButton(
-                //             onPressed: (){cubit.deleteTask(index);},
-                //             icon: Icon(Icons.clear,color: Colors.white60,)),
-                //       ],
-                //     )),
-                //
-                // TextButton(
-                //   onPressed: (){cubit.addNewTask();},
-                //   style: ButtonStyle(
-                //   ),
-                //   child: Text('+  Add new task',
-                //     style: TextStyle(
-                //         color: Colors.white60,
-                //         fontSize: 18
-                //     ),),
-                // )
               ],
             ),
           ),

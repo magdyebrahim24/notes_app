@@ -12,17 +12,24 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
 
-  onBuildAddNoteScreen(id,data){
-    if(id != null){
-      noteId = id ;
-    }
-
-    titleController.text = data['title'];
-    noteTextController.text = data['body'];
-    // emit(state);
-  }
+  TextEditingController noteTextController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
+  List selectedGalleryImagesList = [];
+  List cachedImagesList = [];
+  int? noteId;
+  List noteList = [];
+
+  onBuildAddNoteScreen(id, data, db) {
+    if (id != null) {
+      noteId = data['id'];
+      titleController.text = data['title'].toString();
+      noteTextController.text = data['body'].toString();
+      cachedImagesList = data['images'];
+    }
+    emit(OnBuildAddNoteInitialState());
+  }
 
   void onFocusBodyChange() {
     titleFocus.unfocus();
@@ -46,9 +53,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteClearStackState());
   }
 
-  TextEditingController noteTextController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
-
   undoFun() {
     stackController!.undo();
     noteTextController.text = stackController!.state;
@@ -65,12 +69,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     stackController!.modify(value);
     emit(AddNoteOnNoteTextChangedState());
   }
-  onTitleChange(){
+
+  onTitleChange() {
     emit(AddNoteTitleChangedState());
   }
-
-  List selectedGalleryImagesList = [];
-  List cachedImagesList = [];
 
   pickImageFromGallery(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
@@ -82,31 +84,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     }
   }
 
-// Future saveImagesToPhone() async{
-  //
-  //   Directory appDocDir = await getApplicationDocumentsDirectory();
-  //   String appDocPath = appDocDir.path;
-  //   XFile? _currentImageToSave ;
-  //
-  //   print('pre loop');
-  //
-  //   new File('$appDocPath/notes_images').create(recursive: true)
-  //       .then((File directoryPath) {
-  //
-  //     for(int index = 0 ; index < selectedGalleryImagesList.length ; index++ ){
-  //       String imageName = selectedGalleryImagesList[index].split('/').last;
-  //       final String filePath = '${directoryPath.path}/$imageName';
-  //       _currentImageToSave = XFile(selectedGalleryImagesList[index]);
-  //       final  savedImage =  _currentImageToSave!.saveTo(filePath);
-  //       print('inside loop');
-  //
-  //       print('image saved success $savedImage .');
-  //     }    });
-  //   print(appDocPath);
-  //   print('after loop');
-  //
-  //
-  // }
   Future saveSelectedImagesToPhoneCache(db) async {
     // get app path
     Directory appDocDir = await getApplicationDocumentsDirectory();
@@ -127,55 +104,52 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       cachedImagesPaths.add(filePath);
     }
     selectedGalleryImagesList = [];
-    insertCachedImagedToDatabase(db,images: cachedImagesPaths);
+    insertCachedImagedToDatabase(db, images: cachedImagesPaths);
     // List listOfFiles = await directoryPath.list(recursive: true).toList();
     emit(AddNoteAddImagesToCacheState());
   }
 
   // add cached images path to database
 
-  Future insertCachedImagedToDatabase(
-      database, {
-        required List images
-      }) async {
+  Future insertCachedImagedToDatabase(database, {required List images}) async {
     await database.transaction((txn) {
-
-      for(int i = 0 ; i < images.length ; i++){
-      txn
-          .rawInsert(
-          'INSERT INTO images (link ,note_id) VALUES ("${images[i]}","$noteId")')
-          .then((value) {
-        print(value);
-      }).catchError((error) {
-        print(error.toString());
-      });}
-      getNoteImagesFromDatabase(database,noteId);
+      for (int i = 0; i < images.length; i++) {
+        txn
+            .rawInsert(
+                'INSERT INTO notes_images (link ,note_id) VALUES ("${images[i]}","$noteId")')
+            .then((value) {
+          print(value);
+        }).catchError((error) {
+          print(error.toString());
+        });
+      }
+      getNoteImagesFromDatabase(database, noteId);
       return Future.value(true);
     });
 
     emit(AddNoteAddCachedImagesPathToDatabaseState());
   }
 
-  void getNoteImagesFromDatabase(db,id) async {
+  void getNoteImagesFromDatabase(db, id) async {
     cachedImagesList = [];
-    db.rawQuery('SELECT * FROM images WHERE note_id = ?', [id]).then((value) {
+    db.rawQuery('SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
       value.forEach((element) {
         cachedImagesList.add(element['link']);
+
         print(element);
       });
+      emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
-    emit(AddNoteGetCachedImagesPathsFromDatabaseState());
+
   }
 
-  void deleteAllNoteCachedImages(){
-    for(int i = 0 ; i < cachedImagesList.length ; i++){
+  void deleteAllNoteCachedImages() {
+    for (int i = 0; i < cachedImagesList.length; i++) {
       File('${cachedImagesList[i]}').delete(recursive: true);
     }
   }
 
   // start coding database
-
-  int? noteId;
 
   Future insertNewNote(
     database, {
@@ -200,7 +174,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
         print(error.toString());
       });
 
-
       return Future.value(true);
     });
     titleFocus.unfocus();
@@ -208,7 +181,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteInsertDatabaseState());
   }
 
-  List noteList = [];
 
   void getNoteDataFromDatabase(db) async {
     noteList = [];
@@ -252,6 +224,15 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     });
     emit(AddNoteUpdateTitleAndBodyState());
   }
+  void deleteImage(db, {required int imageID ,required int index}) async {
+    print(imageID);
+    await db.rawDelete('DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
+      File('${cachedImagesList[index]['link']}').delete(recursive: true);
+      getNoteImagesFromDatabase(db,imageID);
+      emit(AddNoteDeleteOneImageState());
+    }).catchError((error) {
+      print(error);
+    });
 
-
+  }
 }

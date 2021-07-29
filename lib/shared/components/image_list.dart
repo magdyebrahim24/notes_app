@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/shared/components/show_full_image.dart';
 
 class ImageList extends StatelessWidget {
+  final database;
+  final cubit;
   final List imageList;
-  ImageList({required this.imageList});
+  ImageList({required this.imageList, this.database,this.cubit});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class ImageList extends StatelessWidget {
                             color: Colors.grey, fontSize: 17),
                       )),
                   IconButton(
-                      onPressed: () {},
+                      onPressed: () {cubit.deleteImage(database, imageID: imageList[index]['id'].toInt(),index:index);},
                       icon: Icon(
                         Icons.delete_outline_rounded,
                         color: Colors.grey,

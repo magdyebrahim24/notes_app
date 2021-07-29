@@ -4,5 +4,7 @@ class AppInitialState extends AppStates {}
 
 class OpenDrawerState extends AppStates {}
 
-class AppCreatDatabaseState extends AppStates {}
-class AppNoteGetDatabaseState extends AppStates {}
+class AppCreateDatabaseState extends AppStates {}
+
+class AppRebuildUIState extends AppStates {}
+class AppLoaderState extends AppStates {}

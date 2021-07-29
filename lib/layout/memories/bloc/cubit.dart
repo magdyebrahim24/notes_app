@@ -13,6 +13,8 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
 
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
+  int? memoryID;
+  List memoryList=[];
 
   void onFocusBodyChange(){
     titleFocus.unfocus();
@@ -37,18 +39,19 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     emit(AddMemoryClearStackState());
   }
 
-  TextEditingController noteTextController = TextEditingController();
+  TextEditingController memoryTextController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
 
 
   undoFun()  {
     stackController!.undo();
-    noteTextController.text = stackController!.state;
+    memoryTextController.text = stackController!.state;
     emit(AddMemoryUndoState());
   }
 
   redoFun() {
     stackController!.redo();
-    noteTextController.text = stackController!.state;
+    memoryTextController.text = stackController!.state;
     emit(AddMemoryRedoState());
 
   }
@@ -87,4 +90,47 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       print('No Image Selected');
     }
   }
+  Future insertNewMemory(
+      database, {
+        required String title,
+        required String body,
+        required String memoryDate,
+      }) async {
+    // var db = await openDatabase('database.db');
+    DateTime dateTime = DateTime.now();
+    String createdDate = dateTime.toString().split(' ').first;
+    String time = dateTime.toString().split(' ').last;
+    String createdTime = time.toString().split('.').first;
+    await database.transaction((txn) {
+      txn
+          .rawInsert(
+          'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate) VALUES ("$title","$body","$createdTime","$createdDate","$memoryDate")')
+          .then((value) {
+        memoryID=value;
+        // saveSelectedImagesToPhoneCache(database);
+        // getNoteImagesFromDatabase(database, noteId);
+        getMemoryDataFromDatabase(database);
+        print(value);
+      }).catchError((error) {
+        print(error.toString());
+      });
+
+      return Future.value(true);
+    });
+    titleFocus.unfocus();
+    bodyFocus.unfocus();
+    emit(AddMemoryInsertDatabaseState());
+  }
+  void getMemoryDataFromDatabase(db) async {
+    memoryList = [];
+    // emit(AppLoaderState());
+    db.rawQuery('SELECT * FROM memories').then((value) {
+      value.forEach((element) {
+        print(element);
+        memoryList.add(element);
+      });
+      emit(AddMemoryGetDatabaseState());
+    });
+  }
+
 }

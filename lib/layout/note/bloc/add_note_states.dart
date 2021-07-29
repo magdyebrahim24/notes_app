@@ -2,6 +2,8 @@ abstract class AddNoteState {}
 
 class AddNoteInitialState extends AddNoteState {}
 
+class OnBuildAddNoteInitialState extends AddNoteState {}
+
 class AddNoteClearStackState extends AddNoteState {}
 
 class AddNoteUndoState extends AddNoteState {}
@@ -26,6 +28,7 @@ class AddNoteGetDatabaseState extends AddNoteState {}
 class AddNoteUpdateTitleAndBodyState extends AddNoteState {}
 
 class AddNoteDeleteOneNoteState extends AddNoteState {}
+class AddNoteDeleteOneImageState extends AddNoteState {}
 
 class AddNoteAddImagesToCacheState extends AddNoteState {}
 
