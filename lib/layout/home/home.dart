@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/layout/memories/add%20memory.dart';
-import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/setting/setting.dart';
-import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -87,7 +84,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               children: [
                 GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
                 GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
-                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                GridViewComponents(widget.cubit.allMemoriesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
               ]),
         ),

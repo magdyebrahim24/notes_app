@@ -6,8 +6,10 @@ import 'bloc/cubit/add_task_cubit.dart';
 import 'bloc/states/states.dart';
 
 class AddTask extends StatelessWidget {
+  final database;
+  AddTask({this.database});
+
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final TextEditingController _titleController = TextEditingController();
 
 
 
@@ -22,6 +24,26 @@ class AddTask extends StatelessWidget {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      if (cubit.taskID == null) {
+                        cubit.insertNewTask(
+                          database,
+                          title: cubit.titleController.text,
+                          taskDate: cubit.dateController!,
+                          taskTime: cubit.timeController!,
+                        );
+                       }else {
+                        cubit.updateTask(database,
+                            id: cubit.taskID!,
+                            taskDate: cubit.dateController!,
+                            taskTime: cubit.timeController!,
+                            title: cubit.titleController.text);
+                      }
+                    },
+                    icon: Icon(Icons.done))
+              ],
               // leading: IconButton(
               //   onPressed: ()=>Navigator.pop(context),
               //   icon: Icon(Icons.arrow_back_ios),
@@ -34,7 +56,7 @@ class AddTask extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     DefaultFormField(
-                      controller: _titleController,
+                      controller: cubit.titleController,
                       maxLines: null,
                       minLines: null,
                       fillColor: Theme.of(context).primaryColor,

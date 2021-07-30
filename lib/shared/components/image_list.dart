@@ -43,7 +43,9 @@ class ImageList extends StatelessWidget {
                             color: Colors.grey, fontSize: 17),
                       )),
                   IconButton(
-                      onPressed: () {cubit.deleteImage(database, imageID: imageList[index]['id'].toInt(),index:index);},
+                      onPressed: () {print(imageList);
+                        cubit.deleteImage(database, imageID: imageList[index]['id'].toInt(),index:index);
+                        },
                       icon: Icon(
                         Icons.delete_outline_rounded,
                         color: Colors.grey,

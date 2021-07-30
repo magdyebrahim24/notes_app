@@ -26,21 +26,31 @@ class AddMemory extends StatelessWidget {
           appBar: AppBar(
 
             actions: [
-              // cubit.bodyFocus.hasFocus ?    IconButton(
-              //   tooltip: 'Undo',
-              //   icon: Icon(Icons.undo,),
-              //   onPressed: cubit.stackController!.state == '' &&
-              //       !(cubit.stackController!.canUndo)
-              //       ? null
-              //       : cubit.undoFun,
-              // ) : SizedBox(),
-              // cubit.bodyFocus.hasFocus ?  IconButton(
-              //   tooltip: 'Redo',
-              //   icon: Icon(Icons.redo),
-              //   onPressed:
-              //   !cubit.stackController!.canRedo ? null : cubit.redoFun,
-              // ) : SizedBox(),
-              IconButton(
+              cubit.bodyFocus.hasFocus
+                  ? IconButton(
+                tooltip: 'Undo',
+                icon: Icon(
+                  Icons.undo,
+                ),
+                onPressed: cubit.stackController!.state == '' &&
+                    !(cubit.stackController!.canUndo)
+                    ? null
+                    : cubit.undoFun,
+              )
+                  : SizedBox(),
+              cubit.bodyFocus.hasFocus
+                  ? IconButton(
+                tooltip: 'Redo',
+                icon: Icon(Icons.redo),
+                onPressed: !cubit.stackController!.canRedo
+                    ? null
+                    : cubit.redoFun,
+              )
+                  : SizedBox(),
+              cubit.titleController.text.isNotEmpty ||
+                  cubit.memoryTextController.text.isNotEmpty ||
+                  cubit.selectedGalleryImagesList.isNotEmpty
+                  ? IconButton(
                   onPressed: () {
                     if (cubit.memoryID == null) {
                       cubit.insertNewMemory(
@@ -49,15 +59,16 @@ class AddMemory extends StatelessWidget {
                         title: cubit.titleController.text,
                         body: cubit.memoryTextController.text,
                       );
+                    } else {
+                      cubit.updateMemory(database,
+                          id: cubit.memoryID!,
+                          body: cubit.memoryTextController.text,
+                          memoryDate: cubit.dateController!,
+                          title: cubit.titleController.text);
                     }
-                    // else {
-                    //   cubit.updateNote(database,
-                    //       id: cubit.noteId!,
-                    //       body: cubit.memoryTextController.text,
-                    //       title: cubit.titleController.text);
-                    // }
                   },
                   icon: Icon(Icons.done))
+                  : SizedBox(),
             ],
           ),
         body: Padding(
@@ -70,6 +81,7 @@ class AddMemory extends StatelessWidget {
                   controller: cubit.titleController,
                   focusNode: cubit.titleFocus,
                   onTap:  (){cubit.onFocusTitleChange();},
+                  onChanged: (value){cubit.onTitleChange();},
                   maxLines: null,
                   minLines: null,
                   fillColor: Theme.of(context).primaryColor,
@@ -141,7 +153,7 @@ class AddMemory extends StatelessWidget {
                   controller: cubit.memoryTextController,
                   onTap: (){cubit.onFocusBodyChange();},
                   style: TextStyle(color: Colors.white, fontSize: 20,),
-                  onChanged: (value) {cubit.onNoteTextChanged(value);},
+                  onChanged: (value) {cubit.onMemoryTextChanged(value);},
                   maxLines: null,
                   minLines: null,
                   keyboardType: TextInputType.multiline,
@@ -151,14 +163,15 @@ class AddMemory extends StatelessWidget {
 
                 ),
                 SizedBox(height: 15,),
-                ImageList(imageList: cubit.addedImages),
+                ImageList(imageList: cubit.selectedGalleryImagesList),
+                ImageList(imageList: cubit.cachedImagesList,cubit: cubit,database: database,),
               ],
             ),
           ),
         ),
           bottomNavigationBar: MyBottomNavigationBar(
-            onPressedForAddImage: () => cubit.pickImage(ImageSource.gallery),
-            onPressedForDeleteNote: (){}
+            onPressedForAddImage: () => cubit.pickImageFromGallery(ImageSource.gallery),
+            onPressedForDeleteNote: ()=>cubit.deleteMemory(database ,context ,id:cubit.memoryID!),
           )
       );
         },),

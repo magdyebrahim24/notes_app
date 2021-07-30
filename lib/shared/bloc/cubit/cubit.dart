@@ -23,10 +23,13 @@ class AppCubit extends Cubit<AppStates> {
   Animation<double>? drawerMenuScaleAnimation;
   Animation<Offset>? drawerSlideAnimation;
   Database? database;
-  List cachedImagesList = [];
+  List cachedNotesImagesList = [];
+  List cachedMemoriesImagesList = [];
   List<Map<String,dynamic>> notesDataList = [];
+  List<Map<String,dynamic>> memoriesDataList = [];
   // have notes data and images data
   List<Map<String,dynamic>> allNotesDataList = [];
+  List<Map<String,dynamic>> allMemoriesDataList = [];
   bool isLoading=true;
 
 
@@ -119,27 +122,40 @@ class AppCubit extends Cubit<AppStates> {
   void getDataAndRebuild() async{
     isLoading=true;
     emit(AppLoaderState());
-    getNoteDataFromDatabase(database);
-    getNoteImagesFromDatabase(database);
+    getDataFromDatabase(database);
+    getImagesFromDatabase(database);
     // emit(AddNoteRebuildUIState());
   }
 
-  void getNoteDataFromDatabase(db) {
+  void getDataFromDatabase(db) {
     notesDataList = [];
     // emit(AppLoaderState());
     db.rawQuery('SELECT * FROM notes').then((value) {
       value.forEach((element) {
         notesDataList.add(element);
       });
-      getNoteImagesFromDatabase(db);
+      getImagesFromDatabase(db);
+      // emit(AppNoteGetDatabaseState());
+    });
+    memoriesDataList=[];
+    db.rawQuery('SELECT * FROM memories').then((value) {
+      value.forEach((element) {
+        memoriesDataList.add(element);
+      });
+      getImagesFromDatabase(db);
       // emit(AppNoteGetDatabaseState());
     });
   }
 
-  void getNoteImagesFromDatabase(db) async {
-    cachedImagesList = [];
+  void getImagesFromDatabase(db) async {
+    cachedNotesImagesList = [];
     db.rawQuery('SELECT * FROM notes_images').then((value) {
-      cachedImagesList = value ;
+      cachedNotesImagesList = value ;
+      getAllNotesDataWithItsImages(value);
+    });
+    cachedMemoriesImagesList=[];
+    db.rawQuery('SELECT * FROM memories_images').then((value) {
+      cachedMemoriesImagesList = value ;
       getAllNotesDataWithItsImages(value);
     });
     // emit(AddNoteGetCachedImagesPathsFromDatabaseState());
@@ -155,9 +171,13 @@ class AppCubit extends Cubit<AppStates> {
 
   void getAllNotesDataWithItsImages(List imagesData) async {
     List notesDataModified = makeModifiableResults(notesDataList);
+    List memoriesDataModified = makeModifiableResults(memoriesDataList);
     List oneNoteImagesList = [];
+    List oneMemoryImagesList = [];
     Map<String,dynamic> oneNoteData = {} ;
+    Map<String,dynamic> oneMemoryData = {} ;
     List<Map<String,dynamic>> allNotesCompleteData = [];
+    List<Map<String,dynamic>> allMemoriesCompleteData = [];
 
     for (int i = 0; i < notesDataModified.length; i++) {
       oneNoteImagesList = [];
@@ -172,31 +192,24 @@ class AppCubit extends Cubit<AppStates> {
         oneNoteData.update('images',(dynamic val) => oneNoteImagesList);
       allNotesCompleteData.add(oneNoteData);
     }
+    for (int i = 0; i < memoriesDataModified.length; i++) {
+      oneMemoryImagesList = [];
+      oneMemoryData = memoriesDataModified[i];
+      oneMemoryData.putIfAbsent('images', () => []);
+      for (int y = 0; y < imagesData.length; y++) {
+        if (memoriesDataModified[i]['id'] == imagesData[y]['note_id']) {
+          oneMemoryImagesList.add(imagesData[y]);
+        }
+      }
+      if(oneMemoryImagesList.isNotEmpty)
+        oneMemoryData.update('images',(dynamic val) => oneMemoryImagesList);
+      allMemoriesCompleteData.add(oneMemoryData);
+    }
     allNotesDataList = allNotesCompleteData ;
+    allMemoriesDataList = allMemoriesCompleteData ;
     isLoading=false;
     emit(AppRebuildUIState());
 
-  }
-
-  Future insertDatabase(
-      ) async {
-    await database!.transaction((txn) async {
-      txn
-          .rawInsert(
-              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime) VALUES ("asdfalsdkfj","asdfa","asdfa","asdf3e","asdfasd")')
-          .then((value) {
-      }).catchError((error) {
-        print(error.toString());
-      });
-      txn
-          .rawInsert(
-              'INSERT INTO subTasks (body ,isDone ,tasks_id ) VALUES ("asdfalsdkfj",false,1)')
-          .then((value) {
-        print('$value inserted successfully');
-      }).catchError((error) {
-        print(error.toString());
-      });
-    });
   }
 
   void addFABBtnRoutes(context){
@@ -208,7 +221,7 @@ class AppCubit extends Cubit<AppStates> {
       });
     }else if(tabBarController!.index == 1){
       Navigator.push(context,
-          MaterialPageRoute(builder: (context) => AddTask())).then((value){
+          MaterialPageRoute(builder: (context) => AddTask(database: database,))).then((value){
 
       });
     } else{
