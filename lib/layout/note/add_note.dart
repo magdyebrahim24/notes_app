@@ -64,7 +64,7 @@ class AddNote extends StatelessWidget {
                     ? IconButton(
                         onPressed: () {
                           if (cubit.noteId == null) {
-                            cubit.insertNewNote(
+                            cubit.insertNewNote(context,
                               title: cubit.titleController.text,
                               body: cubit.noteTextController.text,
                             );

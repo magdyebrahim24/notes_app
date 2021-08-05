@@ -269,10 +269,16 @@ class AppCubit extends Cubit<AppStates> {
       Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => AddMemory(database: database)))
+                  builder: (context) => AddMemory()))
           .then((value) {
             getAllMemoriesDataWithItsImages();
       });
     }
+  }
+
+  @override
+  Future<void> close() {
+    // database!.close();
+    return super.close();
   }
 }

@@ -9,173 +9,207 @@ import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddMemory extends StatelessWidget {
-  final database;
+  final data;
 
-  AddMemory({this.database});
-
+  const AddMemory({this.data});
   @override
   Widget build(BuildContext context) {
-
     return BlocProvider(
-      create: (BuildContext context)=>AddMemoryCubit(),
-        child: BlocConsumer<AddMemoryCubit,AppMemoryStates>(
-    listener: (context,state){},
-        builder: (context,state){
+      create: (BuildContext context) => AddMemoryCubit()..onBuild(data),
+      child: BlocConsumer<AddMemoryCubit, AppMemoryStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
           AddMemoryCubit cubit = AddMemoryCubit.get(context);
-      return Scaffold(
-          appBar: AppBar(
-
-            actions: [
-              cubit.bodyFocus.hasFocus
-                  ? IconButton(
-                tooltip: 'Undo',
-                icon: Icon(
-                  Icons.undo,
-                ),
-                onPressed: cubit.stackController!.state == '' &&
-                    !(cubit.stackController!.canUndo)
-                    ? null
-                    : cubit.undoFun,
-              )
-                  : SizedBox(),
-              cubit.bodyFocus.hasFocus
-                  ? IconButton(
-                tooltip: 'Redo',
-                icon: Icon(Icons.redo),
-                onPressed: !cubit.stackController!.canRedo
-                    ? null
-                    : cubit.redoFun,
-              )
-                  : SizedBox(),
-              cubit.titleController.text.isNotEmpty ||
-                  cubit.memoryTextController.text.isNotEmpty ||
-                  cubit.selectedGalleryImagesList.isNotEmpty
-                  ? IconButton(
-                  onPressed: () {
-                    if (cubit.memoryID == null) {
-                      cubit.insertNewMemory(
-                        database,
-                        memoryDate: cubit.dateController!,
-                        title: cubit.titleController.text,
-                        body: cubit.memoryTextController.text,
-                      );
-                    } else {
-                      cubit.updateMemory(database,
-                          id: cubit.memoryID!,
-                          body: cubit.memoryTextController.text,
-                          memoryDate: cubit.dateController!,
-                          title: cubit.titleController.text);
-                    }
-                  },
-                  icon: Icon(Icons.done))
-                  : SizedBox(),
-            ],
-          ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                DefaultFormField(
-                  controller: cubit.titleController,
-                  focusNode: cubit.titleFocus,
-                  onTap:  (){cubit.onFocusTitleChange();},
-                  onChanged: (value){cubit.onTitleChange();},
-                  maxLines: null,
-                  minLines: null,
-                  fillColor: Theme.of(context).primaryColor,
-                  hintText: 'Title',
-                  hintStyle: TextStyle(
-                      color: greyColor,
-                      fontSize: 28,
-                      fontWeight: FontWeight.normal),
-                ),
-                // TextFormField(
-                //   controller: _titleController,
-                //   style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 28,
-                //       fontWeight: FontWeight.w800
-                //   ),
-                //   maxLines: null,
-                //   minLines: null,
-                //   decoration: InputDecoration(
-                //     hintText: 'Title',
-                //     disabledBorder: InputBorder.none,
-                //     hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
-                //     fillColor: Theme.of(context).primaryColor,
-                //     border: InputBorder.none,
-                //   ),),
-                Container(
-                  margin: EdgeInsets.only(bottom: 10,),
-                  height: 2,width: MediaQuery.of(context).size.width,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Colors.white24
-                  ),
-                ),
-                SizedBox(height: 15,),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white10,
-                      borderRadius: BorderRadius.circular(10)
-                  ),
-                  width: double.infinity,
-
-                  child: Row(
+          return Scaffold(
+              appBar: AppBar(
+                actions: [
+                  cubit.bodyFocus.hasFocus
+                      ? IconButton(
+                          tooltip: 'Undo',
+                          icon: Icon(
+                            Icons.undo,
+                          ),
+                          onPressed: cubit.stackController!.state == '' &&
+                                  !(cubit.stackController!.canUndo)
+                              ? null
+                              : cubit.undoFun,
+                        )
+                      : SizedBox(),
+                  cubit.bodyFocus.hasFocus
+                      ? IconButton(
+                          tooltip: 'Redo',
+                          icon: Icon(Icons.redo),
+                          onPressed: !cubit.stackController!.canRedo
+                              ? null
+                              : cubit.redoFun,
+                        )
+                      : SizedBox(),
+                  cubit.titleController.text.isNotEmpty ||
+                          cubit.memoryTextController.text.isNotEmpty ||
+                          cubit.selectedGalleryImagesList.isNotEmpty
+                      ? IconButton(
+                          onPressed: () {
+                            if (cubit.memoryID == null) {
+                              cubit.insertNewMemory(
+                                context,
+                                memoryDate: cubit.dateController!,
+                                title: cubit.titleController.text,
+                                body: cubit.memoryTextController.text,
+                              );
+                            } else {
+                              cubit.updateMemory(context,
+                                  id: cubit.memoryID!,
+                                  body: cubit.memoryTextController.text,
+                                  memoryDate: cubit.dateController!,
+                                  title: cubit.titleController.text);
+                            }
+                          },
+                          icon: Icon(Icons.done))
+                      : SizedBox(),
+                ],
+              ),
+              body: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: 10,),
-                      Text('Memory Date',style: TextStyle(fontSize: 18,color: Colors.white),),
-                      Spacer(),
-                      MaterialButton(
-                        padding: EdgeInsets.symmetric(vertical: 10,horizontal: 5),
-                        color: Colors.white24,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          onPressed: (){
-                        cubit.datePicker(context);},
+                      DefaultFormField(
+                        controller: cubit.titleController,
+                        focusNode: cubit.titleFocus,
+                        onTap: () {
+                          cubit.onFocusTitleChange();
+                        },
+                        onChanged: (value) {
+                          cubit.onTitleChange();
+                        },
+                        maxLines: null,
+                        minLines: null,
+                        fillColor: Theme.of(context).primaryColor,
+                        hintText: 'Title',
+                        hintStyle: TextStyle(
+                            color: greyColor,
+                            fontSize: 28,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      // TextFormField(
+                      //   controller: _titleController,
+                      //   style: TextStyle(
+                      //       color: Colors.white,
+                      //       fontSize: 28,
+                      //       fontWeight: FontWeight.w800
+                      //   ),
+                      //   maxLines: null,
+                      //   minLines: null,
+                      //   decoration: InputDecoration(
+                      //     hintText: 'Title',
+                      //     disabledBorder: InputBorder.none,
+                      //     hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
+                      //     fillColor: Theme.of(context).primaryColor,
+                      //     border: InputBorder.none,
+                      //   ),),
+                      Container(
+                        margin: EdgeInsets.only(
+                          bottom: 10,
+                        ),
+                        height: 2,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white24),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white10,
+                            borderRadius: BorderRadius.circular(10)),
+                        width: double.infinity,
                         child: Row(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(cubit.dateController ?? 'Add',style: TextStyle(fontSize: 16,color: Colors.white),),
+                            SizedBox(
+                              width: 10,
                             ),
-                            Icon(Icons.expand_more,color: Colors.white,)
+                            Text(
+                              'Memory Date',
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white),
+                            ),
+                            Spacer(),
+                            MaterialButton(
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 5),
+                              color: Colors.white24,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              onPressed: () {
+                                cubit.datePicker(context);
+                              },
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8),
+                                    child: Text(
+                                      cubit.dateController ?? 'Add',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
+                                    ),
+                                  ),
+                                  Icon(
+                                    Icons.expand_more,
+                                    color: Colors.white,
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      DefaultFormField(
+                        focusNode: cubit.bodyFocus,
+                        controller: cubit.memoryTextController,
+                        onTap: () {
+                          cubit.onFocusBodyChange();
+                        },
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                        onChanged: (value) {
+                          cubit.onMemoryTextChanged(value);
+                        },
+                        maxLines: null,
+                        minLines: null,
+                        keyboardType: TextInputType.multiline,
+                        hintText: 'Start typing your Memory ...',
+                        fillColor: Theme.of(context).primaryColor,
+                        hintStyle: TextStyle(color: greyColor, fontSize: 20),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      ImageList(imageList: cubit.selectedGalleryImagesList),
+                      ImageList(
+                        imageList: cubit.cachedImagesList,
+                        cubit: cubit,
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 15,),
-                DefaultFormField(
-                  focusNode: cubit.bodyFocus,
-                  controller: cubit.memoryTextController,
-                  onTap: (){cubit.onFocusBodyChange();},
-                  style: TextStyle(color: Colors.white, fontSize: 20,),
-                  onChanged: (value) {cubit.onMemoryTextChanged(value);},
-                  maxLines: null,
-                  minLines: null,
-                  keyboardType: TextInputType.multiline,
-                  hintText: 'Start typing your Memory ...',
-                  fillColor: Theme.of(context).primaryColor,
-                  hintStyle: TextStyle(color: greyColor, fontSize: 20),
-
-                ),
-                SizedBox(height: 15,),
-                ImageList(imageList: cubit.selectedGalleryImagesList),
-                ImageList(imageList: cubit.cachedImagesList,cubit: cubit,database: database,),
-              ],
-            ),
-          ),
-        ),
-          bottomNavigationBar: MyBottomNavigationBar(
-            onPressedForAddImage: () => cubit.pickImageFromGallery(ImageSource.gallery),
-            onPressedForDeleteNote: ()=>cubit.deleteMemory(database ,context ,id:cubit.memoryID!),
-          )
-      );
-        },),
-
+              ),
+              bottomNavigationBar: MyBottomNavigationBar(
+                onPressedForAddImage: () =>
+                    cubit.pickImageFromGallery(ImageSource.gallery),
+                onPressedForDeleteNote: () =>
+                    cubit.deleteMemory(context, id: cubit.memoryID!),
+              ));
+        },
+      ),
     );
   }
 }

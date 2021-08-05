@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/setting/setting.dart';
@@ -18,7 +19,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,16 +83,20 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               controller: widget.cubit.tabBarController,
               physics: BouncingScrollPhysics(),
               children: [
-                // Column(
-                //   children: [
-                //     Row()
-                //   ],
-                // ),
                 GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
-                TaskWidget(data: widget.cubit.allTasksDataList ,navFun: ()=> widget.cubit.getAllTasksDataWithItSubTasks()),
+                TaskWidget(data: widget.cubit.allTasksDataList ,navFun: (data){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask(data: data,),)).then((value) {
+                     widget.cubit.getAllTasksDataWithItSubTasks();
+                  });
+                }),
+                TaskWidget(data: widget.cubit.allMemoriesDataList ,navFun: (data){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMemory(data: data,),)).then((value) {
+                    widget.cubit.getAllMemoriesDataWithItsImages();
+                  });
+                }),
                 // GridViewComponents(widget.cubit.allTasksDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
-                GridViewComponents(widget.cubit.allMemoriesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                // GridViewComponents(widget.cubit.allMemoriesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
               ]),
         ),
@@ -235,12 +239,7 @@ final navFun;
                   borderRadius: BorderRadius.circular(10.0),
                 ),
                 child: InkWell(
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddTask(data: data[index],))).then((value) {
-                            navFun();
-                  }),
+                  onTap:()=> navFun(data[index]) ,
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(

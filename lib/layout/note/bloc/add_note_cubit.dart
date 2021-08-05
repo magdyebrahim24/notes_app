@@ -26,7 +26,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   late Database database ;
   onBuildAddNoteScreen(id, data) async{
-    var db = await openDatabase('database.database');
+    var db = await openDatabase('database.db');
     database = db;
     if (id != null) {
       noteId = data['id'];
@@ -158,14 +158,12 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   // start coding database
 
-  Future insertNewNote({
+  Future insertNewNote(context,{
     required String title,
     required String body,
   }) async {
-    DateTime dateTime = DateTime.now();
-    String createdDate = dateTime.toString().split(' ').first;
-    String time = dateTime.toString().split(' ').last;
-    String createdTime = time.toString().split('.').first;
+    String createdDate = TimeAndDate.getDate();
+    String createdTime = TimeAndDate.getTime(context);
     await database.transaction((txn) {
       txn
           .rawInsert(
@@ -254,7 +252,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   @override
   Future<void> close() async{
-    await database.close();
+    // await database.close();
     return super.close();
   }
 }

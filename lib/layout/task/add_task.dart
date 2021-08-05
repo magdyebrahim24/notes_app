@@ -10,7 +10,7 @@ class AddTask extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
-  AddTask({Key? key, this.data}) : super(key: key);
+  AddTask({this.data});
 
 
   @override

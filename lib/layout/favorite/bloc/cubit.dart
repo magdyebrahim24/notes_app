@@ -7,7 +7,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
   FavoriteCubit() : super(FavoriteInitialState());
   static FavoriteCubit get(context) => BlocProvider.of(context);
 
-  Database? database ;
+ late Database database ;
   onBuild() async{
     var db = await openDatabase('database.db');
     database = db ;
@@ -63,7 +63,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
 
   @override
   Future<void> close() async{
-    await database!.close();
+    await database.close();
     return super.close();
   }
 

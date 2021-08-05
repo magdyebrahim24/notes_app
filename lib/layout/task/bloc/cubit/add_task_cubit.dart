@@ -21,6 +21,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   late Database database;
   bool isFavorite = false;
 
+
   onBuild(data) async {
     var db = await openDatabase('database.db');
     database = db;
@@ -266,7 +267,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
 
   @override
   Future<void> close() async{
-    await database.close();
+    // database.close();
     return super.close();
   }
 }
