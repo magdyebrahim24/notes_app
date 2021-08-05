@@ -26,9 +26,8 @@ final bool isFavorite  ;
                     isFavorite ? Icons.star : Icons.star_border,
                     size: 28,
                   )),
-              IconButton(
-                  onPressed:  addImageFun,
-                  icon: Icon(Icons.add_photo_alternate_outlined)),
+              if(addImageFun != null)
+                IconButton(onPressed:  addImageFun, icon: Icon(Icons.add_photo_alternate_outlined)) ,
               IconButton(
                   onPressed: deleteFun,
                   icon: Icon(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'bloc/cubit/add_task_cubit.dart';
@@ -231,51 +232,17 @@ class AddTask extends StatelessWidget {
                 ),
               ),
             ),
-            floatingActionButton: bottomIconBar(
+            floatingActionButton: cubit.taskID != null ? BottomIconBar(
               deleteFun: () =>
                   cubit.deleteTask(context),
-            ),
+              addToFavoriteFun: ()=> cubit.addToFavorite(),
+              isFavorite: cubit.isFavorite,
+            ): SizedBox(),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             resizeToAvoidBottomInset: true,
           );
 
         },
-      ),
-    );
-  }
-  Widget bottomIconBar(
-      {deleteFun, addImageFun, addToFavoriteFun, addToSecretFun}) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30,vertical: 0),
-      child: Material(
-        elevation: 15,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 1),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              IconButton(
-                  onPressed: () {}, icon: Icon(Icons.lock_open_outlined)),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.star_border,
-                    size: 28,
-                  )),
-              IconButton(
-                  onPressed:  addImageFun,
-                  icon: Icon(Icons.add_photo_alternate_outlined)),
-              IconButton(
-                  onPressed: deleteFun,
-                  icon: Icon(
-                    Icons.delete_outline_outlined,
-                    color: Colors.redAccent,
-                    size: 28,
-                  )),
-            ],
-          ),
-        ),
       ),
     );
   }

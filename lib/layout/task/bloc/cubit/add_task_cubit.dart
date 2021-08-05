@@ -265,6 +265,20 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     return temp;
   }
 
+  void addToFavorite(){
+    print('1/');
+    database.rawUpdate(
+        'UPDATE tasks SET is_favorite = ? WHERE id = ?',
+        [!isFavorite, taskID]).then((val){
+      isFavorite = !isFavorite ;
+      print('$val $isFavorite is done');
+      emit(AddTaskToFavoriteState());
+      getTaskDataFromDatabase();
+    }).catchError((error){
+      print(error);
+    });
+  }
+
   @override
   Future<void> close() async{
     // database.close();

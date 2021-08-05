@@ -12,5 +12,6 @@ class AddTaskUpdateTitleAndBodyState extends AppTaskStates {}
 class AddSubTasksIntoDatabaseState extends AppTaskStates {}
 class AddSubTasksUpdateSubTaskState extends AppTaskStates {}
 class DeleteTaskState extends AppTaskStates {}
+class AddTaskToFavoriteState extends AppTaskStates {}
 
 

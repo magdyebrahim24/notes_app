@@ -160,14 +160,6 @@ class AddNote extends StatelessWidget {
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             resizeToAvoidBottomInset: true,
 
-
-            // bottomNavigationBar: MyBottomNavigationBar(
-            //   onPressedForAddImage: () =>
-            //       cubit.pickImageFromGallery(ImageSource.gallery),
-            //   onPressedForDeleteNote: () {
-            //     cubit.deleteNote(database, context, id: cubit.noteId!);
-            //   },
-            // )
           );
         },
       ),
