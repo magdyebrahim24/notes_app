@@ -275,4 +275,17 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     // database.close();
     return super.close();
   }
+
+  void addToFavorite(){
+    database.rawUpdate(
+        'UPDATE memories SET is_favorite = ? WHERE id = ?',
+        [!isFavorite, memoryID]).then((val){
+      isFavorite = !isFavorite ;
+      print('$val $isFavorite is done');
+      emit(AddMemoryFavoriteState());
+      getMemoryDataFromDatabase();
+    }).catchError((error){
+      print(error);
+    });
+  }
 }

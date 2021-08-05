@@ -21,7 +21,7 @@ class AddNote extends StatelessWidget {
       providers: [
         BlocProvider(
             create: (BuildContext context) =>
-                AddNoteCubit()..onBuildAddNoteScreen(id, data)),
+                AddNoteCubit()..onBuildAddNoteScreen(data)),
         BlocProvider(create: (BuildContext context) => AppCubit()),
       ],
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
@@ -148,7 +148,7 @@ class AddNote extends StatelessWidget {
                 ],
               ),
             ),
-            floatingActionButton: BottomIconBar(
+            floatingActionButton: cubit.noteId != null ? BottomIconBar(
               isFavorite: cubit.isFavorite,
               deleteFun: () =>
                   cubit.deleteNote(context, id: cubit.noteId!),
@@ -156,7 +156,7 @@ class AddNote extends StatelessWidget {
                   cubit.pickImageFromGallery(ImageSource.gallery),
               addToFavoriteFun: ()=> cubit.addToFavorite(),
               addToSecretFun: (){},
-            ),
+            ):SizedBox(),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             resizeToAvoidBottomInset: true,
 

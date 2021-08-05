@@ -6,16 +6,15 @@ class GridViewComponents extends StatelessWidget {
   final isLoading;
   final funForRebuild;
   final List body;
-  final database;
 
-  GridViewComponents(this.body, this.database, this.funForRebuild, this.isLoading);
+  GridViewComponents(this.body, this.funForRebuild, this.isLoading);
 
   @override
   Widget build(BuildContext context) {
     return isLoading == true ?Center(child: CircularProgressIndicator()):StaggeredGridView.countBuilder(
       crossAxisCount: 2,
       itemCount: body.length,
-      itemBuilder: (BuildContext context, int index) => NoteCard(data: body[index],database: database,funForRebuild: () => funForRebuild(),),
+      itemBuilder: (BuildContext context, int index) => NoteCard(data: body[index],funForRebuild: () => funForRebuild(),),
       staggeredTileBuilder: (int index) =>
       new StaggeredTile.fit(1),
       mainAxisSpacing: 4.0,

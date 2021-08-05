@@ -20,6 +20,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +84,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               controller: widget.cubit.tabBarController,
               physics: BouncingScrollPhysics(),
               children: [
-                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                GridViewComponents(widget.cubit.allNotesDataList,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
                 TaskWidget(data: widget.cubit.allTasksDataList ,navFun: (data){
                   Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask(data: data,),)).then((value) {

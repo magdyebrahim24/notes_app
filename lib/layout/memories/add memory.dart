@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/cubit.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
+import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/bottom_navigation_bar.dart';
 import 'package:notes_app/shared/components/image_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
@@ -202,12 +203,17 @@ class AddMemory extends StatelessWidget {
                   ),
                 ),
               ),
-              bottomNavigationBar: MyBottomNavigationBar(
-                onPressedForAddImage: () =>
-                    cubit.pickImageFromGallery(ImageSource.gallery),
-                onPressedForDeleteNote: () =>
-                    cubit.deleteMemory(context, id: cubit.memoryID!),
-              ));
+            floatingActionButton: cubit.memoryID != null ?BottomIconBar(
+          isFavorite: cubit.isFavorite,
+          deleteFun: () =>
+          cubit.deleteMemory(context, id: cubit.memoryID!),
+          addImageFun: () =>
+          cubit.pickImageFromGallery(ImageSource.gallery),
+          addToFavoriteFun: ()=> cubit.addToFavorite(),
+          addToSecretFun: (){},
+          ):SizedBox(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          resizeToAvoidBottomInset: true,);
         },
       ),
     );

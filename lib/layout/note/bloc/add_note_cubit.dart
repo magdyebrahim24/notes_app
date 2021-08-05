@@ -25,14 +25,14 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   bool isFavorite = false ;
 
   late Database database ;
-  onBuildAddNoteScreen(id, data) async{
+  onBuildAddNoteScreen(data) async{
     var db = await openDatabase('database.db');
     database = db;
-    if (id != null) {
+    if (data != null) {
       noteId = data['id'];
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
-      cachedImagesList = data['images'];
+      cachedImagesList = data['images'] ?? [];
       isFavorite =  data['is_favorite'] == 1 ? true : false;
     }
     emit(OnBuildAddNoteInitialState());
