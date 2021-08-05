@@ -20,6 +20,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   List cachedImagesList = [];
   int? noteId;
   List noteList = [];
+  bool isFavorite = false ;
 
   onBuildAddNoteScreen(id, data, db) {
     if (id != null) {
@@ -27,6 +28,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
       cachedImagesList = data['images'];
+      isFavorite =  data['is_favorite'] == 1 ? true : false;
     }
     emit(OnBuildAddNoteInitialState());
   }
@@ -186,9 +188,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     noteList = [];
     // emit(AppLoaderState());
     db.rawQuery('SELECT * FROM notes').then((value) {
+      noteList = value ;
       value.forEach((element) {
         print(element);
-        noteList.add(element);
       });
       emit(AddNoteGetDatabaseState());
     });
@@ -234,5 +236,18 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       print(error);
     });
 
+  }
+
+  void addToFavorite(db){
+    db.rawUpdate(
+        'UPDATE notes SET is_favorite = ? WHERE id = ?',
+        [!isFavorite, noteId]).then((val){
+      isFavorite = !isFavorite ;
+      print('$val $isFavorite is done');
+      emit(AddNoteFavoriteState());
+      getNoteDataFromDatabase(db);
+    }).catchError((error){
+      print(error);
+    });
   }
 }

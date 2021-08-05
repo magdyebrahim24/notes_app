@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/setting/setting.dart';
+import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -82,8 +84,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               controller: widget.cubit.tabBarController,
               physics: BouncingScrollPhysics(),
               children: [
+                // Column(
+                //   children: [
+                //     Row()
+                //   ],
+                // ),
                 GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
-                GridViewComponents(widget.cubit.allNotesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+
+                TaskWidget(data: widget.cubit.allTasksDataList ,navFun: ()=> widget.cubit.getAllTasksDataWithItSubTasks()),
+                // GridViewComponents(widget.cubit.allTasksDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
                 GridViewComponents(widget.cubit.allMemoriesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
 
               ]),
@@ -98,9 +107,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               .animate(widget.cubit.fABController!),
           child: Icon(
             widget.cubit.tabBarController!.index == 0
-                ? Icons.note_add_outlined
+                ? Icons.text_snippet_outlined
                 : widget.cubit.tabBarController!.index == 1
-                    ? Icons.task_alt_rounded
+                    ? Icons.task_outlined
                     : Icons.event_available_outlined,
             size: 30,
           ),
@@ -189,7 +198,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             ),
             PopupMenuItem(
               // padding: EdgeInsets.symmetric(horizontal: 50),
-
               value: 2,
               child: Text(
                 "Secret",
@@ -202,4 +210,98 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         Icons.more_vert,
         color: greyColor,
       ));
+}
+
+class TaskWidget extends StatelessWidget {
+final data;
+final navFun;
+
+  const TaskWidget({Key? key,required this.data, this.navFun}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context,index) {
+        return Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Card(
+                elevation: 5,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                semanticContainer: true,
+                shadowColor: Colors.grey,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                child: InkWell(
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddTask(data: data[index],))).then((value) {
+                            navFun();
+                  }),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xff3c3b4e),
+                          Color(0xff2e2e3e),
+                        ],
+                      ),
+                    ),
+                    padding: EdgeInsets.all(15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data[index]['title'],
+                          style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        Container(
+                          color: Colors.white24,
+                          height: 1,
+                          margin: EdgeInsets.symmetric(vertical: 10),
+                        ),
+                        Text(
+                          'note body ',
+                          style: TextStyle(fontSize: 17, color: Colors.white),
+                          maxLines: 5,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              data[index]['createdDate'],
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Text(
+                              data[index]['createdTime'],
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            Spacer(),
+                            Text(
+                              'Task',
+                              style: TextStyle(color: Colors.white),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+    );
+  }
 }

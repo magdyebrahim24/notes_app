@@ -23,18 +23,17 @@ class AppCubit extends Cubit<AppStates> {
   Animation<double>? drawerMenuScaleAnimation;
   Animation<Offset>? drawerSlideAnimation;
   Database? database;
-  List cachedNotesImagesList = [];
-  List cachedMemoriesImagesList = [];
-  List<Map<String,dynamic>> notesDataList = [];
-  List<Map<String,dynamic>> memoriesDataList = [];
-  // have notes data and images data
-  List<Map<String,dynamic>> allNotesDataList = [];
-  List<Map<String,dynamic>> allMemoriesDataList = [];
-  bool isLoading=true;
 
+  // have notes data and images data
+  List<Map<String, dynamic>> allNotesDataList = [];
+  List<Map<String, dynamic>> allMemoriesDataList = [];
+  List<Map<String, dynamic>> allTasksDataList = [];
+  bool isLoading = true;
+  int tabBarSelectedIndex = 0;
 
   // init state function
   void onBuildPage(x) {
+    createDatabase();
     drawerController = AnimationController(vsync: x, duration: drawerDuration);
     drawerScaleAnimation =
         Tween<double>(begin: 1, end: 0.8).animate(drawerController!);
@@ -46,12 +45,14 @@ class AppCubit extends Cubit<AppStates> {
     tabBarController = TabController(length: 3, vsync: x);
     fABController =
         AnimationController(vsync: x, duration: Duration(milliseconds: 200));
-    tabBarController!.addListener((){
-
-      print('my index is '+ tabBarController!.index.toString());
-
+    tabBarController!.addListener(() {
+      if (tabBarSelectedIndex != tabBarController!.index) {
+        tabBarSelectedIndex = tabBarController!.index;
+        print('done');
+        fABController!.forward(from: 0.0);
+        emit(TapChangeState());
+      }
     });
-    // getNoteDataFromDatabase(database);
   }
 
   // open drawer function
@@ -74,17 +75,17 @@ class AppCubit extends Cubit<AppStates> {
         print('database is created');
         database
             .execute(
-                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT)')
+                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,is_favorite BOOLEAN)')
             .then((value) => print('notes table created'))
             .catchError((error) => print('note error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT)')
+                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT,is_favorite BOOLEAN)')
             .then((value) => print('memory table created'))
             .catchError((error) => print('memory error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT,is_favorite BOOLEAN)')
             .then((value) => print('task table created'))
             .catchError((error) => print('task error' + error.toString()));
         database
@@ -112,54 +113,27 @@ class AppCubit extends Cubit<AppStates> {
         await db.execute('PRAGMA foreign_keys = ON');
       },
       onOpen: (database) {},
-    ).then((value) {
-      database = value;
+    ).then((value){
+     database = value;
       getDataAndRebuild();
       emit(AppCreateDatabaseState());
     });
   }
 
-  void getDataAndRebuild() async{
-    isLoading=true;
+  Future appData() async {
+    getNotesDataWithItsImages();
+    getAllTasksDataWithItSubTasks();
+    getAllMemoriesDataWithItsImages();
+  }
+
+  void getDataAndRebuild() async {
+    isLoading = true;
     emit(AppLoaderState());
-    getDataFromDatabase(database);
-    getImagesFromDatabase(database);
-    // emit(AddNoteRebuildUIState());
+    await appData();
+    isLoading = false;
+    emit(AppLoaderState());
   }
 
-  void getDataFromDatabase(db) {
-    notesDataList = [];
-    // emit(AppLoaderState());
-    db.rawQuery('SELECT * FROM notes').then((value) {
-      value.forEach((element) {
-        notesDataList.add(element);
-      });
-      getImagesFromDatabase(db);
-      // emit(AppNoteGetDatabaseState());
-    });
-    memoriesDataList=[];
-    db.rawQuery('SELECT * FROM memories').then((value) {
-      value.forEach((element) {
-        memoriesDataList.add(element);
-      });
-      getImagesFromDatabase(db);
-      // emit(AppNoteGetDatabaseState());
-    });
-  }
-
-  void getImagesFromDatabase(db) async {
-    cachedNotesImagesList = [];
-    db.rawQuery('SELECT * FROM notes_images').then((value) {
-      cachedNotesImagesList = value ;
-      getAllNotesDataWithItsImages(value);
-    });
-    cachedMemoriesImagesList=[];
-    db.rawQuery('SELECT * FROM memories_images').then((value) {
-      cachedMemoriesImagesList = value ;
-      getAllNotesDataWithItsImages(value);
-    });
-    // emit(AddNoteGetCachedImagesPathsFromDatabaseState());
-  }
   // fun to convert RawQuery type to List<Map<String, dynamic>>
   List<Map<String, dynamic>> makeModifiableResults(
       List<Map<String, dynamic>> results) {
@@ -169,67 +143,137 @@ class AppCubit extends Cubit<AppStates> {
         growable: true);
   }
 
-  void getAllNotesDataWithItsImages(List imagesData) async {
+  void getNotesDataWithItsImages() async {
+    // get all notes data
+    List<Map<String, dynamic>> notesDataList = [];
+    await database!.rawQuery('SELECT * FROM notes').then((value) {
+      notesDataList = value;
+    });
+    // get all notes images data
+    List cachedNotesImagesList = [];
+    await database!.rawQuery('SELECT * FROM notes_images').then((value) {
+      cachedNotesImagesList = value;
+    });
     List notesDataModified = makeModifiableResults(notesDataList);
-    List memoriesDataModified = makeModifiableResults(memoriesDataList);
     List oneNoteImagesList = [];
-    List oneMemoryImagesList = [];
-    Map<String,dynamic> oneNoteData = {} ;
-    Map<String,dynamic> oneMemoryData = {} ;
-    List<Map<String,dynamic>> allNotesCompleteData = [];
-    List<Map<String,dynamic>> allMemoriesCompleteData = [];
+    Map<String, dynamic> oneNoteData = {};
+    List<Map<String, dynamic>> allNotesCompleteData = [];
 
     for (int i = 0; i < notesDataModified.length; i++) {
       oneNoteImagesList = [];
       oneNoteData = notesDataModified[i];
       oneNoteData.putIfAbsent('images', () => []);
-      for (int y = 0; y < imagesData.length; y++) {
-        if (notesDataModified[i]['id'] == imagesData[y]['note_id']) {
-          oneNoteImagesList.add(imagesData[y]);
+      for (int y = 0; y < cachedNotesImagesList.length; y++) {
+        if (notesDataModified[i]['id'] == cachedNotesImagesList[y]['note_id']) {
+          oneNoteImagesList.add(cachedNotesImagesList[y]);
         }
       }
-      if(oneNoteImagesList.isNotEmpty)
-        oneNoteData.update('images',(dynamic val) => oneNoteImagesList);
+      if (oneNoteImagesList.isNotEmpty)
+        oneNoteData.update('images', (dynamic val) => oneNoteImagesList);
       allNotesCompleteData.add(oneNoteData);
     }
+
+    allNotesDataList = allNotesCompleteData;
+    emit(GetNotesData());
+  }
+
+  void getAllTasksDataWithItSubTasks() async {
+    // get all task data
+    List<Map<String, dynamic>> tasksDataList = [];
+    database!.rawQuery('SELECT * FROM tasks').then((value) {
+      tasksDataList = value;
+    });
+
+    // get all task sub tasks data
+    List subTasksList = [];
+    await database!.rawQuery('SELECT * FROM subTasks').then((value) {
+      subTasksList = value;
+    });
+    List tasksDataModified = makeModifiableResults(tasksDataList);
+    List oneSubTaskList = [];
+    Map<String, dynamic> oneTaskData = {};
+    List<Map<String, dynamic>> allTasksCompleteData = [];
+
+    // get tasks data
+    for (int i = 0; i < tasksDataModified.length; i++) {
+      oneSubTaskList = [];
+      oneTaskData = tasksDataModified[i];
+      oneTaskData.putIfAbsent('subTasks', () => []);
+      for (int y = 0; y < subTasksList.length; y++) {
+        if (tasksDataModified[i]['id'] == subTasksList[y]['tasks_id']) {
+          oneSubTaskList.add(subTasksList[y]);
+        }
+      }
+      if (oneSubTaskList.isNotEmpty)
+        oneTaskData.update('subTasks', (dynamic val) => oneSubTaskList);
+      allTasksCompleteData.add(oneTaskData);
+    }
+
+    allTasksDataList = allTasksCompleteData;
+    emit(GetTasksData());
+
+  }
+
+  void getAllMemoriesDataWithItsImages() async {
+    // get all user memories
+    List<Map<String, dynamic>> memoriesDataList = [];
+    await database!.rawQuery('SELECT * FROM memories').then((value) {
+      memoriesDataList = value;
+    });
+    // get memories images
+    List cachedMemoriesImagesList = [];
+    await database!.rawQuery('SELECT * FROM memories_images').then((value) {
+      cachedMemoriesImagesList = value;
+    });
+    List memoriesDataModified = makeModifiableResults(memoriesDataList);
+    List oneMemoryImagesList = [];
+    Map<String, dynamic> oneMemoryData = {};
+    List<Map<String, dynamic>> allMemoriesCompleteData = [];
+
+    // get memories data and images in one list
     for (int i = 0; i < memoriesDataModified.length; i++) {
       oneMemoryImagesList = [];
       oneMemoryData = memoriesDataModified[i];
       oneMemoryData.putIfAbsent('images', () => []);
-      for (int y = 0; y < imagesData.length; y++) {
-        if (memoriesDataModified[i]['id'] == imagesData[y]['note_id']) {
-          oneMemoryImagesList.add(imagesData[y]);
+      for (int y = 0; y < cachedMemoriesImagesList.length; y++) {
+        if (memoriesDataModified[i]['id'] == cachedMemoriesImagesList[y]['memory_id']) {
+          oneMemoryImagesList.add(cachedMemoriesImagesList[y]);
         }
       }
-      if(oneMemoryImagesList.isNotEmpty)
-        oneMemoryData.update('images',(dynamic val) => oneMemoryImagesList);
+      if (oneMemoryImagesList.isNotEmpty)
+        oneMemoryData.update('images', (dynamic val) => oneMemoryImagesList);
       allMemoriesCompleteData.add(oneMemoryData);
     }
-    allNotesDataList = allNotesCompleteData ;
-    allMemoriesDataList = allMemoriesCompleteData ;
-    isLoading=false;
-    emit(AppRebuildUIState());
 
+    allMemoriesDataList = allMemoriesCompleteData;
+    emit(GetTasksData());
   }
 
-  void addFABBtnRoutes(context){
-    if(tabBarController!.index == 0){
-      Navigator.push(context,
+  void addFABBtnRoutes(context) {
+    if (tabBarController!.index == 0) {
+      Navigator.push(
+          context,
           MaterialPageRoute(
-              builder: (context) => AddNote(database: database,))).then((value){
-        getDataAndRebuild();
+              builder: (context) => AddNote(
+                    database: database,
+                  ))).then((value) {
+        getNotesDataWithItsImages();
       });
-    }else if(tabBarController!.index == 1){
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => AddTask(database: database,))).then((value){
-
+    } else if (tabBarController!.index == 1) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddTask())).then((value) {
+                    getAllTasksDataWithItSubTasks();
       });
-    } else{
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => AddMemory(database: database))).then((value){
-
+    } else {
+      Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AddMemory(database: database)))
+          .then((value) {
+            getAllMemoriesDataWithItsImages();
       });
     }
-
   }
 }

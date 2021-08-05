@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/layout/favorite/favorite.dart';
 import 'package:notes_app/layout/home/home.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/shared/bloc/cubit/cubit.dart';
@@ -29,7 +30,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
     screenHeight = size.height;
     screenWidth = size.width;
     return BlocProvider(
-        create: (BuildContext context) => AppCubit()..onBuildPage(this)..createDatabase(),
+        create: (BuildContext context) => AppCubit()..onBuildPage(this),
         child: BlocConsumer<AppCubit, AppStates>(
             listener: (BuildContext context, AppStates state) {},
             builder: (BuildContext context, AppStates state) {
@@ -85,7 +86,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                 _drawerItem(
                     text: 'Favorite',
                     leading: Icons.stars,
-                    fun: (){}
+                    fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen(),))
                 ),
 
               ],

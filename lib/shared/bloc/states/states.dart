@@ -7,4 +7,13 @@ class OpenDrawerState extends AppStates {}
 class AppCreateDatabaseState extends AppStates {}
 
 class AppRebuildUIState extends AppStates {}
+
 class AppLoaderState extends AppStates {}
+
+class TapChangeState extends AppStates {}
+
+class GetNotesData extends AppStates {}
+
+class GetTasksData extends AppStates {}
+
+class GetMemoriesData extends AppStates {}

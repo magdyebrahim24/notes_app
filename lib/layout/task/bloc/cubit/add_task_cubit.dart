@@ -4,71 +4,112 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notes_app/layout/task/bloc/states/states.dart';
-
+import 'package:sqflite/sqflite.dart';
 
 class AddTaskCubit extends Cubit<AppTaskStates> {
   AddTaskCubit() : super(AppTaskInitialState());
 
   static AddTaskCubit get(context) => BlocProvider.of(context);
-  List newTask=[];
+  List newTasksList = [];
   String? dateController;
   String? timeController;
   int? taskID;
-  List taskList=[];
+  List taskList = [];
+  List subTasksList = [];
+  List subTasksStoredDBList = [];
+  late Database database;
+  bool isFavorite = false;
+
+  onBuild(data) async {
+    var db = await openDatabase('database.db');
+    database = db;
+
+    if (data != null) {
+      taskID = data['id'];
+      titleController.text = data['title'];
+      dateController = data['taskDate'];
+      timeController = data['taskTime'];
+      subTasksList = modifySubTasksList(data['subTasks']);
+      isFavorite = data['is_favorite'] == 1 ? true : false;
+    }
+    emit(AppTaskBuildState());
+  }
 
   TextEditingController titleController = TextEditingController();
 
-  void changeCheckbox(index){
-    newTask[index]['isChecked']=!newTask[index]['isChecked'];
+  void changeCheckbox(index) {
+    subTasksList[index]['isDone'] = !subTasksList[index]['isDone'];
     emit(AppTaskChengCheckboxState());
   }
 
-  void addNewTask(){
-    newTask.add({'isChecked':false,'task':TextEditingController()});
+  void changeNewSubTAskCheckbox(index) {
+    newTasksList[index]['isDone'] = !newTasksList[index]['isDone'];
+    emit(AppTaskChengCheckboxState());
+  }
+
+  void addNewTask() {
+    newTasksList.add({'isDone': false, 'body': TextEditingController()});
     emit(AppTaskNewTaskState());
   }
 
-  void deleteTask(index){
-    newTask.removeAt(index);
-    emit(AppTaskRemoveTaskState());
+  void deleteSubTaskFromDataBase(index, context) async {
+    database.rawDelete('DELETE FROM subTasks WHERE id = ?',
+        [subTasksList[index]['id']]).then((value) {
+      print('sub task id ==> ' +
+          subTasksList[index]['id'].toString() +
+          'has been deleted');
+      subTasksList.removeAt(index);
+      getSubTaskData();
+      emit(AppTaskRemoveSubTaskState());
+    }).catchError((error) {
+      print(error);
+    });
   }
 
-  void datePicker(context){
+  void deleteUnSavedSubTask(index) {
+    newTasksList.removeAt(index);
+    emit(AppTaskRemoveSubTaskState());
+  }
+
+  void deleteTask(context) {
+    database
+        .rawDelete('DELETE FROM tasks WHERE id = ?', [taskID]).then((value) {
+      Navigator.pop(context);
+      print('task $taskID ==> ' + 'has been deleted');
+      // emit(DeleteTaskState());
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  void datePicker(context) {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime.parse('1900-09-22'),
       lastDate: DateTime.now(),
-    )
-        .then((value) {
-      dateController = DateFormat.yMMMd()
-          .format(value!);
+    ).then((value) {
+      dateController = DateFormat.yMMMd().format(value!);
       emit(AppTaskTimePickerState());
-    }).catchError((error){});
-
-
+    }).catchError((error) {});
   }
 
-  void timePicker(context){
+  void timePicker(context) {
     showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-    )
-        .then((value) {
-      timeController =value!.format(context).toString();
+    ).then((value) {
+      timeController = value!.format(context).toString();
       emit(AppTaskTimePickerState());
-    }).catchError((error){});
-
-
+    }).catchError((error) {});
   }
 
   Future insertNewTask(
-      database, {
-        required String title,
-        required String taskDate,
-        required String taskTime,
-      }) async {
-    // var db = await openDatabase('database.db');
+    database, {
+    required String title,
+    required String taskDate,
+    required String taskTime,
+  }) async {
     DateTime dateTime = DateTime.now();
     String createdDate = dateTime.toString().split(' ').first;
     String time = dateTime.toString().split(' ').last;
@@ -76,13 +117,11 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     await database.transaction((txn) {
       txn
           .rawInsert(
-          'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime) VALUES ("$title","$createdTime","$createdDate","$taskDate","$taskTime")')
+              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime) VALUES ("$title","$createdTime","$createdDate","$taskDate","$taskTime")')
           .then((value) {
         taskID = value;
-        getTaskDataFromDatabase(database);
-        // saveSelectedImagesToPhoneCache(database);
-        // getNoteImagesFromDatabase(database, noteId);
-        print(value);
+        getTaskDataFromDatabase();
+        if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
       }).catchError((error) {
         print(error.toString());
       });
@@ -94,34 +133,156 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     emit(AddTaskInsertDatabaseState());
   }
 
-  void getTaskDataFromDatabase(db) async {
+  void getTaskDataFromDatabase() async {
     taskList = [];
     // emit(AppLoaderState());
-    db.rawQuery('SELECT * FROM tasks').then((value) {
+    database.rawQuery('SELECT * FROM tasks').then((value) {
+      taskList = value;
       value.forEach((element) {
         print(element);
-        taskList.add(element);
+        // taskList.add(element);
       });
-      emit(AddTaskGetDatabaseState());
+      emit(AddTaskGetSubTasksFromDatabaseState());
     });
   }
 
-  void updateTask(db,
-      {required String title ,required String taskDate ,required String taskTime ,required int id}) async {
+  void getSubTaskData() async {
+    subTasksList = [];
+    subTasksStoredDBList = [];
+    // emit(AppLoaderState());
+    print('all sub tasks ------------------------');
+    database.rawQuery(
+        'SELECT * FROM subTasks WHERE tasks_id = ?', [taskID]).then((value) {
+      value.forEach((element) {
+        print(element);
+      });
+      subTasksStoredDBList = value;
+      subTasksList = modifySubTasksList(value);
+      emit(AddTaskGetSubTasksFromDatabaseState());
+    });
+  }
+
+  void insertSubTasks({required List newTasks}) async {
+    await database.transaction((txn) {
+      for (int i = 0; i < newTasksList.length; i++) {
+        txn.rawInsert(
+            'INSERT INTO subTasks (body,isDone,tasks_id) VALUES (?,?,?)', [
+          newTasks[i]['body'].text,
+          newTasks[i]['isDone'],
+          taskID
+        ]).catchError((error) {
+          print(error.toString());
+        });
+      }
+      return Future.value(true);
+    });
+
+    getSubTaskData();
+    newTasksList = [];
+    emit(AddSubTasksIntoDatabaseState());
+  }
+
+  void updateTask(
+      {required String title,
+      required String taskDate,
+      required String taskTime,
+      required int id}) async {
     DateTime dateTime = DateTime.now();
     String createdDate = dateTime.toString().split(' ').first;
     String time = dateTime.toString().split(' ').last;
     String createdTime = time.toString().split('.').first;
 
-    db.rawUpdate(
+    database.rawUpdate(
         'UPDATE tasks SET title = ? , createdTime = ? ,createdDate = ? ,taskDate = ? ,taskTime = ? WHERE id = ?',
-        ['$title', '$createdTime', '$createdDate', '$taskDate', '$taskTime', id]).then((value) {
-      // saveSelectedImagesToPhoneCache(db);
-      // getNoteImagesFromDatabase(db, noteId);
-      getTaskDataFromDatabase(db);
+        [
+          '$title',
+          '$createdTime',
+          '$createdDate',
+          '$taskDate',
+          '$taskTime',
+          id
+        ]).then((value) {
+      getTaskDataFromDatabase();
+
       // titleFocus.unfocus();
       // bodyFocus.unfocus();
+      emit(AddTaskUpdateTitleAndBodyState());
     });
-    emit(AddTaskUpdateTitleAndBodyState());
+  }
+
+  void saveTaskBTNFun() {
+    if (taskID == null) {
+      insertNewTask(
+        database,
+        title: titleController.text,
+        taskDate: dateController!,
+        taskTime: timeController!,
+      );
+      if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+    } else {
+      updateTask(
+          id: taskID!,
+          taskDate: dateController!,
+          taskTime: timeController!,
+          title: titleController.text);
+
+      if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+
+      updateSubTasks();
+    }
+  }
+
+  // void updateSubTask(db,
+  //     {required List subTaskList }) async {
+  //   for(int i =0; i<subTasksDatabaseList.length;i++)
+  //   db.rawUpdate(
+  //       'UPDATE tasks SET body = ? , isDone = ? ,tasks_id = ? WHERE id = ?',
+  //       [
+  //         '${subTasksDatabaseList[i]['body']}',
+  //         '${subTasksDatabaseList[i]['isDone']}',
+  //         '${subTasksDatabaseList[i]['tasks_id']}',
+  //         subTasksDatabaseList[i]['id'],
+  //       ]).then((value) {
+  //     getTaskDataFromDatabase(db);
+  //     getSubTaskData(db);
+  //     // titleFocus.unfocus();
+  //     // bodyFocus.unfocus();
+  //     emit(AddSubTasksUpdateSubTaskState());
+  //   });
+  // }
+
+  void updateSubTasks() async {
+    for (int i = 0; i < subTasksStoredDBList.length; i++) {
+      if (subTasksStoredDBList[i]['body'] != subTasksList[i]['body'].text ||
+          subTasksStoredDBList[i]['isDone'] != subTasksList[i]['isDone']) {
+        await database.rawUpdate(
+            'UPDATE subTasks SET body = ? , isDone = ?  WHERE id = ?', [
+          '${subTasksList[i]['body'].text}',
+          subTasksList[i]['isDone'],
+          subTasksList[i]['id'],
+        ]);
+      }
+    }
+    getSubTaskData();
+    emit(AddSubTasksUpdateSubTaskState());
+  }
+
+  modifySubTasksList(List databaseValues) {
+    List temp = [];
+    for (int i = 0; i < databaseValues.length; i++) {
+      bool isDone = databaseValues[i]['isDone'] == 1 ? true : false;
+      temp.add({
+        'id': databaseValues[i]['id'],
+        'tasks_id': databaseValues[i]['tasks_id'],
+        'isDone': isDone,
+        'body': TextEditingController(text: databaseValues[i]['body'])
+      });
+    }
+    print('----------------------');
+    temp.forEach((element) {
+      print(element);
+    });
+
+    return temp;
   }
 }
