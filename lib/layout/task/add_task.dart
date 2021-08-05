@@ -27,7 +27,7 @@ class AddTask extends StatelessWidget {
               actions: [
                 IconButton(
                     onPressed: () {
-                     cubit.saveTaskBTNFun();
+                     cubit.saveTaskBTNFun(context);
                     },
                     icon: Icon(Icons.done)),
               ],

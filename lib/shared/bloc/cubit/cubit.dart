@@ -255,7 +255,6 @@ class AppCubit extends Cubit<AppStates> {
           context,
           MaterialPageRoute(
               builder: (context) => AddNote(
-                    database: database,
                   ))).then((value) {
         getNotesDataWithItsImages();
       });

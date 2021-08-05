@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/setting/setting.dart';

@@ -28,7 +28,6 @@ class NoteCard extends StatelessWidget {
                   builder: (context) => AddNote(
                         id: data['id'].toInt(),
                         data: data,
-                        database: database,
                       ))).then((value) {
           funForRebuild();
 

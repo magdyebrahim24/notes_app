@@ -10,19 +10,18 @@ import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddNote extends StatelessWidget {
-  final database;
   final id;
   final data;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  AddNote({this.database, this.id, this.data});
+  AddNote({this.id, this.data});
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
             create: (BuildContext context) =>
-                AddNoteCubit()..onBuildAddNoteScreen(id, data, database)),
+                AddNoteCubit()..onBuildAddNoteScreen(id, data)),
         BlocProvider(create: (BuildContext context) => AppCubit()),
       ],
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
@@ -66,12 +65,11 @@ class AddNote extends StatelessWidget {
                         onPressed: () {
                           if (cubit.noteId == null) {
                             cubit.insertNewNote(
-                              database,
                               title: cubit.titleController.text,
                               body: cubit.noteTextController.text,
                             );
                           } else {
-                            cubit.updateNote(database,
+                            cubit.updateNote(context,
                                 id: cubit.noteId!,
                                 body: cubit.noteTextController.text,
                                 title: cubit.titleController.text);
@@ -146,7 +144,6 @@ class AddNote extends StatelessWidget {
                   ImageList(
                     imageList: cubit.cachedImagesList,
                     cubit: cubit,
-                    database: database,
                   ),
                 ],
               ),
@@ -154,10 +151,10 @@ class AddNote extends StatelessWidget {
             floatingActionButton: BottomIconBar(
               isFavorite: cubit.isFavorite,
               deleteFun: () =>
-                  cubit.deleteNote(database, context, id: cubit.noteId!),
+                  cubit.deleteNote(context, id: cubit.noteId!),
               addImageFun: () =>
                   cubit.pickImageFromGallery(ImageSource.gallery),
-              addToFavoriteFun: ()=> cubit.addToFavorite(database),
+              addToFavoriteFun: ()=> cubit.addToFavorite(),
               addToSecretFun: (){},
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

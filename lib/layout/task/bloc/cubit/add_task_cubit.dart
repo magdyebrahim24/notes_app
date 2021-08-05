@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notes_app/layout/task/bloc/states/states.dart';
+import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddTaskCubit extends Cubit<AppTaskStates> {
@@ -105,15 +106,13 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   Future insertNewTask(
-    database, {
+      context, {
     required String title,
     required String taskDate,
     required String taskTime,
   }) async {
-    DateTime dateTime = DateTime.now();
-    String createdDate = dateTime.toString().split(' ').first;
-    String time = dateTime.toString().split(' ').last;
-    String createdTime = time.toString().split('.').first;
+    String createdDate = TimeAndDate.getDate();
+    String createdTime = TimeAndDate.getTime(context);
     await database.transaction((txn) {
       txn
           .rawInsert(
@@ -140,7 +139,6 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       taskList = value;
       value.forEach((element) {
         print(element);
-        // taskList.add(element);
       });
       emit(AddTaskGetSubTasksFromDatabaseState());
     });
@@ -183,14 +181,13 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   void updateTask(
-      {required String title,
+  context,{required String title,
       required String taskDate,
       required String taskTime,
       required int id}) async {
-    DateTime dateTime = DateTime.now();
-    String createdDate = dateTime.toString().split(' ').first;
-    String time = dateTime.toString().split(' ').last;
-    String createdTime = time.toString().split('.').first;
+
+    String createdDate = TimeAndDate.getDate();
+    String createdTime = TimeAndDate.getTime(context);
 
     database.rawUpdate(
         'UPDATE tasks SET title = ? , createdTime = ? ,createdDate = ? ,taskDate = ? ,taskTime = ? WHERE id = ?',
@@ -210,17 +207,17 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     });
   }
 
-  void saveTaskBTNFun() {
+  void saveTaskBTNFun(context) {
     if (taskID == null) {
       insertNewTask(
-        database,
+        context,
         title: titleController.text,
         taskDate: dateController!,
         taskTime: timeController!,
       );
       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
     } else {
-      updateTask(
+      updateTask(context,
           id: taskID!,
           taskDate: dateController!,
           taskTime: timeController!,
@@ -231,25 +228,6 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       updateSubTasks();
     }
   }
-
-  // void updateSubTask(db,
-  //     {required List subTaskList }) async {
-  //   for(int i =0; i<subTasksDatabaseList.length;i++)
-  //   db.rawUpdate(
-  //       'UPDATE tasks SET body = ? , isDone = ? ,tasks_id = ? WHERE id = ?',
-  //       [
-  //         '${subTasksDatabaseList[i]['body']}',
-  //         '${subTasksDatabaseList[i]['isDone']}',
-  //         '${subTasksDatabaseList[i]['tasks_id']}',
-  //         subTasksDatabaseList[i]['id'],
-  //       ]).then((value) {
-  //     getTaskDataFromDatabase(db);
-  //     getSubTaskData(db);
-  //     // titleFocus.unfocus();
-  //     // bodyFocus.unfocus();
-  //     emit(AddSubTasksUpdateSubTaskState());
-  //   });
-  // }
 
   void updateSubTasks() async {
     for (int i = 0; i < subTasksStoredDBList.length; i++) {
@@ -284,5 +262,11 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     });
 
     return temp;
+  }
+
+  @override
+  Future<void> close() async{
+    await database.close();
+    return super.close();
   }
 }
