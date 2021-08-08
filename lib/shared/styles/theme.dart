@@ -37,5 +37,7 @@ ThemeData darkTheme = ThemeData(
       backgroundColor: blackColor,
       elevation: 0.0,
 
-    )
+    ),
+  textTheme: TextTheme(headline4: TextStyle(color: Colors.white),headline5: TextStyle(color: Colors.white),
+    headline6: TextStyle(color: Colors.white),),
 );
