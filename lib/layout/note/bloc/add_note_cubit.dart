@@ -167,7 +167,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     await database.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO notes (title ,body ,createdTime ,createdDate) VALUES ("$title","$body","$createdTime","$createdDate")')
+              'INSERT INTO notes (title ,body ,createdTime ,createdDate,type) VALUES ("$title","$body","$createdTime","$createdDate","note")')
           .then((value) {
         noteId = value;
         saveSelectedImagesToPhoneCache();
@@ -245,6 +245,17 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       print('$val $isFavorite is done');
       emit(AddNoteFavoriteState());
       getNoteDataFromDatabase();
+    }).catchError((error){
+      print(error);
+    });
+  }
+
+  void addToSecret(){
+    database.rawUpdate(
+        'UPDATE notes SET is_secret = ? WHERE id = ?',
+        [1, noteId]).then((val){
+      print('$val  is done');
+      emit(AddNoteToSecretState());
     }).catchError((error){
       print(error);
     });

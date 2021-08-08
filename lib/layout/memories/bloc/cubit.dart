@@ -188,7 +188,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     database.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate) VALUES ("$title","$body","$createdTime","$createdDate","$memoryDate")')
+              'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate,type) VALUES ("$title","$body","$createdTime","$createdDate","$memoryDate","memory")')
           .then((value) {
         memoryID = value;
         saveSelectedImagesToPhoneCache();
@@ -284,6 +284,17 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       print('$val $isFavorite is done');
       emit(AddMemoryFavoriteState());
       getMemoryDataFromDatabase();
+    }).catchError((error){
+      print(error);
+    });
+  }
+
+  void addToSecret(){
+    database.rawUpdate(
+        'UPDATE memories SET is_secret = ? WHERE id = ?',
+        [1, memoryID]).then((val){
+      print('$val  is done');
+      emit(AddMemoryToSecretState());
     }).catchError((error){
       print(error);
     });

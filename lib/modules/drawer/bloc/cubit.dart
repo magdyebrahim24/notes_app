@@ -2,7 +2,7 @@
 // import 'package:flutter/animation.dart';
 // import 'package:flutter/cupertino.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:notes_app/modules/drawer/bloc/state.dart';
+// import 'package:notes_app/modules/drawer/bloc/states.dart';
 //
 // class AppCubit extends Cubit<DrawerStates>{
 //   AppCubit() : super(AppInitialState());

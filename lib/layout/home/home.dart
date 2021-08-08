@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
-import 'package:notes_app/layout/secret/secret.dart';
+import 'package:notes_app/verify/verify.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/gridview.dart';
@@ -53,7 +53,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         'assets/icons/search.svg',
                         color: greyColor,
                       )),
-                  _offsetPopup(context)
+                  SizedBox(width: 10,)
                 ],
                 pinned: true,
                 snap: true,
@@ -111,7 +111,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               .animate(widget.cubit.fABController!),
           child: Icon(
             widget.cubit.tabBarController!.index == 0
-                ? Icons.text_snippet_outlined
+                ? Icons.article_outlined
                 : widget.cubit.tabBarController!.index == 1
                     ? Icons.task_outlined
                     : Icons.event_available_outlined,
@@ -183,7 +183,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       onSelected: (value) {
         if (value == 1) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Secret()));
+              context, MaterialPageRoute(builder: (context) => Verify()));
         } else {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Setting()));

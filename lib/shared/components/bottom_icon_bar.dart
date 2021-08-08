@@ -19,7 +19,7 @@ final bool isFavorite  ;
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               IconButton(
-                  onPressed: () {}, icon: Icon(Icons.lock_open_outlined)),
+                  onPressed: addToSecretFun, icon: Icon(Icons.lock_open_outlined)),
               IconButton(
                   onPressed: addToFavoriteFun,
                   icon: Icon(

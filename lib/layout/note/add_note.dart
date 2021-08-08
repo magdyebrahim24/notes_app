@@ -3,27 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
-import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/image_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class AddNote extends StatelessWidget {
-  final id;
   final data;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  AddNote({this.id, this.data});
+  AddNote({this.data});
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-            create: (BuildContext context) =>
-                AddNoteCubit()..onBuildAddNoteScreen(data)),
-        BlocProvider(create: (BuildContext context) => AppCubit()),
-      ],
+    return BlocProvider(
+      create: (BuildContext context) =>
+      AddNoteCubit()..onBuildAddNoteScreen(data),
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
         listener: (context, AddNoteState state) {
           if (state.toString() == 'AddNoteCubit') {
@@ -155,7 +149,7 @@ class AddNote extends StatelessWidget {
               addImageFun: () =>
                   cubit.pickImageFromGallery(ImageSource.gallery),
               addToFavoriteFun: ()=> cubit.addToFavorite(),
-              addToSecretFun: (){},
+              addToSecretFun: ()=> cubit.addToSecret(),
             ):SizedBox(),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             resizeToAvoidBottomInset: true,

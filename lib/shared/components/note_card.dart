@@ -26,7 +26,6 @@ class NoteCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                   builder: (context) => AddNote(
-                        id: data['id'].toInt(),
                         data: data,
                       ))).then((value) {
           funForRebuild();

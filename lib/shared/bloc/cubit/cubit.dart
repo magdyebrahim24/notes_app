@@ -75,17 +75,17 @@ class AppCubit extends Cubit<AppStates> {
         print('database is created');
         database
             .execute(
-                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,is_favorite BOOLEAN)')
+                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('notes table created'))
             .catchError((error) => print('note error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT,is_favorite BOOLEAN)')
+                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('memory table created'))
             .catchError((error) => print('memory error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT,is_favorite BOOLEAN)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('task table created'))
             .catchError((error) => print('task error' + error.toString()));
         database
@@ -146,7 +146,7 @@ class AppCubit extends Cubit<AppStates> {
   void getNotesDataWithItsImages() async {
     // get all notes data
     List<Map<String, dynamic>> notesDataList = [];
-    await database!.rawQuery('SELECT * FROM notes').then((value) {
+    await database!.rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]).then((value) {
       notesDataList = value;
     });
     // get all notes images data
@@ -180,7 +180,7 @@ class AppCubit extends Cubit<AppStates> {
   void getAllTasksDataWithItSubTasks() async {
     // get all task data
     List<Map<String, dynamic>> tasksDataList = [];
-    database!.rawQuery('SELECT * FROM tasks').then((value) {
+    database!.rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [0]).then((value) {
       tasksDataList = value;
     });
 
@@ -217,7 +217,7 @@ class AppCubit extends Cubit<AppStates> {
   void getAllMemoriesDataWithItsImages() async {
     // get all user memories
     List<Map<String, dynamic>> memoriesDataList = [];
-    await database!.rawQuery('SELECT * FROM memories').then((value) {
+    await database!.rawQuery('SELECT * FROM memories WHERE is_secret = ?', [0]).then((value) {
       memoriesDataList = value;
     });
     // get memories images

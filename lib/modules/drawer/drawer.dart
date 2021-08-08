@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/favorite/favorite.dart';
 import 'package:notes_app/layout/home/home.dart';
-import 'package:notes_app/layout/secret/secret.dart';
+import 'package:notes_app/verify/verify.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:notes_app/shared/bloc/states/states.dart';
@@ -77,7 +77,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                 _drawerItem(
                     text: 'Secret',
                     leading: Icons.lock_open_outlined,
-                    fun:  ()=>Navigator.push(context, MaterialPageRoute(builder:(context) => Secret()))
+                    fun:  ()=>Navigator.push(context, MaterialPageRoute(builder:(context) => Verify()))
                 ),
                 _drawerItem(
                     text: 'Archived',

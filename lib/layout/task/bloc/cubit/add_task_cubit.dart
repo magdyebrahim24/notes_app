@@ -117,7 +117,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     await database.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime) VALUES ("$title","$createdTime","$createdDate","$taskDate","$taskTime")')
+              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime,type) VALUES ("$title","$createdTime","$createdDate","$taskDate","$taskTime","task")')
           .then((value) {
         taskID = value;
         getTaskDataFromDatabase();
@@ -274,6 +274,16 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       print('$val $isFavorite is done');
       emit(AddTaskToFavoriteState());
       getTaskDataFromDatabase();
+    }).catchError((error){
+      print(error);
+    });
+  }
+  void addToSecret(){
+    database.rawUpdate(
+        'UPDATE tasks SET is_secret = ? WHERE id = ?',
+        [1, taskID]).then((val){
+      print('$val  is done');
+      emit(AddNoteToSecretState());
     }).catchError((error){
       print(error);
     });

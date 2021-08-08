@@ -36,3 +36,4 @@ class AddNoteAddCachedImagesPathToDatabaseState extends AddNoteState {}
 
 class AddNoteGetCachedImagesPathsFromDatabaseState extends AddNoteState {}
 class AddNoteFavoriteState extends AddNoteState {}
+class AddNoteToSecretState extends AddNoteState {}
