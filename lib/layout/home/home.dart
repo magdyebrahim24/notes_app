@@ -7,7 +7,6 @@ import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/memories/memories_preview.dart';
 import 'package:notes_app/verify/verify.dart';
 import 'package:notes_app/layout/setting/setting.dart';
-import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 

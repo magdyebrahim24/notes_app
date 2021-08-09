@@ -7,6 +7,7 @@ import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/bloc/states/states.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -132,15 +133,6 @@ class AppCubit extends Cubit<AppStates> {
     await appData();
     isLoading = false;
     emit(AppLoaderState());
-  }
-
-  // fun to convert RawQuery type to List<Map<String, dynamic>>
-  List<Map<String, dynamic>> makeModifiableResults(
-      List<Map<String, dynamic>> results) {
-    // Generate modifiable
-    return List<Map<String, dynamic>>.generate(
-        results.length, (index) => Map<String, dynamic>.from(results[index]),
-        growable: true);
   }
 
   void getNotesDataWithItsImages() async {
