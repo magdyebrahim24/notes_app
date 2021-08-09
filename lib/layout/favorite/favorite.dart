@@ -4,6 +4,7 @@ import 'package:notes_app/layout/favorite/bloc/cubit.dart';
 import 'package:notes_app/layout/favorite/bloc/states.dart';
 import 'package:notes_app/layout/home/home.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
+import 'package:notes_app/layout/note/note_preview.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 
@@ -19,7 +20,7 @@ class FavoriteScreen extends StatelessWidget {
           List<Widget> bodyList = [
             GridViewComponents(
                 cubit.notes, () => cubit.getDataAndRebuild(), cubit.isLoading),
-            TaskWidget(
+            NotePreview(
                 data: cubit.tasks,
                 navFun: (data) {
                   Navigator.push(
@@ -32,7 +33,7 @@ class FavoriteScreen extends StatelessWidget {
                     cubit.getDataAndRebuild();
                   });
                 }),
-            TaskWidget(
+            NotePreview(
                 data: cubit.memories,
                 navFun: (data) {
                   Navigator.push(

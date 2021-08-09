@@ -27,17 +27,19 @@ class AddTask extends StatelessWidget {
               actions: [
                 IconButton(
                     onPressed: () {
-                      cubit.saveTaskBTNFun(context);
+                      if(formKey.currentState!.validate())
+                        cubit.saveTaskBTNFun(context);
                     },
                     icon: Icon(Icons.done)),
               ],
             ),
             body: Form(
               key: formKey,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
+                    mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DefaultFormField(
@@ -46,6 +48,10 @@ class AddTask extends StatelessWidget {
                         minLines: null,
                         fillColor: Theme.of(context).primaryColor,
                         hintText: 'Title',
+                        validator: (value){
+                          if(value.toString().isEmpty)
+                            return 'task title can\'t be empty';
+                        },
                         hintStyle: TextStyle(
                             color: greyColor,
                             fontSize: 28,

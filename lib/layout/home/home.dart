@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
+import 'package:notes_app/layout/note/add_note.dart';
+import 'package:notes_app/layout/note/note_preview.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
+import 'package:notes_app/layout/task/tasks_preview.dart';
+import 'package:notes_app/layout/memories/memories_preview.dart';
 import 'package:notes_app/verify/verify.dart';
 import 'package:notes_app/layout/setting/setting.dart';
-import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
-
   final cubit;
 
   final database;
-  Home( this.cubit, this.database);
+  Home(this.cubit, this.database);
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +53,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         'assets/icons/search.svg',
                         color: greyColor,
                       )),
-                  SizedBox(width: 10,)
+                  SizedBox(
+                    width: 10,
+                  )
                 ],
                 pinned: true,
                 snap: true,
@@ -69,35 +71,51 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       text: 'Memories',
                     ),
                   ],
-                  // onTap: (x) {
-                  //   widget.cubit.fABController!.forward(from: 0.0);
-                  // },
                   labelStyle: TextStyle(fontSize: 15),
                   isScrollable: true,
                   indicatorSize: TabBarIndicatorSize.label,
                 ),
               ),
-
             ];
           },
           body: TabBarView(
               controller: widget.cubit.tabBarController,
               physics: BouncingScrollPhysics(),
               children: [
-                GridViewComponents(widget.cubit.allNotesDataList,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                // GridViewComponents(
+                //     widget.cubit.allNotesDataList,
+                //     () => widget.cubit.getDataAndRebuild(),
+                //     widget.cubit.isLoading),
+                NotePreview(data: widget.cubit.allNotesDataList, navFun: (data) {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddNote(
+                          data: data,
+                        ),
+                      )).then((value) {
+                    widget.cubit.getNotesDataWithItsImages();
+                  });
+                },isLoading: widget.cubit.isLoading,),
+                TasksPreview(
+                    widget.cubit.allTasksDataList,
+                    () => widget.cubit.getAllTasksDataWithItSubTasks(),
+                    widget.cubit.isLoading),
 
-                TaskWidget(data: widget.cubit.allTasksDataList ,navFun: (data){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask(data: data,),)).then((value) {
-                     widget.cubit.getAllTasksDataWithItSubTasks();
-                  });
-                }),
-                TaskWidget(data: widget.cubit.allMemoriesDataList ,navFun: (data){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => AddMemory(data: data,),)).then((value) {
-                    widget.cubit.getAllMemoriesDataWithItsImages();
-                  });
-                }),
-                // GridViewComponents(widget.cubit.allTasksDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
-                // GridViewComponents(widget.cubit.allMemoriesDataList,widget.cubit.database,()=>widget.cubit.getDataAndRebuild(),widget.cubit.isLoading),
+                MemoriesPreview(
+                    data: widget.cubit.allMemoriesDataList,
+                    isLoading: widget.cubit.isLoading,
+                    onTapFun: (data) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddMemory(
+                              data: data,
+                            ),
+                          )).then((value) {
+                           widget.cubit.getAllMemoriesDataWithItsImages();
+                      });
+                    }),
 
               ]),
         ),
@@ -120,60 +138,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         ),
       ),
 
-      // extendBody: true,
-
-      // floatingActionButton: FloatingActionButton(onPressed: () {},
-      // child: Icon(Icons.add,size: 30,),),
-      // bottomNavigationBar: BottomAppBar(
-      //   elevation: 5.0,
-      //   color: Colors.white,
-      //   notchMargin: 15.0,
-      //   clipBehavior: Clip.antiAliasWithSaveLayer,
-      //   shape: CircularNotchedRectangle(),
-      //
-      //   child: Container(
-      //     padding: EdgeInsets.symmetric(horizontal: 20,vertical: 20),
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //       children: [
-      //         Icon(Icons.expand),
-      //         Icon(Icons.expand),
-      //         Icon(Icons.expand),
-      //         SizedBox(width: MediaQuery.of(context).size.width * .1,)
-      //       ],
-      //     ),
-      //   ),
-      //   // child: BottomNavigationBar(
-      //   //   type: BottomNavigationBarType.fixed,
-      //   //   enableFeedback: true,
-      //   //   backgroundColor: Colors.white,
-      //   //
-      //   //
-      //   //   elevation: 5.0,
-      //   //   items: [
-      //   //     BottomNavigationBarItem(
-      //   //       icon: Icon(Icons.business),
-      //   //       label: 'Business',
-      //   //     ),
-      //   //     BottomNavigationBarItem(
-      //   //       icon: Icon(Icons.school),
-      //   //       label: 'School',
-      //   //     ),
-      //   //     BottomNavigationBarItem(
-      //   //       icon: Icon(Icons.settings),
-      //   //       label: 'Settings',
-      //   //     ),
-      //   //   ],
-      //   //   // currentIndex: _selectedIndex,
-      //   //   onTap: (value){},
-      //   //   showSelectedLabels: false,
-      //   //   showUnselectedLabels: false,
-      //   //
-      //   //
-      //   //
-      //   // ),
-      // ),
-      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 
@@ -216,91 +180,3 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       ));
 }
 
-class TaskWidget extends StatelessWidget {
-final data;
-final navFun;
-
-  const TaskWidget({Key? key,required this.data, this.navFun}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context,index) {
-        return Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            children: [
-              Card(
-                elevation: 5,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                semanticContainer: true,
-                shadowColor: Colors.grey,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: InkWell(
-                  onTap:()=> navFun(data[index]) ,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xff3c3b4e),
-                          Color(0xff2e2e3e),
-                        ],
-                      ),
-                    ),
-                    padding: EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data[index]['title'],
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        Container(
-                          color: Colors.white24,
-                          height: 1,
-                          margin: EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        Text(
-                          'note body ',
-                          style: TextStyle(fontSize: 17, color: Colors.white),
-                          maxLines: 5,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              data[index]['createdDate'],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Text(
-                              data[index]['createdTime'],
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            Spacer(),
-                            Text(
-                              'Task',
-                              style: TextStyle(color: Colors.white),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }
-    );
-  }
-}

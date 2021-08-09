@@ -11,14 +11,18 @@ class GridViewComponents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true ?Center(child: CircularProgressIndicator()):StaggeredGridView.countBuilder(
-      crossAxisCount: 2,
-      itemCount: body.length,
-      itemBuilder: (BuildContext context, int index) => NoteCard(data: body[index],funForRebuild: () => funForRebuild(),),
-      staggeredTileBuilder: (int index) =>
-      new StaggeredTile.fit(1),
-      mainAxisSpacing: 4.0,
-      crossAxisSpacing: 4.0,
-    );
+    return isLoading == true
+        ? Center(child: CircularProgressIndicator())
+        : StaggeredGridView.countBuilder(
+            crossAxisCount: 2,
+            itemCount: body.length,
+            itemBuilder: (BuildContext context, int index) => NoteCard(
+              data: body[index],
+              funForRebuild: () => funForRebuild(),
+            ),
+            staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+            mainAxisSpacing: 4.0,
+            crossAxisSpacing: 4.0,
+          );
   }
 }
