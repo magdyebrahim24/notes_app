@@ -20,6 +20,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   List subTasksStoredDBList = [];
   late Database database;
   bool isFavorite = false;
+  FocusNode titleFocus = new FocusNode();
 
 
   onBuild(data) async {
@@ -29,8 +30,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     if (data != null) {
       taskID = data['id'];
       titleController.text = data['title'];
-      dateController = data['taskDate'];
-      timeController = data['taskTime'];
+     if(data['taskDate'].toString() != 'null') dateController = data['taskDate'];
+     if(data['taskTime'].toString() != 'null') timeController = data['taskTime'];
       subTasksList = modifySubTasksList(data['subTasks']);
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
@@ -88,8 +89,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.parse('1900-09-22'),
-      lastDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 1000)),
     ).then((value) {
       dateController = DateFormat.yMMMd().format(value!);
       emit(AppTaskTimePickerState());
@@ -117,7 +118,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     await database.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime,type) VALUES ("$title","$createdTime","$createdDate","$taskDate","$taskTime","task")')
+              'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime,type) VALUES ("$title","$createdTime","$createdDate","${taskDate.toString()}","${taskTime.toString()}","task")')
           .then((value) {
         taskID = value;
         getTaskDataFromDatabase();
@@ -213,22 +214,27 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       insertNewTask(
         context,
         title: titleController.text,
-        taskDate: dateController!,
-        taskTime: timeController!,
+        taskDate: dateController.toString(),
+        taskTime: timeController.toString(),
       );
       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
     } else {
       updateTask(context,
           id: taskID!,
-          taskDate: dateController!,
-          taskTime: timeController!,
+          taskDate: dateController.toString(),
+          taskTime: timeController.toString(),
           title: titleController.text);
 
       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
 
       updateSubTasks();
     }
+    titleFocus.unfocus();
   }
+  // void unFocusTitle(){
+  //   titleFocus.unfocus();
+  //   emit(AddNoteTitleUnFocusState());
+  // }
 
   void updateSubTasks() async {
     for (int i = 0; i < subTasksStoredDBList.length; i++) {

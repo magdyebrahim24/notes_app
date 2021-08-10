@@ -54,7 +54,7 @@ class NotePreview extends StatelessWidget {
                               //   height: .5,
                               //   margin: EdgeInsets.symmetric(vertical: 10),
                               // ),
-                              data[index]['images'].isEmpty ?  Padding(
+                              data[index]['images'].isEmpty && data[index]['body'].toString().isNotEmpty ?  Padding(
                                 padding: const EdgeInsets.only(top: 10),
                                 child: Text(
                                   data[index]['body'],

@@ -40,7 +40,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                 backgroundColor: backgroundColor,
                 body: Stack(
                   children: [
-                    menu(context,
+                    menu(context,rebuildFunction: ()=>cubit.getDataAndRebuild(),
                         menuScaleAnimation: cubit.drawerMenuScaleAnimation,
                         slideAnimation: cubit.drawerSlideAnimation),
                     dashboard(context, cubit: cubit),
@@ -50,7 +50,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             }));
   }
 
-  Widget menu(context, {slideAnimation, menuScaleAnimation}) {
+  Widget menu(context, {slideAnimation, menuScaleAnimation,rebuildFunction}) {
     return SlideTransition(
       position: slideAnimation,
       child: ScaleTransition(
@@ -80,14 +80,11 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                     fun:  ()=>Navigator.push(context, MaterialPageRoute(builder:(context) => Verify()))
                 ),
                 _drawerItem(
-                    text: 'Archived',
-                    leading: Icons.archive,
-                    fun: (){}
-                ),
-                _drawerItem(
                     text: 'Favorite',
                     leading: Icons.stars,
-                    fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen(),))
+                    fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen(),)).then((value){
+                      rebuildFunction();
+                    })
                 ),
 
               ],

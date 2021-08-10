@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/cubit.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
-import 'package:notes_app/shared/components/image_list.dart';
+import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
@@ -52,7 +52,7 @@ class AddMemory extends StatelessWidget {
                           if (cubit.memoryID == null) {
                             cubit.insertNewMemory(
                               context,
-                              memoryDate: cubit.dateController!,
+                              memoryDate: cubit.dateController.toString(),
                               title: cubit.titleController.text,
                               body: cubit.memoryTextController.text,
                             );
@@ -60,7 +60,7 @@ class AddMemory extends StatelessWidget {
                             cubit.updateMemory(context,
                                 id: cubit.memoryID!,
                                 body: cubit.memoryTextController.text,
-                                memoryDate: cubit.dateController!,
+                                memoryDate: cubit.dateController.toString(),
                                 title: cubit.titleController.text);
                           }
                         },
@@ -192,11 +192,10 @@ class AddMemory extends StatelessWidget {
                     SizedBox(
                       height: 15,
                     ),
-                    ImageList(imageList: cubit.selectedGalleryImagesList),
-                    ImageList(
-                      imageList: cubit.cachedImagesList,
-                      cubit: cubit,
-                    ),
+                    GridViewComponents(cubit.selectedGalleryImagesList, (){}, false,
+                        imagesCards),
+                    GridViewComponents(cubit.cachedImagesList, (){}, false,
+                        imagesCards),
                   ],
                 ),
               ),

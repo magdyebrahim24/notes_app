@@ -43,6 +43,7 @@ class AddTask extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       DefaultFormField(
+                        focusNode: cubit.titleFocus,
                         controller: cubit.titleController,
                         maxLines: null,
                         minLines: null,

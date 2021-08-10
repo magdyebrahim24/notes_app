@@ -84,7 +84,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   pickImageFromGallery(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
     if (_image != null) {
-      selectedGalleryImagesList.add(_image.path);
+      selectedGalleryImagesList.add({'link':_image.path});
       emit(AddNoteAddImageState());
     } else {
       print('No Image Selected');
@@ -104,9 +104,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
     List cachedImagesPaths = [];
     for (int index = 0; index < selectedGalleryImagesList.length; index++) {
-      String imageName = selectedGalleryImagesList[index].split('/').last;
+      String imageName = selectedGalleryImagesList[index]['link'].split('/').last;
       final String filePath = '${directoryPath.path}/$imageName';
-      _currentImageToSave = XFile(selectedGalleryImagesList[index]);
+      _currentImageToSave = XFile(selectedGalleryImagesList[index]['link']);
       await _currentImageToSave.saveTo(filePath);
       cachedImagesPaths.add(filePath);
     }

@@ -41,13 +41,6 @@ class TasksPreview extends StatelessWidget {
                         )).then((value) {
                       funForRebuild();
                     });
-                    // Navigator.push(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => AddNote(
-                    //           data: data,
-                    //         ))).then((value) {
-                    funForRebuild();
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -90,7 +83,18 @@ class TasksPreview extends StatelessWidget {
                                 Checkbox(
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(50)),
-                                  onChanged: null,
+                                  onChanged: (value){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => AddTask(
+                                            data: body[index],
+                                          ),
+                                        )).then((value) {
+                                      funForRebuild();
+                                    });
+                                  },
+                                  splashRadius: 0 ,
                                   value:
                                       body[index]['subTasks'][i]['isDone'] == 0
                                           ? false

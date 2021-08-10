@@ -39,7 +39,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       memoryID = data['id'];
       titleController.text = data['title'].toString();
       memoryTextController.text = data['body'].toString();
-      dateController = data['memoryDate'];
+     if(data['memoryDate'] != 'null') dateController = data['memoryDate'];
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
@@ -105,7 +105,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   pickImageFromGallery(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
     if (_image != null) {
-      selectedGalleryImagesList.add(_image.path);
+      selectedGalleryImagesList.add({'link':_image.path});
       emit(AddMemoryAddImageStateState());
     } else {
       print('No Image Selected');
@@ -125,9 +125,9 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
 
     List cachedImagesPaths = [];
     for (int index = 0; index < selectedGalleryImagesList.length; index++) {
-      String imageName = selectedGalleryImagesList[index].split('/').last;
+      String imageName = selectedGalleryImagesList[index]['link'].split('/').last;
       final String filePath = '${directoryPath.path}/$imageName';
-      _currentImageToSave = XFile(selectedGalleryImagesList[index]);
+      _currentImageToSave = XFile(selectedGalleryImagesList[index]['link']);
       await _currentImageToSave.saveTo(filePath);
       cachedImagesPaths.add(filePath);
     }
@@ -188,7 +188,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     database.transaction((txn) {
       txn
           .rawInsert(
-              'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate,type) VALUES ("$title","$body","$createdTime","$createdDate","$memoryDate","memory")')
+              'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate,type) VALUES ("$title","$body","$createdTime","$createdDate","${memoryDate.toString()}","memory")')
           .then((value) {
         memoryID = value;
         saveSelectedImagesToPhoneCache();

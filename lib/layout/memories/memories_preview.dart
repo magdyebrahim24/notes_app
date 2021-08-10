@@ -47,7 +47,7 @@ class MemoriesPreview extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                           data[index]['title'].toString().isNotEmpty ? Text(
                               data[index]['title'] ?? 'Title',
                               maxLines: 2,
                               softWrap: true,
@@ -56,21 +56,23 @@ class MemoriesPreview extends StatelessWidget {
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white),
-                            ),
-                            Container(
+                            ):SizedBox(),
+                            data[index]['title'].toString().isNotEmpty ? Container(
                               color: Colors.white24,
                               height: .5,
                               margin: EdgeInsets.symmetric(vertical: 10),
-                            ),
-                            Text(
-                              '${data[index]['body']}',
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.white),
-                              maxLines: 10,
-                              softWrap: true,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            SizedBox(height: 17,),
+                            ):SizedBox(),
+                            data[index]['body'].toString().isNotEmpty ? Padding(
+                              padding: const EdgeInsets.only(bottom: 17),
+                              child: Text(
+                                '${data[index]['body']}',
+                                style:
+                                    TextStyle(fontSize: 17, color: Colors.white),
+                                maxLines: 10,
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ):SizedBox(),
                             Directionality(
                               textDirection: TextDirection.ltr,
                               child: Row(

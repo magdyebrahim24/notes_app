@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
-import 'package:notes_app/shared/components/image_list.dart';
+import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/constants.dart';
 
@@ -132,13 +132,10 @@ class AddNote extends StatelessWidget {
                   ),
                   SizedBox(),
                   // Image.file(File('/data/user/0/com.example.notes_app/app_flutter/notes_images/image_picker7464063783057228289.jpg'),height: 50,width: 100,cacheHeight: 100,cacheWidth: 100,),
-                  ImageList(
-                    imageList: cubit.selectedGalleryImagesList,
-                  ),
-                  ImageList(
-                    imageList: cubit.cachedImagesList,
-                    cubit: cubit,
-                  ),
+                  GridViewComponents(cubit.selectedGalleryImagesList, (){}, false,
+                      imagesCards),
+                  GridViewComponents(cubit.cachedImagesList, (){}, false,
+                      imagesCards),
                 ],
               ),
             ),
