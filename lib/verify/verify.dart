@@ -28,6 +28,7 @@ class Verify extends StatelessWidget {
                         SizedBox(
                           height: size.height * .3,
                         ),
+                        IconButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Verify()));}, icon: Icon(Icons.check)),
                         Text(cubit.isCreated?'Login':'Create Password',style: them.headline4,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,

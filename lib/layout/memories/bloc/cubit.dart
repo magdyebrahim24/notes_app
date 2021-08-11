@@ -160,10 +160,9 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     cachedImagesList = [];
     database.rawQuery('SELECT * FROM memories_images WHERE memory_id = ?', [id]).then((value) {
       value.forEach((element) {
-        cachedImagesList.add(element);
-
         print(element);
       });
+      cachedImagesList = value ;
       emit(AddMemoryGetCachedImagesPathsFromDatabaseState());
     });
 

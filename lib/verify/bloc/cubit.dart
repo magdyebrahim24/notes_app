@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/layout/secrete/secret.dart';
+import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/verify/bloc/state.dart';
 
@@ -13,7 +13,7 @@ class VerifyCubit extends Cubit<VerifyStates> {
 
   List<int> passwordDigitsList = [];
 
-  String x = '1234';
+  String? verifyPass ;
 
   void onBuild() {
     checkPass();
@@ -34,7 +34,11 @@ class VerifyCubit extends Cubit<VerifyStates> {
   }
 
   void addToList(index,context) {
-    if (passwordDigitsList.length < 4) {
+    if(verifyPass != null){
+      if(verifyPass == passwordText)
+      CacheHelper.putString(key: 'secret_password', value: passwordText);
+
+    }else{if (passwordDigitsList.length < 4) {
       passwordDigitsList.add(index + 1);
       print(passwordDigitsList);
       if (passwordDigitsList.length == 4) {
@@ -50,12 +54,14 @@ class VerifyCubit extends Cubit<VerifyStates> {
             passwordDigitsList = [];
           }
         } else {
-          CacheHelper.putString(key: 'secret_password', value: passwordText);
+          verifyPass=passwordText;
+          // CacheHelper.putString(key: 'secret_password', value: passwordText);
           print('pass created success ------------');
         }
       }
       emit(VerifyAddToListState());
-    }
+    }}
+
   }
 
   void removeFromList() {

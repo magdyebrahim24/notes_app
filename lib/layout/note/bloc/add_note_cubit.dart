@@ -22,18 +22,18 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   List cachedImagesList = [];
   int? noteId;
   List noteList = [];
-  bool isFavorite = false ;
+  bool isFavorite = false;
 
-  late Database database ;
-  onBuildAddNoteScreen(data) async{
+  late Database database;
+  onBuildAddNoteScreen(data) async {
     var db = await openDatabase('database.db');
     database = db;
     if (data != null) {
       noteId = data['id'];
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
-      cachedImagesList = data['images'] ?? [];
-      isFavorite =  data['is_favorite'] == 1 ? true : false;
+      cachedImagesList = data['images'];
+      isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     emit(OnBuildAddNoteInitialState());
   }
@@ -84,7 +84,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   pickImageFromGallery(ImageSource src) async {
     XFile? _image = await ImagePicker().pickImage(source: src);
     if (_image != null) {
-      selectedGalleryImagesList.add({'link':_image.path});
+      selectedGalleryImagesList.add({'link': _image.path});
       emit(AddNoteAddImageState());
     } else {
       print('No Image Selected');
@@ -104,7 +104,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
     List cachedImagesPaths = [];
     for (int index = 0; index < selectedGalleryImagesList.length; index++) {
-      String imageName = selectedGalleryImagesList[index]['link'].split('/').last;
+      String imageName =
+          selectedGalleryImagesList[index]['link'].split('/').last;
       final String filePath = '${directoryPath.path}/$imageName';
       _currentImageToSave = XFile(selectedGalleryImagesList[index]['link']);
       await _currentImageToSave.saveTo(filePath);
@@ -139,15 +140,14 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   void getNoteImagesFromDatabase(id) async {
     cachedImagesList = [];
-    database.rawQuery('SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
+    database.rawQuery(
+        'SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
       value.forEach((element) {
-        cachedImagesList.add(element['link']);
-
         print(element);
       });
+      cachedImagesList = value ;
       emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
-
   }
 
   void deleteAllNoteCachedImages() {
@@ -158,7 +158,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   // start coding database
 
-  Future insertNewNote(context,{
+  Future insertNewNote(
+    context, {
     required String title,
     required String body,
   }) async {
@@ -170,8 +171,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
               'INSERT INTO notes (title ,body ,createdTime ,createdDate,type) VALUES ("$title","$body","$createdTime","$createdDate","note")')
           .then((value) {
         noteId = value;
-        saveSelectedImagesToPhoneCache();
-        getNoteImagesFromDatabase(noteId);
+        if (selectedGalleryImagesList.isNotEmpty) {
+          saveSelectedImagesToPhoneCache();
+          getNoteImagesFromDatabase(value);
+        }
         print(value);
       }).catchError((error) {
         print(error.toString());
@@ -184,12 +187,11 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteInsertDatabaseState());
   }
 
-
   void getNoteDataFromDatabase() async {
     noteList = [];
     // emit(AppLoaderState());
     database.rawQuery('SELECT * FROM notes').then((value) {
-      noteList = value ;
+      noteList = value;
       value.forEach((element) {
         print(element);
       });
@@ -199,7 +201,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   void deleteNote(context, {required int id}) async {
     print(id);
-    await database.rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) {
+    await database
+        .rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) {
       deleteAllNoteCachedImages();
       Navigator.pop(context);
       getNoteDataFromDatabase();
@@ -209,60 +212,61 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteDeleteOneNoteState());
   }
 
-  void updateNote(context,{required String title, required String body, required int id}) async {
-
+  void updateNote(context,
+      {required String title, required String body, required int id}) async {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
 
     database.rawUpdate(
         'UPDATE notes SET title = ? , body = ? , createdTime = ? ,createdDate = ? WHERE id = ?',
         ['$title', '$body', '$createdTime', '$createdDate', id]).then((value) {
-      saveSelectedImagesToPhoneCache();
-      getNoteImagesFromDatabase(noteId);
+      if (selectedGalleryImagesList.isNotEmpty) {
+        saveSelectedImagesToPhoneCache();
+        getNoteImagesFromDatabase(noteId);
+      }
       getNoteDataFromDatabase();
       titleFocus.unfocus();
       bodyFocus.unfocus();
     });
     emit(AddNoteUpdateTitleAndBodyState());
   }
-  void deleteImage({required int imageID ,required int index}) async {
+
+  void deleteImage({required int imageID, required int index}) async {
     print(imageID);
-    await database.rawDelete('DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
+    await database.rawDelete(
+        'DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
       getNoteImagesFromDatabase(imageID);
       emit(AddNoteDeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
-
   }
 
-  void addToFavorite(){
-    database.rawUpdate(
-        'UPDATE notes SET is_favorite = ? WHERE id = ?',
-        [!isFavorite, noteId]).then((val){
-      isFavorite = !isFavorite ;
+  void addToFavorite() {
+    database.rawUpdate('UPDATE notes SET is_favorite = ? WHERE id = ?',
+        [!isFavorite, noteId]).then((val) {
+      isFavorite = !isFavorite;
       print('$val $isFavorite is done');
       emit(AddNoteFavoriteState());
       getNoteDataFromDatabase();
-    }).catchError((error){
+    }).catchError((error) {
       print(error);
     });
   }
 
-  void addToSecret(){
+  void addToSecret() {
     database.rawUpdate(
-        'UPDATE notes SET is_secret = ? WHERE id = ?',
-        [1, noteId]).then((val){
+        'UPDATE notes SET is_secret = ? WHERE id = ?', [1, noteId]).then((val) {
       print('$val  is done');
       emit(AddNoteToSecretState());
-    }).catchError((error){
+    }).catchError((error) {
       print(error);
     });
   }
 
   @override
-  Future<void> close() async{
+  Future<void> close() async {
     // await database.close();
     return super.close();
   }
