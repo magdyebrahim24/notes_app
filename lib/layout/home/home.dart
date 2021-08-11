@@ -3,6 +3,7 @@ import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/note/note_preview.dart';
 import 'package:notes_app/layout/search_screen/search_screen.dart';
+import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/memories/memories_preview.dart';
 import 'package:notes_app/verify/verify.dart';
@@ -98,7 +99,17 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 },isLoading: widget.cubit.isLoading,),
                 TasksPreview(
                     widget.cubit.allTasksDataList,
-                    () => widget.cubit.getAllTasksDataWithItSubTasks(),
+                     (data) {
+                       Navigator.push(
+                                     context,
+                                     MaterialPageRoute(
+                                       builder: (context) => AddTask(
+                                         data: data,
+                                       ),
+                                     )).then((value) {
+                         widget.cubit.getAllTasksDataWithItSubTasks();                                 });
+                    },
+                    // () => widget.cubit.getAllTasksDataWithItSubTasks(),
                     widget.cubit.isLoading),
 
                 MemoriesPreview(

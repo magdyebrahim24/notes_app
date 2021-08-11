@@ -13,25 +13,49 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
   List notes = [];
   List tasks = [];
   List memories = [];
+  List allData = [];
+  int navBarIndex = 0;
 
   onBuild() async {
     var db = await openDatabase('database.db');
     database = db;
-    // getFavoriteNotes();
-    getDataAndRebuild();
+
+    await manageSortedData();
+    print('get data');
+    print('sort data');
+
+    emit(X());
   }
 
-  void getDataAndRebuild() async {
-    isLoading = true;
-    emit(FavoriteLoaderState());
+  sortedAllDataList(notes,tasks,memories){
+    print('sorted');
+    allData = [] ;
+    allData.addAll(notes);
+    allData.addAll(tasks);
+    allData.addAll(memories);
+
+    allData.sort((a, b) => DateTime.parse(a["favorite_add_date"]).compareTo(DateTime.parse(b["favorite_add_date"])));
+
+    allData.forEach((element) {print(element);});
+  }
+
+  getData(){
     getNotesDataWithItsImages();
     getAllTasksDataWithItSubTasks();
     getAllMemoriesDataWithItsImages();
+  }
+
+  manageSortedData() async {
+    isLoading = true;
+    emit(FavoriteLoaderState());
+   await getData();
+    await sortedAllDataList(notes,tasks,memories);
+
     isLoading = false;
     emit(FavoriteLoaderState());
   }
 
-  int navBarIndex = 0;
+
 
   void onNavBarIndexChange(value) {
     navBarIndex = value;
@@ -69,6 +93,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
       allNotesCompleteData.add(oneNoteData);
     }
 
+    allNotesCompleteData.forEach((element) {print(element);});
     notes = allNotesCompleteData;
     emit(FavoriteGetDataState());
   }
@@ -107,6 +132,8 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
     }
 
     tasks = allTasksCompleteData;
+    allTasksCompleteData.forEach((element) {print(element);});
+
     emit(FavoriteGetDataState());
 
   }
@@ -144,6 +171,8 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
     }
 
     memories = allMemoriesCompleteData;
+    allMemoriesCompleteData.forEach((element) {print(element);});
+
     emit(FavoriteGetDataState());
   }
 

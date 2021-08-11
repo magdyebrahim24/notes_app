@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notes_app/layout/favorite/bloc/cubit.dart';
 import 'package:notes_app/layout/favorite/bloc/states.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
@@ -55,30 +56,43 @@ class FavoriteScreen extends StatelessWidget {
           ];
           return Scaffold(
             appBar: AppBar(),
-            body: bodyList[cubit.navBarIndex],
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Material(
-                borderRadius: BorderRadius.circular(25),
-                clipBehavior: Clip.antiAlias,
-                child: BottomNavigationBar(
-                  showUnselectedLabels: false,
-                  selectedIconTheme: IconThemeData(),
-                  currentIndex: cubit.navBarIndex,
-                  onTap: (value) => cubit.onNavBarIndexChange(value),
-                  items: [
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.note_outlined), label: 'Notes'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.task_outlined), label: 'Tasks'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.archive), label: 'Memory'),
-                  ],
-                ),
-              ),
+            body: StaggeredGridView.countBuilder(
+              crossAxisCount: 2,
+              itemCount: cubit.allData.length,
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+              itemBuilder: (BuildContext context, int index) {
+
+                return cubit.allData[index]['type'] == 'note' ? Text('note',style: TextStyle(color: Colors.white),):
+                cubit.allData[index]['task'] == 'task' ? Text('task'): Text('memories');
+              },
+              staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
             ),
-            floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
+            // body: bodyList[cubit.navBarIndex],
+            // floatingActionButton: Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 20),
+            //   child: Material(
+            //     borderRadius: BorderRadius.circular(25),
+            //     clipBehavior: Clip.antiAlias,
+            //     child: BottomNavigationBar(
+            //       showUnselectedLabels: false,
+            //       selectedIconTheme: IconThemeData(),
+            //       currentIndex: cubit.navBarIndex,
+            //       onTap: (value) => cubit.onNavBarIndexChange(value),
+            //       items: [
+            //         BottomNavigationBarItem(
+            //             icon: Icon(Icons.note_outlined), label: 'Notes'),
+            //         BottomNavigationBarItem(
+            //             icon: Icon(Icons.task_outlined), label: 'Tasks'),
+            //         BottomNavigationBarItem(
+            //             icon: Icon(Icons.archive), label: 'Memory'),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // floatingActionButtonLocation:
+            // FloatingActionButtonLocation.centerFloat,
           );
         },
       ),

@@ -274,8 +274,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   void addToFavorite(){
     print('1/');
     database.rawUpdate(
-        'UPDATE tasks SET is_favorite = ? WHERE id = ?',
-        [!isFavorite, taskID]).then((val){
+        'UPDATE tasks SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+        [!isFavorite,DateTime.now().toString() , taskID]).then((val){
       isFavorite = !isFavorite ;
       print('$val $isFavorite is done');
       emit(AddTaskToFavoriteState());

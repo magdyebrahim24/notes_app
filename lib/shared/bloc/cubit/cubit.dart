@@ -76,17 +76,17 @@ class AppCubit extends Cubit<AppStates> {
         print('database is created');
         database
             .execute(
-                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
+                'CREATE TABLE notes (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,favorite_add_date TEXT,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('notes table created'))
             .catchError((error) => print('note error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
+                'CREATE TABLE memories (id INTEGER PRIMARY KEY ,title TEXT ,body TEXT ,createdTime TEXT ,createdDate TEXT,memoryDate TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,favorite_add_date TEXT,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('memory table created'))
             .catchError((error) => print('memory error' + error.toString()));
         database
             .execute(
-                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
+                'CREATE TABLE tasks (id INTEGER PRIMARY KEY ,title TEXT ,createdTime TEXT ,createdDate TEXT,taskDate TEXT,taskTime TEXT,is_favorite BOOLEAN DEFAULT 0 NOT NULL,favorite_add_date TEXT,is_secret BOOLEAN DEFAULT 0 NOT NULL,type TEXT)')
             .then((value) => print('task table created'))
             .catchError((error) => print('task error' + error.toString()));
         database

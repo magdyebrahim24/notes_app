@@ -244,8 +244,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   void addToFavorite() {
-    database.rawUpdate('UPDATE notes SET is_favorite = ? WHERE id = ?',
-        [!isFavorite, noteId]).then((val) {
+    database.rawUpdate('UPDATE notes SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
       isFavorite = !isFavorite;
       print('$val $isFavorite is done');
       emit(AddNoteFavoriteState());
