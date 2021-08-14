@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/states.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SecretCubit extends Cubit<SecretStates> {
@@ -51,7 +53,6 @@ class SecretCubit extends Cubit<SecretStates> {
     List oneNoteImagesList = [];
     Map<String, dynamic> oneNoteData = {};
     List<Map<String, dynamic>> allNotesCompleteData = [];
-
     for (int i = 0; i < notesDataModified.length; i++) {
       oneNoteImagesList = [];
       oneNoteData = notesDataModified[i];
@@ -65,7 +66,6 @@ class SecretCubit extends Cubit<SecretStates> {
         oneNoteData.update('images', (dynamic val) => oneNoteImagesList);
       allNotesCompleteData.add(oneNoteData);
     }
-
     notes = allNotesCompleteData;
     emit(SecretGetDataState());
   }
@@ -76,7 +76,6 @@ class SecretCubit extends Cubit<SecretStates> {
     database.rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [1]).then((value) {
       tasksDataList = value;
     });
-
     // get all task sub tasks data
     List subTasksList = [];
     await database.rawQuery('SELECT * FROM subTasks').then((value) {
@@ -101,10 +100,8 @@ class SecretCubit extends Cubit<SecretStates> {
         oneTaskData.update('subTasks', (dynamic val) => oneSubTaskList);
       allTasksCompleteData.add(oneTaskData);
     }
-
     tasks = allTasksCompleteData;
     emit(SecretGetDataState());
-
   }
 
   void getAllMemoriesDataWithItsImages() async {
@@ -122,7 +119,6 @@ class SecretCubit extends Cubit<SecretStates> {
     List oneMemoryImagesList = [];
     Map<String, dynamic> oneMemoryData = {};
     List<Map<String, dynamic>> allMemoriesCompleteData = [];
-
     // get memories data and images in one list
     for (int i = 0; i < memoriesDataModified.length; i++) {
       oneMemoryImagesList = [];
@@ -137,8 +133,11 @@ class SecretCubit extends Cubit<SecretStates> {
         oneMemoryData.update('images', (dynamic val) => oneMemoryImagesList);
       allMemoriesCompleteData.add(oneMemoryData);
     }
-
     memories = allMemoriesCompleteData;
     emit(SecretGetDataState());
+  }
+  void upDatePassword(context){
+    bool isUpdated=true;
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>Login(isUpdate: isUpdated,)));
   }
 }

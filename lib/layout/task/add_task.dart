@@ -314,7 +314,7 @@ class AddTask extends StatelessWidget {
                     deleteFun: () => cubit.deleteTask(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
                     isFavorite: cubit.isFavorite,
-                addToSecretFun: ()=> cubit.addToSecret(),
+                addToSecretFun: ()=> cubit.addToSecret(context),
                   )
                 : SizedBox(),
             floatingActionButtonLocation:

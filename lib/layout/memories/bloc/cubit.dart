@@ -6,7 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
 import 'package:intl/intl.dart';
+import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
+import 'package:notes_app/verify/create_pass.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:undo/undo.dart';
@@ -288,14 +291,16 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     });
   }
 
-  void addToSecret(){
-    database.rawUpdate(
-        'UPDATE memories SET is_secret = ? WHERE id = ?',
-        [1, memoryID]).then((val){
-      print('$val  is done');
-      emit(AddMemoryToSecretState());
-    }).catchError((error){
-      print(error);
-    });
+  void addToSecret(context) {
+    String? pass = CacheHelper.getString(key: 'secret_password');
+    if (pass == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreatePass(id: memoryID,table: 'memories',)));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Login(id: memoryID,table: 'memories',)));
+    }
   }
 }

@@ -4,18 +4,22 @@ import 'package:notes_app/shared/components/icon_for_secret.dart';
 import 'package:notes_app/verify/bloc/state.dart';
 import 'bloc/cubit.dart';
 
-class Verify extends StatelessWidget {
+class Login extends StatelessWidget {
+  final isUpdate;
+  final id;
+  final table;
+  Login({this.id,this.table,this.isUpdate});
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var them = Theme.of(context).textTheme;
 
     return BlocProvider(
-      create: (BuildContext context)=>VerifyCubit()..onBuild(),
-      child: BlocConsumer<VerifyCubit,VerifyStates>(
+      create: (BuildContext context)=>LoginCubit()..onBuild(),
+      child: BlocConsumer<LoginCubit,VerifyStates>(
         listener: (context,state){},
         builder: (context,state){
-          VerifyCubit cubit =VerifyCubit.get(context);
+          LoginCubit cubit =LoginCubit.get(context);
           return Scaffold(
             body: SingleChildScrollView(
               child: Center(
@@ -26,10 +30,11 @@ class Verify extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: size.height * .3,
+                          height: size.height * .22,
                         ),
-                        IconButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context)=>Verify()));}, icon: Icon(Icons.check)),
-                        Text(cubit.isCreated?'Login':'Create Password',style: them.headline4,),
+                        IconButton(onPressed: (){cubit.z();}, icon: Icon(Icons.remove)),
+                        Text('Enter Password',style: them.headline4,),
+                        SizedBox(height: 10,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -71,30 +76,33 @@ class Verify extends StatelessWidget {
                               itemBuilder: (BuildContext context, int index) {
                                 return IconForSecret(
                                   onPressed: () {
-                                    cubit.addToList(index,context);
+                                    cubit.loginAndAddToSecret(index:index,context:context,id: id,table: table,isUpdate: isUpdate);
                                   },
                                   body: (index + 1).toString(),
                                 );
                               }),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconForSecret(
-                              body: '0',
-                              onPressed: (){cubit.addToList(-1,context);},
-                            ),
-                            MaterialButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                'BACK',
-                                style: them.headline6,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 37),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              IconForSecret(
+                                body: '0',
+                                onPressed: (){cubit.loginAndAddToSecret(index:-1,context:context,id: id,table: table,isUpdate: isUpdate);},
                               ),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            )
-                          ],
+                              MaterialButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text(
+                                  'BACK',
+                                  style: them.headline6,
+                                ),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              )
+                            ],
+                          ),
                         )
                       ]),
                 ),

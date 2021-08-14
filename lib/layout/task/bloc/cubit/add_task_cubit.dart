@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:notes_app/layout/task/bloc/states/states.dart';
+import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
+import 'package:notes_app/verify/create_pass.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddTaskCubit extends Cubit<AppTaskStates> {
@@ -284,20 +287,16 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       print(error);
     });
   }
-  void addToSecret(){
-    database.rawUpdate(
-        'UPDATE tasks SET is_secret = ? WHERE id = ?',
-        [1, taskID]).then((val){
-      print('$val  is done');
-      emit(AddNoteToSecretState());
-    }).catchError((error){
-      print(error);
-    });
-  }
-
-  @override
-  Future<void> close() async{
-    // database.close();
-    return super.close();
+  void addToSecret(context) {
+    String? pass = CacheHelper.getString(key: 'secret_password');
+    if (pass == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreatePass(id: taskID,table: 'tasks',)));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Login(id: taskID,table: 'tasks',)));
+    }
   }
 }

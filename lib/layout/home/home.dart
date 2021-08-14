@@ -6,7 +6,7 @@ import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/memories/memories_preview.dart';
-import 'package:notes_app/verify/verify.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -98,8 +98,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   });
                 },isLoading: widget.cubit.isLoading,),
                 TasksPreview(
-                    widget.cubit.allTasksDataList,
-                     (data) {
+                   body:  widget.cubit.allTasksDataList,
+                   onTapFun:   (data) {
                        Navigator.push(
                                      context,
                                      MaterialPageRoute(
@@ -110,7 +110,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                          widget.cubit.getAllTasksDataWithItSubTasks();                                 });
                     },
                     // () => widget.cubit.getAllTasksDataWithItSubTasks(),
-                    widget.cubit.isLoading),
+                 isLoading:    widget.cubit.isLoading),
 
                 MemoriesPreview(
                     data: widget.cubit.allMemoriesDataList,
@@ -157,7 +157,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       onSelected: (value) {
         if (value == 1) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Verify()));
+              context, MaterialPageRoute(builder: (context) => Login()));
         } else {
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => Setting()));

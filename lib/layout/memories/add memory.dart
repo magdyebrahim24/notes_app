@@ -208,7 +208,7 @@ class AddMemory extends StatelessWidget {
                     addImageFun: () =>
                         cubit.pickImageFromGallery(ImageSource.gallery),
                     addToFavoriteFun: () => cubit.addToFavorite(),
-                    addToSecretFun: ()=> cubit.addToSecret(),
+                    addToSecretFun: ()=> cubit.addToSecret(context),
                   )
                 : SizedBox(),
             floatingActionButtonLocation:

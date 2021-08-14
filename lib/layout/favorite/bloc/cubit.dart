@@ -1,6 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/favorite/bloc/states.dart';
+import 'package:notes_app/layout/memories/add%20memory.dart';
+import 'package:notes_app/layout/note/add_note.dart';
+import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -19,50 +23,40 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
   onBuild() async {
     var db = await openDatabase('database.db');
     database = db;
-
-    await manageSortedData();
+    await getData();
     print('get data');
     print('sort data');
 
-    emit(X());
   }
 
-  sortedAllDataList(notes,tasks,memories){
+   sortedAllDataList(notes,tasks,memories){
     print('sorted');
     allData = [] ;
     allData.addAll(notes);
     allData.addAll(tasks);
     allData.addAll(memories);
-
     allData.sort((a, b) => DateTime.parse(a["favorite_add_date"]).compareTo(DateTime.parse(b["favorite_add_date"])));
+    emit(FavoriteSortDataState());
 
-    allData.forEach((element) {print(element);});
   }
 
-  getData(){
-    getNotesDataWithItsImages();
-    getAllTasksDataWithItSubTasks();
-    getAllMemoriesDataWithItsImages();
+   getData()async{
+     isLoading = true;
+     emit(FavoriteLoaderState());
+     await getNotesDataWithItsImages();
+     await getAllTasksDataWithItSubTasks();
+     await getAllMemoriesDataWithItsImages();
+     sortedAllDataList(notes,tasks,memories);
+     isLoading = false;
+     emit(FavoriteLoaderState());
   }
-
-  manageSortedData() async {
-    isLoading = true;
-    emit(FavoriteLoaderState());
-   await getData();
-    await sortedAllDataList(notes,tasks,memories);
-
-    isLoading = false;
-    emit(FavoriteLoaderState());
-  }
-
-
 
   void onNavBarIndexChange(value) {
     navBarIndex = value;
     emit(FavoriteNavBarIndexState());
   }
 
-  void getNotesDataWithItsImages() async {
+   getNotesDataWithItsImages() async {
     // get all notes data
     List<Map<String, dynamic>> notesDataList = [];
     await database.rawQuery('SELECT * FROM notes WHERE is_favorite = ? AND is_secret = ?',
@@ -98,7 +92,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
     emit(FavoriteGetDataState());
   }
 
-  void getAllTasksDataWithItSubTasks() async {
+   getAllTasksDataWithItSubTasks() async {
     // get all task data
     List<Map<String, dynamic>> tasksDataList = [];
     database.rawQuery('SELECT * FROM tasks WHERE is_favorite = ? AND is_secret = ?',
@@ -138,7 +132,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
 
   }
 
-  void getAllMemoriesDataWithItsImages() async {
+   getAllMemoriesDataWithItsImages() async {
     // get all user memories
     List<Map<String, dynamic>> memoriesDataList = [];
     await database.rawQuery('SELECT * FROM memories WHERE is_favorite = ? AND is_secret = ?',
@@ -175,10 +169,41 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
 
     emit(FavoriteGetDataState());
   }
-
-  @override
-  Future<void> close() async {
-    // await database.close();
-    return super.close();
+  void updateDataForGetOutTask(context,data){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddTask(
+            data: data,
+          ),
+        )).then((value) async{
+      await getAllTasksDataWithItSubTasks();
+      sortedAllDataList(notes, tasks, memories);
+    });
   }
+  void updateDataForGetOutNote(context,data){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddNote(
+            data: data,
+          ),
+        )).then((value) async{
+      await getNotesDataWithItsImages();
+      sortedAllDataList(notes, tasks, memories);
+    });
+  }
+  void updateDataForGetOutMemory(context,data){
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddMemory(
+            data: data,
+          ),
+        )).then((value) async{
+      await getAllMemoriesDataWithItsImages();
+      sortedAllDataList(notes, tasks, memories);
+    });
+  }
+
 }

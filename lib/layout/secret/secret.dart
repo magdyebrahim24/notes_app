@@ -6,20 +6,22 @@ import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/note/note_preview.dart';
 import 'package:notes_app/layout/secret/bloc/cubit.dart';
 import 'package:notes_app/layout/secret/bloc/states.dart';
+import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
+import 'package:notes_app/modules/drawer/drawer.dart';
 
 class Secret extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => SecretCubit()..onBuild(),
-      child: BlocConsumer<SecretCubit,SecretStates>(
-        listener: (context,state){},
-        builder: (context,state){
+      child: BlocConsumer<SecretCubit, SecretStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
           SecretCubit cubit = SecretCubit.get(context);
           List<Widget> bodyList = [
-            NotePreview(data: cubit.notes,
+            NotePreview(
+              data: cubit.notes,
               navFun: (data) {
                 Navigator.push(
                     context,
@@ -30,11 +32,21 @@ class Secret extends StatelessWidget {
                     )).then((value) {
                   cubit.getNotesDataWithItsImages();
                 });
-              },isLoading: cubit.isLoading,),
-            TasksPreview(
-                cubit.tasks,
-                    () => cubit.getAllTasksDataWithItSubTasks(),
-                cubit.isLoading),
+              },
+              isLoading: cubit.isLoading,
+            ),
+            TasksPreview(body: cubit.tasks,
+                onTapFun: (data) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddTask(
+                      data: data,
+                    ),
+                  )).then((value) {
+                cubit.getAllTasksDataWithItSubTasks();
+              });
+            },isLoading:  cubit.isLoading),
             MemoriesPreview(
                 data: cubit.memories,
                 isLoading: cubit.isLoading,
@@ -51,7 +63,27 @@ class Secret extends StatelessWidget {
                 }),
           ];
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MenuDashboardPage()));
+                },
+                icon: Icon(Icons.arrow_back),
+              ),
+              actions: [
+                MaterialButton(
+                    child: Text(
+                      'Update Password',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      cubit.upDatePassword(context);
+                    }),
+              ],
+            ),
             body: bodyList[cubit.navBarIndex],
             floatingActionButton: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -75,9 +107,10 @@ class Secret extends StatelessWidget {
               ),
             ),
             floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerFloat,
+                FloatingActionButtonLocation.centerFloat,
           );
         },
       ),
     );
-  }}
+  }
+}

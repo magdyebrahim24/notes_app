@@ -3,7 +3,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/favorite/favorite.dart';
 import 'package:notes_app/layout/home/home.dart';
-import 'package:notes_app/verify/verify.dart';
+import 'package:notes_app/shared/cache_helper.dart';
+import 'package:notes_app/verify/create_pass.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/shared/bloc/cubit/cubit.dart';
 import 'package:notes_app/shared/bloc/states/states.dart';
@@ -40,7 +42,8 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                 backgroundColor: backgroundColor,
                 body: Stack(
                   children: [
-                    menu(context,rebuildFunction: ()=>cubit.getDataAndRebuild(),
+                    menu(context,
+                        rebuildFunction: () => cubit.getDataAndRebuild(),
                         menuScaleAnimation: cubit.drawerMenuScaleAnimation,
                         slideAnimation: cubit.drawerSlideAnimation),
                     dashboard(context, cubit: cubit),
@@ -50,7 +53,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             }));
   }
 
-  Widget menu(context, {slideAnimation, menuScaleAnimation,rebuildFunction}) {
+  Widget menu(context, {slideAnimation, menuScaleAnimation, rebuildFunction}) {
     return SlideTransition(
       position: slideAnimation,
       child: ScaleTransition(
@@ -65,28 +68,43 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Container(
-                  alignment: Alignment.center,
+                    alignment: Alignment.center,
                     margin: EdgeInsets.only(bottom: 50),
-                    width: .5 * screenWidth! ,
-                    child: Text('Notes',style: TextStyle(fontSize: 30,color: Colors.white),)),
+                    width: .5 * screenWidth!,
+                    child: Text(
+                      'Notes',
+                      style: TextStyle(fontSize: 30, color: Colors.white),
+                    )),
                 _drawerItem(
-                  text: 'Setting',
-                  leading: Icons.settings,
-                  fun: ()=>Navigator.push(context, MaterialPageRoute(builder:(context) => Setting()))
-                ),
+                    text: 'Setting',
+                    leading: Icons.settings,
+                    fun: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Setting()))),
                 _drawerItem(
                     text: 'Secret',
                     leading: Icons.lock_open_outlined,
-                    fun:  ()=>Navigator.push(context, MaterialPageRoute(builder:(context) => Verify()))
-                ),
+                    fun: () {
+                      String? pass = CacheHelper.getString(key: 'secret_password');
+                      if (pass == null) {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CreatePass()));
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Login()));
+                      }
+                    }),
                 _drawerItem(
                     text: 'Favorite',
                     leading: Icons.stars,
-                    fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteScreen(),)).then((value){
-                      rebuildFunction();
-                    })
-                ),
-
+                    fun: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FavoriteScreen(),
+                            )).then((value) {
+                          rebuildFunction();
+                        })),
               ],
             ),
           ),
@@ -95,21 +113,24 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
     );
   }
 
-  Widget _drawerItem({text,leading,fun}) {
+  Widget _drawerItem({text, leading, fun}) {
     return SizedBox(
-                width: 0.5 *  screenWidth!,
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(text, style: TextStyle(color: Colors.white, fontSize: 20)),
-                      leading: Icon(leading,color: Colors.white,),
-                      onTap: fun,
-
-                    ),
-                    Divider(color: Colors.white60,indent: 15,endIndent: 20),
-                  ],
-                ),
-              );
+      width: 0.5 * screenWidth!,
+      child: Column(
+        children: [
+          ListTile(
+            title:
+                Text(text, style: TextStyle(color: Colors.white, fontSize: 20)),
+            leading: Icon(
+              leading,
+              color: Colors.white,
+            ),
+            onTap: fun,
+          ),
+          Divider(color: Colors.white60, indent: 15, endIndent: 20),
+        ],
+      ),
+    );
   }
 
   Widget dashboard(context, {cubit}) {
@@ -132,7 +153,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Stack(
               children: [
-                Home(cubit,cubit.database),
+                Home(cubit, cubit.database),
                 GestureDetector(
                   onTap: cubit.isDrawerCollapsed ? null : cubit.openDrawer,
                   onHorizontalDragUpdate: cubit.isDrawerCollapsed

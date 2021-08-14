@@ -1,10 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/constants.dart';
 
 class TasksPreview extends StatelessWidget {
@@ -12,7 +9,7 @@ class TasksPreview extends StatelessWidget {
   final onTapFun;
   final List body;
 
-  TasksPreview(this.body, this.onTapFun, this.isLoading);
+  TasksPreview({required this.body, this.onTapFun, this.isLoading});
 
   @override
   Widget build(BuildContext context) {

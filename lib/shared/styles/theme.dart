@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/shared/constants.dart';
 
 ThemeData lightTheme = ThemeData(
+  fontFamily: 'PT_Sans',
   tabBarTheme: TabBarTheme(
     labelStyle:TextStyle(color: blueColor),
     labelColor: blueColor,
@@ -19,6 +20,8 @@ ThemeData lightTheme = ThemeData(
     elevation: 0.0,
 
   ),
+  textTheme: TextTheme(headline4: TextStyle(color: Colors.black),headline5: TextStyle(color: Colors.black),
+    headline6: TextStyle(color: Colors.black),),
 
 );
 

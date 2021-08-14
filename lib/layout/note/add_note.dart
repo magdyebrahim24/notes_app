@@ -131,7 +131,6 @@ class AddNote extends StatelessWidget {
                     ),
                   ),
                   SizedBox(),
-                  // Image.file(File('/data/user/0/com.example.notes_app/app_flutter/notes_images/image_picker7464063783057228289.jpg'),height: 50,width: 100,cacheHeight: 100,cacheWidth: 100,),
                   GridViewComponents(cubit.selectedGalleryImagesList, (){}, false,
                       imagesCards),
                   GridViewComponents(cubit.cachedImagesList, (){}, false,
@@ -139,15 +138,27 @@ class AddNote extends StatelessWidget {
                 ],
               ),
             ),
-            floatingActionButton: cubit.noteId != null ? BottomIconBar(
-              isFavorite: cubit.isFavorite,
-              deleteFun: () =>
-                  cubit.deleteNote(context, id: cubit.noteId!),
-              addImageFun: () =>
-                  cubit.pickImageFromGallery(ImageSource.gallery),
-              addToFavoriteFun: ()=> cubit.addToFavorite(),
-              addToSecretFun: ()=> cubit.addToSecret(),
-            ):SizedBox(),
+
+            bottomSheet: BottomAppBar(
+              child: cubit.noteId != null ? BottomIconBar(
+                isFavorite: cubit.isFavorite,
+                deleteFun: () =>
+                    cubit.deleteNote(context, id: cubit.noteId!),
+                addImageFun: () =>
+                    cubit.pickImageFromGallery(ImageSource.gallery),
+                addToFavoriteFun: ()=> cubit.addToFavorite(),
+                addToSecretFun: ()=> cubit.addToSecret(context),
+              ):SizedBox(),
+            ),
+            // floatingActionButton: cubit.noteId != null ? BottomIconBar(
+            //   isFavorite: cubit.isFavorite,
+            //   deleteFun: () =>
+            //       cubit.deleteNote(context, id: cubit.noteId!),
+            //   addImageFun: () =>
+            //       cubit.pickImageFromGallery(ImageSource.gallery),
+            //   addToFavoriteFun: ()=> cubit.addToFavorite(),
+            //   addToSecretFun: ()=> cubit.addToSecret(),
+            // ):SizedBox(),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
             resizeToAvoidBottomInset: true,
 
@@ -155,6 +166,8 @@ class AddNote extends StatelessWidget {
         },
       ),
     );
+
+
   }
 
   // Widget bottomIconBar(
