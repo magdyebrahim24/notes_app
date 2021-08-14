@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
+import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:share/share.dart';
 
 class SettingCubit extends Cubit<SettingStates> {
@@ -16,7 +17,8 @@ class SettingCubit extends Cubit<SettingStates> {
 
   bool? checkMode;
 
-  void onBuild() {
+  String? language = "en";
+  void onBuild() async{
     checkMode = CacheHelper.getBool(key: 'mode');
     if (checkMode != null) {
       darkMode = checkMode!;
@@ -25,6 +27,7 @@ class SettingCubit extends Cubit<SettingStates> {
       darkMode = brightness == Brightness.dark;
       CacheHelper.putBool(key: 'mode', value: darkMode);
     }
+     language = await getLanguage();
     emit(SettingOnBuildState());
   }
 

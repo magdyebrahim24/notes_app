@@ -1,12 +1,17 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/terms_of_use/terms_of_use.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
+import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
+import 'package:notes_app/shared/localizations/localization_models/language_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Setting extends StatelessWidget {
+  final String defaultLocale = Platform.localeName;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SettingCubit, SettingStates>(
@@ -45,9 +50,7 @@ class Setting extends StatelessWidget {
               //   color: Colors.grey,
               // ),
               tileItem(
-                  fun: () {},
-                  title: 'About',
-                  leadingIcon: Icons.info_outline),
+                  fun: () {}, title: 'About', leadingIcon: Icons.info_outline),
               tileItem(
                   fun: () {},
                   title: 'Contact Us',
@@ -81,13 +84,14 @@ class Setting extends StatelessWidget {
                 ),
               ),
 
+              _createLanguageDropDown(context),
+              Text( cubit.language.toString() + defaultLocale.toString(),style: TextStyle(color: Colors.grey,fontSize: 20),),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 35, horizontal: 20),
+                    padding: EdgeInsets.symmetric(vertical: 35, horizontal: 20),
                     child: Text(
                       'contactUS',
                       textAlign: TextAlign.end,
@@ -102,32 +106,30 @@ class Setting extends StatelessWidget {
               tileItem(
                   leadingIcon: FontAwesomeIcons.facebookF,
                   title: 'faceBook',
-                  fun: () =>
-                      launch('https://www.facebook.com/migoamasha224')),
+                  fun: () => launch('https://www.facebook.com/migoamasha224')),
               tileItem(
                   leadingIcon: FontAwesomeIcons.twitter,
                   title: 'Twitter',
-                  fun: () async{
+                  fun: () async {
+                    String fbProtocolUrl = 'fb://profile/page_id';
 
-         String  fbProtocolUrl = 'fb://profile/page_id';
+                    String fallbackUrl = 'https://www.facebook.com/page_name';
 
+                    try {
+                      bool launched =
+                          await launch(fbProtocolUrl, forceSafariVC: false);
 
-        String fallbackUrl = 'https://www.facebook.com/page_name';
+                      if (!launched) {
+                        await launch(fallbackUrl, forceSafariVC: false);
+                      }
+                    } catch (e) {
+                      await launch(fallbackUrl, forceSafariVC: false);
+                    }
+                    // launch(
+                    //         'https://twitter.com/migoo_1_3?s=09&fbclid=IwAR3k92gBqVe_OWHYwn2jsvsdV7hpO_lCB9dqJdS2SSM-7yhlaD_i8S7nsKM')
+                  })
 
-        try {
-        bool launched = await launch(fbProtocolUrl, forceSafariVC: false);
-
-        if (!launched) {
-        await launch(fallbackUrl, forceSafariVC: false);
-        }
-        } catch (e) {
-        await launch(fallbackUrl, forceSafariVC: false);
-        }
-        // launch(
-        //         'https://twitter.com/migoo_1_3?s=09&fbclid=IwAR3k92gBqVe_OWHYwn2jsvsdV7hpO_lCB9dqJdS2SSM-7yhlaD_i8S7nsKM')
-        })
-
-        // DrawerTile(
+              // DrawerTile(
 
               //     leadingIconColor: primaryColor.withOpacity(.8),
               //     icon: FontAwesomeIcons.twitter,
@@ -150,6 +152,68 @@ class Setting extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  _createLanguageDropDown(context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.language, color: Colors.grey),
+              SizedBox(
+                width: 33,
+              ),
+              Text(
+                Languages.of(context)!.setting['language'],
+                style: TextStyle(color: Colors.grey, fontSize: 16),
+              ),
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 55),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<LanguageData>(
+                      iconSize: 30,
+                      hint: Text(Languages.of(context)!
+                          .setting['labelSelectLanguage']),
+                      onChanged: (language) {
+                        changeLanguage(context, language!.languageCode);
+                      },
+                      isDense: false,
+                      items: LanguageData.languageList()
+                          .map<DropdownMenuItem<LanguageData>>(
+                            (e) => DropdownMenuItem<LanguageData>(
+                              value: e,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: <Widget>[
+                                  Text(
+                                    e.flag,
+                                    style: TextStyle(fontSize: 30),
+                                  ),
+                                  Text(e.name)
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
