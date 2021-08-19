@@ -13,6 +13,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
   static FavoriteCubit get(context) => BlocProvider.of(context);
 
   late Database database;
+  bool isFavorite=true;
   bool isLoading = true;
   List notes = [];
   List tasks = [];

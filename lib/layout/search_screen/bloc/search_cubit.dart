@@ -24,7 +24,7 @@ class SearchCubit extends Cubit<SearchStates> {
 
   Future search(text) async {
     searchResult = [];
-    if (text != '' && text != null) {
+    if (text != '' && text != null && text != ' ') {
       List allNotesData = await getNotesDataWithItsImages(text);
       List allTasksData = await getAllTasksDataWithItSubTasks(text);
       List allMemoriesData = await getAllMemoriesDataWithItsImages(text);

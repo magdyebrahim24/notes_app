@@ -5,7 +5,6 @@ import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_cubit.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
 import 'package:notes_app/layout/task/add_task.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -32,39 +31,27 @@ class SearchScreen extends StatelessWidget {
                     child: TextFormField(
                       controller: cubit.searchController,
                       decoration: InputDecoration(
-                        focusColor: greyColor,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: Colors.white60)),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                           borderSide: BorderSide(
                             color: Colors.white60,
                           ),
                         ),
-                        fillColor: Colors.grey.withOpacity(.1),
-                        filled: true,
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                               width: 1, color: Colors.grey.withOpacity(.4)),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        hintStyle: TextStyle(
-                          color: greyColor,
-                        ),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+                        filled: true,
                         hintText: 'Search ...',
-                        suffixStyle: TextStyle(color: greyColor),
                         suffixIcon: Icon(
                           Icons.search_rounded,
                           color: Colors.white60,
                         ),
                       ),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                      ),
+                      style: Theme.of(context).textTheme.bodyText2,
                       cursorColor: Colors.white,
                       textInputAction: TextInputAction.search,
                       onEditingComplete: () {
@@ -84,11 +71,9 @@ class SearchScreen extends StatelessWidget {
                   itemBuilder: (context, index) => Card(
                         margin:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 7),
-                        color: Color(0xff2e2e3e),
                         elevation: 5,
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         semanticContainer: true,
-                        shadowColor: Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
@@ -134,10 +119,10 @@ class SearchScreen extends StatelessWidget {
                                         maxLines: 1,
                                         softWrap: true,
                                         overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .headline5!
+                                            .copyWith(fontSize: 22),
                                       ),
                                       // Container(
                                       //   color: Colors.white24,
@@ -157,9 +142,9 @@ class SearchScreen extends StatelessWidget {
                                               child: Text(
                                                 '${cubit.searchResult[index]['createdDate']} , ${cubit.searchResult[index]['createdTime']}',
                                                 maxLines: 1,
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 13),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .subtitle1,
                                               ),
                                             ),
                                             SizedBox(
@@ -174,9 +159,9 @@ class SearchScreen extends StatelessWidget {
                                                   maxLines: 1,
                                                   softWrap: true,
                                                   overflow: TextOverflow.clip,
-                                                  style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 13),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .subtitle1,
                                                 ),
                                               ),
                                             ),

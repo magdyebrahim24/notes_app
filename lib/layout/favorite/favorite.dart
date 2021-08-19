@@ -27,10 +27,11 @@ class FavoriteScreen extends StatelessWidget {
                     itemBuilder: (BuildContext context, int index) {
                       return cubit.allData[index]['type'] == 'note'
                           ? NoteCard(
+                        isFavorite: cubit.isFavorite,
                               onTapFun: () {cubit.updateDataForGetOutNote(context,cubit.allData[index]);}, data: cubit.allData[index])
                           : cubit.allData[index]['type'] == 'task'
-                              ? TaskCard(() {cubit.updateDataForGetOutTask(context,cubit.allData[index]);}, cubit.allData[index])
-                              : MemoryCard(() {cubit.updateDataForGetOutMemory(context, cubit.allData[index]);}, cubit.allData[index]);
+                              ? TaskCard( onTapFun: () {cubit.updateDataForGetOutTask(context,cubit.allData[index]);},data:  cubit.allData[index],isFavorite: cubit.isFavorite,)
+                              : MemoryCard(noTapFun: () {cubit.updateDataForGetOutMemory(context, cubit.allData[index]);},data:  cubit.allData[index],isFavorite: cubit.isFavorite,);
                     },
                     staggeredTileBuilder: (int index) =>
                         new StaggeredTile.fit(1),

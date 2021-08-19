@@ -18,7 +18,7 @@ class MemoriesPreview extends StatelessWidget {
             itemCount: data.length,
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
             itemBuilder: (BuildContext context, int index) {
-              return MemoryCard(()=> onTapFun(data[index]), data[index]);
+              return MemoryCard(noTapFun: ()=> onTapFun(data[index]), data: data[index]);
             },
             staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
             mainAxisSpacing: 4.0,
@@ -30,15 +30,15 @@ class MemoriesPreview extends StatelessWidget {
 class MemoryCard extends StatelessWidget {
   final noTapFun;
   final data;
+  final isFavorite;
 
-  const MemoryCard(this.noTapFun, this.data);
+  const MemoryCard({this.noTapFun, this.data,this.isFavorite=false});
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.all(5),
-      // elevation: 5,
-      color: Color(0xff2e2e3e),
+      elevation: 8,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       semanticContainer: true,
       // shadowColor: Colors.grey,
@@ -70,10 +70,7 @@ class MemoryCard extends StatelessWidget {
                     maxLines: 2,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                    style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 22),
                   )
                       : SizedBox(),
                   data['title'].toString().isNotEmpty
@@ -88,8 +85,8 @@ class MemoryCard extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 17),
                     child: Text(
                       '${data['body']}',
-                      style: TextStyle(
-                          fontSize: 17, color: Colors.white),
+                      style:
+                      Theme.of(context).textTheme.bodyText2,
                       maxLines: 10,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
@@ -106,8 +103,7 @@ class MemoryCard extends StatelessWidget {
                           child: Text(
                             '${data['createdDate']}',
                             maxLines: 1,
-                            style: TextStyle(
-                                color: Colors.white, fontSize: 13),
+                            style: Theme.of(context).textTheme.subtitle1,
                           ),
                         ),
                         SizedBox(
@@ -117,12 +113,11 @@ class MemoryCard extends StatelessWidget {
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text(
-                              '${data['createdTime']}',
+                              '${data[isFavorite ?'type':'createdTime']}',
                               maxLines: 1,
                               softWrap: true,
                               overflow: TextOverflow.clip,
-                              style: TextStyle(
-                                  color: Colors.white, fontSize: 13),
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ),
                         ),

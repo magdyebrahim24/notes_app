@@ -20,153 +20,7 @@ class TasksPreview extends StatelessWidget {
             itemCount: body.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
-              return TaskCard(() => onTapFun(body[index]), body[index]);
-              // return Card(
-              //   margin: EdgeInsets.all(5),
-              //   // elevation: 5,
-              //   clipBehavior: Clip.antiAliasWithSaveLayer,
-              //   semanticContainer: true,
-              //   // shadowColor: Colors.grey,
-              //   shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(5.0),
-              //   ),
-              //   child: InkWell(
-              //     onTap: () {
-              //       Navigator.push(
-              //           context,
-              //           MaterialPageRoute(
-              //             builder: (context) => AddTask(
-              //               data: body[index],
-              //             ),
-              //           )).then((value) {
-              //         funForRebuild();
-              //       });
-              //     },
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //           color: Color(0xff2e2e3e)),
-              //       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Text(
-              //             body[index]['title'] ?? 'Title',
-              //             maxLines: 2,
-              //             softWrap: true,
-              //             overflow: TextOverflow.ellipsis,
-              //             style: TextStyle(
-              //                 fontSize: 22,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: Colors.white),
-              //           ),
-              //           Container(
-              //             color: Colors.white24,
-              //             height: .5,
-              //             margin: EdgeInsets.symmetric(vertical: 10),
-              //           ),
-              //           ListView.builder(
-              //             padding: EdgeInsets.zero,
-              //             shrinkWrap: true,
-              //             physics: NeverScrollableScrollPhysics(),
-              //             itemCount: body[index]['subTasks'].length,
-              //             itemBuilder: (context, i) {
-              //               return Row(
-              //                 children: [
-              //                   Checkbox(
-              //                     shape: RoundedRectangleBorder(
-              //                         borderRadius: BorderRadius.circular(50)),
-              //                     onChanged: (value){
-              //                       Navigator.push(
-              //                           context,
-              //                           MaterialPageRoute(
-              //                             builder: (context) => AddTask(
-              //                               data: body[index],
-              //                             ),
-              //                           )).then((value) {
-              //                         funForRebuild();
-              //                       });
-              //                     },
-              //                     splashRadius: 0 ,
-              //                     value:
-              //                         body[index]['subTasks'][i]['isDone'] == 0
-              //                             ? false
-              //                             : true,
-              //                     fillColor: MaterialStateProperty.resolveWith(
-              //                         (states) => blueColor),
-              //                     materialTapTargetSize:
-              //                         MaterialTapTargetSize.shrinkWrap,
-              //                   ),
-              //                   Expanded(
-              //                     child: Text(
-              //                       '${body[index]['subTasks'][i]['body']}',
-              //                       style: TextStyle(
-              //                         fontSize: 17,
-              //                         color: body[index]['subTasks'][i]
-              //                                     ['isDone'] ==
-              //                                 1
-              //                             ? Colors.white60
-              //                             : Colors.white,
-              //                         decoration: body[index]['subTasks'][i]
-              //                                     ['isDone'] ==
-              //                                 1
-              //                             ? TextDecoration.lineThrough
-              //                             : TextDecoration.none,
-              //                       ),
-              //                       maxLines: 1,
-              //                       softWrap: true,
-              //                       overflow: TextOverflow.ellipsis,
-              //                     ),
-              //                   ),
-              //                 ],
-              //               );
-              //             },
-              //           ),
-              //           body[index]['subTasks'].isNotEmpty
-              //               ? Container(
-              //                   color: Colors.white24,
-              //                   height: .5,
-              //                   margin: EdgeInsets.symmetric(vertical: 10),
-              //                 )
-              //               : SizedBox(),
-              //           Directionality(
-              //             textDirection: TextDirection.ltr,
-              //             child: Row(
-              //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //               children: [
-              //                 Expanded(
-              //                   flex: 4,
-              //                   child: Text(
-              //                     '${body[index]['createdDate']}',
-              //                     maxLines: 1,
-              //                     style: TextStyle(
-              //                         color: Colors.white, fontSize: 13),
-              //                   ),
-              //                 ),
-              //                 SizedBox(
-              //                   width: 10,
-              //                 ),
-              //                 Expanded(
-              //                   flex: 3,
-              //                   child: Align(
-              //                     alignment: Alignment.centerRight,
-              //                     child: Text(
-              //                       '${body[index]['createdTime']}',
-              //                       maxLines: 1,
-              //                       softWrap: true,
-              //                       overflow: TextOverflow.clip,
-              //                       style: TextStyle(
-              //                           color: Colors.white, fontSize: 13),
-              //                     ),
-              //                   ),
-              //                 ),
-              //               ],
-              //             ),
-              //           )
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // );
+              return TaskCard(onTapFun: () => onTapFun(body[index]), data: body[index]);
             },
             staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
             // mainAxisSpacing: 5.0,
@@ -179,8 +33,9 @@ class TasksPreview extends StatelessWidget {
 class TaskCard extends StatelessWidget {
   final onTapFun;
   final data;
+  final isFavorite;
 
-  const TaskCard(this.onTapFun, this.data);
+  const TaskCard({this.onTapFun, this.data,this.isFavorite=false});
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -193,7 +48,6 @@ class TaskCard extends StatelessWidget {
       child: InkWell(
         onTap: onTapFun,
         child: Container(
-          decoration: BoxDecoration(color: Color(0xff2e2e3e)),
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,10 +57,7 @@ class TaskCard extends StatelessWidget {
                 maxLines: 2,
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
+                style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 22),
               ),
               Container(
                 color: Colors.white24,
@@ -222,28 +73,15 @@ class TaskCard extends StatelessWidget {
                   return Row(
                     children: [
                       Checkbox(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50)),
                         onChanged: (value) => onTapFun,
-                        splashRadius: 0,
                         value:
                             data['subTasks'][i]['isDone'] == 0 ? false : true,
-                        fillColor: MaterialStateProperty.resolveWith(
-                            (states) => blueColor),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       Expanded(
                         child: Text(
                           '${data['subTasks'][i]['body']}',
-                          style: TextStyle(
-                            fontSize: 17,
-                            color: data['subTasks'][i]['isDone'] == 1
-                                ? Colors.white60
-                                : Colors.white,
-                            decoration: data['subTasks'][i]['isDone'] == 1
-                                ? TextDecoration.lineThrough
-                                : TextDecoration.none,
-                          ),
+                          style: data['subTasks'][i]['isDone'] == 1?
+                          Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
                           maxLines: 1,
                           softWrap: true,
                           overflow: TextOverflow.ellipsis,
@@ -270,7 +108,7 @@ class TaskCard extends StatelessWidget {
                       child: Text(
                         '${data['createdDate']}',
                         maxLines: 1,
-                        style: TextStyle(color: Colors.white, fontSize: 13),
+                        style: Theme.of(context).textTheme.subtitle1,
                       ),
                     ),
                     SizedBox(
@@ -281,11 +119,11 @@ class TaskCard extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          '${data['createdTime']}',
+                          '${data[isFavorite?'type':'createdTime']}',
                           maxLines: 1,
                           softWrap: true,
                           overflow: TextOverflow.clip,
-                          style: TextStyle(color: Colors.white, fontSize: 13),
+                          style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
                     ),
