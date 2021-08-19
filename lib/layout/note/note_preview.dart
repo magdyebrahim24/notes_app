@@ -36,7 +36,7 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 7),
-      elevation: 8,
+      elevation: 4,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       semanticContainer: true,
       shape: RoundedRectangleBorder(

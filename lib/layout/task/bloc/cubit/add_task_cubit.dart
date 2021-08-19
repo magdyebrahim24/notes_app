@@ -65,7 +65,6 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
           subTasksList[index]['id'].toString() +
           'has been deleted');
       subTasksList.removeAt(index);
-      getSubTaskData();
       emit(AppTaskRemoveSubTaskState());
     }).catchError((error) {
       print(error);

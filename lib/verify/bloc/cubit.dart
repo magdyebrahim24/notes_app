@@ -46,23 +46,17 @@ class LoginCubit extends Cubit<VerifyStates> {
         passwordDigitsList.forEach((element) {
           passwordText = passwordText + element.toString();
         });
-        print('00000000000000000000000000000000000');
-        print(storedPassword);
         if (passwordText == storedPassword) {
           if (isUpdate == true) {
-            print('karaaaaaaaaaaa');
            await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>CreatePass()));
           }else if(id != null){
-            print('kara bel qestaaaaaaaaa');
             database.rawQuery('SELECT is_secret FROM $table WHERE id = ?',
                 [id]).then((value) {
               var isSecret = value[0]['is_secret'];
-              print('MMMMMMMMMMMMMMM $isSecret');
               if (isSecret == 0) {
                 database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',
                     [1, id]).then((val) {
-                  print('$val  is done');
                   emit(UpdateTableState());
                 }).catchError((error) {
                   print(error);
@@ -71,7 +65,6 @@ class LoginCubit extends Cubit<VerifyStates> {
                 database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',
                     [0, id]).then((val) {
-                  print('$val  is done');
                   emit(UpdateTableState());
                 }).catchError((error) {
                   print(error);
@@ -109,8 +102,6 @@ class LoginCubit extends Cubit<VerifyStates> {
     } else {
       if (passwordDigitsList.length < 4) {
         passwordDigitsList.add(index + 1);
-        print(passwordDigitsList);
-        print('in verify');
         if (passwordDigitsList.length == 4) {
           passwordText = '';
           passwordDigitsList.forEach((element) {
@@ -126,7 +117,6 @@ class LoginCubit extends Cubit<VerifyStates> {
                 print(error);
               });
             }
-            print('pass is verified');
             CacheHelper.putString(key: 'secret_password', value: passwordText);
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Secret()));

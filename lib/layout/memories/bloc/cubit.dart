@@ -31,7 +31,27 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   XFile? image;
   bool isFavorite = false ;
   late Database database ;
+  final formKey = GlobalKey<FormState>();
 
+
+  void saveButton(context){
+   if(formKey.currentState!.validate()) {
+      if (memoryID == null) {
+        insertNewMemory(
+          context,
+          memoryDate: dateController.toString(),
+          title: titleController.text,
+          body: memoryTextController.text,
+        );
+      } else {
+        updateMemory(context,
+            id: memoryID!,
+            body: memoryTextController.text,
+            memoryDate: dateController.toString(),
+            title: titleController.text);
+      }
+    }
+  }
   void onBuild(data) async{
     var db = await openDatabase('database.db');
     database = db ;

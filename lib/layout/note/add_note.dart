@@ -13,11 +13,12 @@ class AddNote extends StatelessWidget {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AddNote({this.data});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-      AddNoteCubit()..onBuildAddNoteScreen(data),
+          AddNoteCubit()..onBuildAddNoteScreen(data),
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
         listener: (context, AddNoteState state) {
           if (state.toString() == 'AddNoteCubit') {
@@ -58,7 +59,8 @@ class AddNote extends StatelessWidget {
                     ? IconButton(
                         onPressed: () {
                           if (cubit.noteId == null) {
-                            cubit.insertNewNote(context,
+                            cubit.insertNewNote(
+                              context,
                               title: cubit.titleController.text,
                               body: cubit.noteTextController.text,
                             );
@@ -81,6 +83,10 @@ class AddNote extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   DefaultFormField(
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.headline4!.color,
+                      fontSize: 28,
+                    ),
                     controller: cubit.titleController,
                     focusNode: cubit.titleFocus,
                     onTap: () {
@@ -92,9 +98,9 @@ class AddNote extends StatelessWidget {
                     maxLines: null,
                     minLines: null,
                     fillColor: Theme.of(context).primaryColor,
-                    hintText: 'Title',
+                    hintText: 'title',
                     hintStyle: TextStyle(
-                        color: greyColor,
+                        color: Theme.of(context).hintColor,
                         fontSize: 28,
                         fontWeight: FontWeight.normal),
                   ),
@@ -106,7 +112,7 @@ class AddNote extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.white24),
+                        color: Theme.of(context).dividerColor),
                   ),
                   Center(
                     child: DefaultFormField(
@@ -116,7 +122,7 @@ class AddNote extends StatelessWidget {
                         cubit.onFocusBodyChange();
                       },
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).textTheme.headline4!.color,
                         fontSize: 20,
                       ),
                       onChanged: (value) {
@@ -125,121 +131,42 @@ class AddNote extends StatelessWidget {
                       maxLines: null,
                       minLines: null,
                       keyboardType: TextInputType.multiline,
-                      hintText: 'Start typing your note ...',
+                      hintText: 'typing your note ...',
                       fillColor: Theme.of(context).primaryColor,
-                      hintStyle: TextStyle(color: greyColor, fontSize: 20),
+                      hintStyle: TextStyle(
+                          color: Theme.of(context).hintColor, fontSize: 20),
                     ),
                   ),
                   SizedBox(),
-                  GridViewComponents(cubit.selectedGalleryImagesList, (){}, false,
-                      imagesCards),
-                  GridViewComponents(cubit.cachedImagesList, (){}, false,
-                      imagesCards),
+                  GridViewComponents(cubit.selectedGalleryImagesList, () {},
+                      false, imagesCards),
+                  GridViewComponents(
+                      cubit.cachedImagesList, () {}, false, imagesCards),
                 ],
               ),
             ),
-
-            bottomSheet: BottomAppBar(
-              child: cubit.noteId != null ? BottomIconBar(
-                isFavorite: cubit.isFavorite,
-                deleteFun: () =>
-                    cubit.deleteNote(context, id: cubit.noteId!),
-                addImageFun: () =>
-                    cubit.pickImageFromGallery(ImageSource.gallery),
-                addToFavoriteFun: ()=> cubit.addToFavorite(),
-                addToSecretFun: ()=> cubit.addToSecret(context),
-              ):SizedBox(),
-            ),
-            // floatingActionButton: cubit.noteId != null ? BottomIconBar(
-            //   isFavorite: cubit.isFavorite,
-            //   deleteFun: () =>
-            //       cubit.deleteNote(context, id: cubit.noteId!),
-            //   addImageFun: () =>
-            //       cubit.pickImageFromGallery(ImageSource.gallery),
-            //   addToFavoriteFun: ()=> cubit.addToFavorite(),
-            //   addToSecretFun: ()=> cubit.addToSecret(),
-            // ):SizedBox(),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-            resizeToAvoidBottomInset: true,
-
+            bottomNavigationBar: cubit.noteId != null
+                ? BottomIconBar(
+                    isFavorite: cubit.isFavorite,
+                    deleteFun: () =>
+                        cubit.deleteNote(context, id: cubit.noteId!),
+                    addImageFun: () =>
+                        cubit.pickImageFromGallery(ImageSource.gallery),
+                    addToFavoriteFun: () => cubit.addToFavorite(),
+                    addToSecretFun: () => cubit.addToSecret(context),
+                  )
+                : SizedBox(),
+            floatingActionButton: cubit.noteId == null
+                ? FloatingActionButton(
+                    onPressed: () {
+                      cubit.pickImageFromGallery(ImageSource.gallery);
+                    },
+                    child: Icon(Icons.add_photo_alternate_outlined),
+                  )
+                : SizedBox(),
           );
         },
       ),
     );
-
-
   }
-
-  // Widget bottomIconBar(
-  //     {deleteFun, addImageFun, addToFavoriteFun, addToSecretFun}) {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: 30,vertical: 0),
-  //     child: Material(
-  //       elevation: 15,
-  //       borderRadius: BorderRadius.circular(20),
-  //       child: Padding(
-  //         padding: EdgeInsets.symmetric(vertical: 1),
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //           children: [
-  //             IconButton(
-  //                 onPressed: () {}, icon: Icon(Icons.lock_open_outlined)),
-  //             IconButton(
-  //                 onPressed: addToFavoriteFun,
-  //                 icon: Icon(
-  //                   Icons.star_border,
-  //                   size: 28,
-  //                 )),
-  //             IconButton(
-  //                 onPressed:  addImageFun,
-  //                 icon: Icon(Icons.add_photo_alternate_outlined)),
-  //             IconButton(
-  //                 onPressed: deleteFun,
-  //                 icon: Icon(
-  //                   Icons.delete_outline_outlined,
-  //                   color: Colors.redAccent,
-  //                   size: 28,
-  //                 )),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
 }
-
-// BottomAppBar(color: Colors.transparent,
-// elevation: 0,
-// child: Padding(
-// padding: const EdgeInsets.all(10.0),
-// child: Row(
-// mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-// children: [
-// MaterialButton(
-// minWidth: MediaQuery.of(context).size.width * .4,
-// onPressed: () => cubit.pickImage(ImageSource.gallery),
-// shape: RoundedRectangleBorder(
-// borderRadius: BorderRadius.circular(10)),
-// color: Colors.grey.withOpacity(.3),
-// padding: EdgeInsets.symmetric(
-// horizontal: 25,
-// vertical: 10
-// ),
-// child: Text('Add Image',style: TextStyle(color: Colors.white,fontSize: 16)),
-// ),
-// MaterialButton(
-// minWidth: MediaQuery.of(context).size.width * .4,
-// padding: EdgeInsets.symmetric(
-// horizontal: 25,
-// vertical: 10
-// ),
-// onPressed: () {},
-// shape: RoundedRectangleBorder(
-// borderRadius: BorderRadius.circular(10)),
-// color: Colors.redAccent.withOpacity(.1),
-// child: Text('Delete Note',style: TextStyle(color: Colors.red,fontSize: 16),),
-// )
-// ],
-// ),
-// ),
-// )

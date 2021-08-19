@@ -49,6 +49,8 @@ class DefaultFormField extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       decoration: InputDecoration(
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
         hintText: hintText,
         disabledBorder: disableBorder,
         hintStyle: hintStyle,

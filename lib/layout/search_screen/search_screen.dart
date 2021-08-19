@@ -31,28 +31,18 @@ class SearchScreen extends StatelessWidget {
                     child: TextFormField(
                       controller: cubit.searchController,
                       decoration: InputDecoration(
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.white60,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              width: 1, color: Colors.grey.withOpacity(.4)),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                         filled: true,
                         hintText: 'Search ...',
                         suffixIcon: Icon(
                           Icons.search_rounded,
-                          color: Colors.white60,
+                          color: Theme.of(context).accentColor,
                         ),
                       ),
                       style: Theme.of(context).textTheme.bodyText2,
-                      cursorColor: Colors.white,
+                      cursorColor: Theme.of(context).accentColor,
                       textInputAction: TextInputAction.search,
                       onEditingComplete: () {
                         cubit.search(cubit.searchController.text);

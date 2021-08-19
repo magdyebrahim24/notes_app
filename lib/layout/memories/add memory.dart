@@ -6,12 +6,12 @@ import 'package:notes_app/layout/memories/bloc/states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class AddMemory extends StatelessWidget {
   final data;
 
-  const AddMemory({this.data});
+
+   AddMemory({this.data});
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -48,22 +48,7 @@ class AddMemory extends StatelessWidget {
                         cubit.memoryTextController.text.isNotEmpty ||
                         cubit.selectedGalleryImagesList.isNotEmpty
                     ? IconButton(
-                        onPressed: () {
-                          if (cubit.memoryID == null) {
-                            cubit.insertNewMemory(
-                              context,
-                              memoryDate: cubit.dateController.toString(),
-                              title: cubit.titleController.text,
-                              body: cubit.memoryTextController.text,
-                            );
-                          } else {
-                            cubit.updateMemory(context,
-                                id: cubit.memoryID!,
-                                body: cubit.memoryTextController.text,
-                                memoryDate: cubit.dateController.toString(),
-                                title: cubit.titleController.text);
-                          }
-                        },
+                        onPressed: () => cubit.saveButton(context),
                         icon: Icon(Icons.done))
                     : SizedBox(),
               ],
@@ -74,40 +59,37 @@ class AddMemory extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    DefaultFormField(
-                      controller: cubit.titleController,
-                      focusNode: cubit.titleFocus,
-                      onTap: () {
-                        cubit.onFocusTitleChange();
-                      },
-                      onChanged: (value) {
-                        cubit.onTitleChange();
-                      },
-                      maxLines: null,
-                      minLines: null,
-                      fillColor: Theme.of(context).primaryColor,
-                      hintText: 'Title',
-                      hintStyle: TextStyle(
-                          color: greyColor,
+                    Form(
+                      key: cubit.formKey,
+                      child: DefaultFormField(
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.headline4!.color,
                           fontSize: 28,
-                          fontWeight: FontWeight.normal),
+                        ),
+                        controller: cubit.titleController,
+                        focusNode: cubit.titleFocus,
+                        onTap: () {
+                          cubit.onFocusTitleChange();
+                        },
+                        onChanged: (value) {
+                          cubit.onTitleChange();
+                        },
+                        maxLines: null,
+                        minLines: null,
+                        fillColor: Theme.of(context).primaryColor,
+                        hintText: 'Title',
+                        hintStyle: TextStyle(
+                            color: Theme.of(context).hintColor,
+                            fontSize: 28,
+                            fontWeight: FontWeight.normal),
+                        validator: (value){
+                          if(value.toString().isEmpty){
+                            return 'memory title required';
+                          }
+                        },
+                      ),
                     ),
-                    // TextFormField(
-                    //   controller: _titleController,
-                    //   style: TextStyle(
-                    //       color: Colors.white,
-                    //       fontSize: 28,
-                    //       fontWeight: FontWeight.w800
-                    //   ),
-                    //   maxLines: null,
-                    //   minLines: null,
-                    //   decoration: InputDecoration(
-                    //     hintText: 'Title',
-                    //     disabledBorder: InputBorder.none,
-                    //     hintStyle: TextStyle(color: greyColor, fontSize: 28,fontWeight: FontWeight.normal),
-                    //     fillColor: Theme.of(context).primaryColor,
-                    //     border: InputBorder.none,
-                    //   ),),
+
                     Container(
                       margin: EdgeInsets.only(
                         bottom: 10,
@@ -116,14 +98,14 @@ class AddMemory extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.white24),
+                          color: Theme.of(context).dividerColor),
                     ),
                     SizedBox(
                       height: 15,
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          color: Colors.white10,
+                          color: Theme.of(context).cardTheme.color,
                           borderRadius: BorderRadius.circular(10)),
                       width: double.infinity,
                       child: Row(
@@ -133,13 +115,13 @@ class AddMemory extends StatelessWidget {
                           ),
                           Text(
                             'Memory Date',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            style: TextStyle(fontSize: 18, color: Theme.of(context).textTheme.headline4!.color),
                           ),
                           Spacer(),
                           MaterialButton(
                             padding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 5),
-                            color: Colors.white24,
+                            color: Theme.of(context).dividerColor,
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             onPressed: () {
@@ -152,13 +134,12 @@ class AddMemory extends StatelessWidget {
                                       const EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
                                     cubit.dateController ?? 'Add',
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
+                                    style: Theme.of(context).textTheme.bodyText2,
                                   ),
                                 ),
                                 Icon(
                                   Icons.expand_more,
-                                  color: Colors.white,
+                                  color: Theme.of(context).textTheme.headline6!.color,
                                 )
                               ],
                             ),
@@ -176,7 +157,7 @@ class AddMemory extends StatelessWidget {
                         cubit.onFocusBodyChange();
                       },
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).textTheme.headline4!.color,
                         fontSize: 20,
                       ),
                       onChanged: (value) {
@@ -187,7 +168,7 @@ class AddMemory extends StatelessWidget {
                       keyboardType: TextInputType.multiline,
                       hintText: 'Start typing your Memory ...',
                       fillColor: Theme.of(context).primaryColor,
-                      hintStyle: TextStyle(color: greyColor, fontSize: 20),
+                      hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
                     ),
                     SizedBox(
                       height: 15,
@@ -200,7 +181,7 @@ class AddMemory extends StatelessWidget {
                 ),
               ),
             ),
-            floatingActionButton: cubit.memoryID != null
+            bottomNavigationBar: cubit.memoryID != null
                 ? BottomIconBar(
                     isFavorite: cubit.isFavorite,
                     deleteFun: () =>
@@ -211,9 +192,15 @@ class AddMemory extends StatelessWidget {
                     addToSecretFun: ()=> cubit.addToSecret(context),
                   )
                 : SizedBox(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            resizeToAvoidBottomInset: true,
+            floatingActionButton: cubit.memoryID == null
+                ? FloatingActionButton(
+              onPressed: () {
+                cubit.pickImageFromGallery(ImageSource.gallery);
+              },
+              child: Icon(Icons.add_photo_alternate_outlined),
+            )
+                : SizedBox(),
+
           );
         },
       ),

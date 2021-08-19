@@ -57,7 +57,7 @@ class Login extends StatelessWidget {
                                 icon: Icon(
                                   Icons.backspace_outlined,
                                   size: 28,
-                                  color: Colors.white,
+                                  color: them.headline6!.color,
                                 )),
                           ],
                         ),

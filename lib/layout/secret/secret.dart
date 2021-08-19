@@ -74,14 +74,15 @@ class Secret extends StatelessWidget {
                 icon: Icon(Icons.arrow_back),
               ),
               actions: [
-                MaterialButton(
-                    child: Text(
-                      'Update Password',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () {
-                      cubit.upDatePassword(context);
-                    }),
+                _offsetPopup(context,()=>cubit.upDatePassword(context) ),
+                // MaterialButton(
+                //     child: Text(
+                //       'Update Password',
+                //       style: TextStyle(color: Colors.white),
+                //     ),
+                //     onPressed: () {
+                //       cubit.upDatePassword(context);
+                //     }),
               ],
             ),
             body: bodyList[cubit.navBarIndex],
@@ -92,16 +93,15 @@ class Secret extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 child: BottomNavigationBar(
                   showUnselectedLabels: false,
-                  selectedIconTheme: IconThemeData(),
-                  currentIndex: cubit.navBarIndex,
+                  currentIndex: cubit.navBarIndex,unselectedIconTheme: IconThemeData(size: 26),
                   onTap: (value) => cubit.onNavBarIndexChange(value),
                   items: [
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.note_outlined), label: 'Notes'),
-                    BottomNavigationBarItem(
+                    BottomNavigationBarItem(tooltip: 'Notes',
+                        icon: Icon(Icons.article_outlined), label: 'Notes'),
+                    BottomNavigationBarItem(tooltip: 'Tasks',
                         icon: Icon(Icons.task_outlined), label: 'Tasks'),
-                    BottomNavigationBarItem(
-                        icon: Icon(Icons.archive), label: 'Memory'),
+                    BottomNavigationBarItem(tooltip: 'Memories',
+                        icon: Icon(Icons.event_available_outlined), label: 'Memories'),
                   ],
                 ),
               ),
@@ -113,4 +113,25 @@ class Secret extends StatelessWidget {
       ),
     );
   }
+  Widget _offsetPopup(context,fun) => PopupMenuButton<int>(
+      tooltip: 'More',
+      enableFeedback: true,
+      onSelected: (value) {
+        fun();
+      },
+      // offset: Offset(-10,45),
+
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          // padding: EdgeInsets.symmetric(horizontal: 50),
+          value: 1,
+          child: Text(
+            "Update Password",
+          ),
+        ),
+      ],
+      icon: Icon(
+        Icons.more_vert,
+        // color: greyColor,
+      ));
 }
