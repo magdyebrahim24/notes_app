@@ -6,7 +6,6 @@ import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class AddNote extends StatelessWidget {
   final data;
@@ -138,10 +137,10 @@ class AddNote extends StatelessWidget {
                     ),
                   ),
                   SizedBox(),
-                  GridViewComponents(cubit.selectedGalleryImagesList, () {},
-                      false, imagesCards),
-                  GridViewComponents(
-                      cubit.cachedImagesList, () {}, false, imagesCards),
+                  GridViewForImages(cubit.selectedGalleryImagesList,
+                      false, ),
+                  GridViewForImages(
+                      cubit.cachedImagesList, false, ),
                 ],
               ),
             ),

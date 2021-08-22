@@ -196,6 +196,8 @@ class AddTask extends StatelessWidget {
                                         ['isDone']?
                                         Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
                                         decoration: InputDecoration(
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
                                           hintText: 'write sub task',
                                           disabledBorder: InputBorder.none,
                                           hintStyle: TextStyle(
@@ -238,6 +240,8 @@ class AddTask extends StatelessWidget {
                                         style: cubit.newTasksList[index]
                                         ['isDone']?Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
                                         decoration: InputDecoration(
+                                          focusedBorder: InputBorder.none,
+                                          enabledBorder: InputBorder.none,
                                           hintText: 'write sub task',
                                           disabledBorder: InputBorder.none,
                                           hintStyle: TextStyle(
@@ -269,7 +273,7 @@ class AddTask extends StatelessWidget {
                         style: ButtonStyle(),
                         child: Text(
                           '+  Add sub task',
-                          style: Theme.of(context).textTheme.headline1,
+                          style: TextStyle(color: Theme.of(context).accentColor,fontSize: 18),
                         ),
                       )
                     ],
