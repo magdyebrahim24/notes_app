@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/cubit.dart';
 import 'package:notes_app/layout/memories/bloc/states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
-import 'package:notes_app/shared/components/gridview.dart';
+import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 
 class AddMemory extends StatelessWidget {
@@ -173,10 +173,19 @@ class AddMemory extends StatelessWidget {
                     SizedBox(
                       height: 15,
                     ),
-                    GridViewForImages(cubit.selectedGalleryImagesList, false,
+                    GridViewForImages(cubit.selectedGalleryImagesList,
+                      deleteFun: (id,index){
+                        cubit.deleteUnSavedImage(index: index);
+                      },
+                      expansionTileHeader: 'Un Saved Images',
                         ),
-                    GridViewForImages(cubit.cachedImagesList, false,
-                        ),
+                    GridViewForImages(cubit.cachedImagesList,
+                      deleteFun:(id,index){
+                        cubit.deleteImage(imageID: id, index: index);
+                      },
+                      expansionTileHeader: 'Saved Images',
+
+                    ),
                   ],
                 ),
               ),

@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
 
 class BottomIconBar extends StatelessWidget {
 final deleteFun, addImageFun, addToFavoriteFun, addToSecretFun;

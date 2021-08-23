@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
-import 'package:notes_app/shared/components/gridview.dart';
+import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 
 class AddNote extends StatelessWidget {
@@ -20,9 +20,6 @@ class AddNote extends StatelessWidget {
           AddNoteCubit()..onBuildAddNoteScreen(data),
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
         listener: (context, AddNoteState state) {
-          if (state.toString() == 'AddNoteCubit') {
-            print('done --------------------------');
-          }
         },
         builder: (context, state) {
           // AppCubit appCubit = AppCubit.get(context);
@@ -111,7 +108,7 @@ class AddNote extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Theme.of(context).dividerColor),
+                        color: Colors.white24),
                   ),
                   Center(
                     child: DefaultFormField(
@@ -138,11 +135,18 @@ class AddNote extends StatelessWidget {
                   ),
                   SizedBox(),
                   GridViewForImages(cubit.selectedGalleryImagesList,
-                      false, ),
+                  deleteFun: (id,index){
+                    cubit.deleteUnSavedImage(index: index);
+                  },
+                    expansionTileHeader: 'Un Saved Images',
+
+                  ),
                   GridViewForImages(
-                      cubit.cachedImagesList, false, ),
-                ],
-              ),
+                      cubit.cachedImagesList, deleteFun:(id,index){
+                    cubit.deleteSavedImage(imageID: id, index: index);
+                  },                      expansionTileHeader: 'Saved Images',
+                  ),
+                ], ),
             ),
             bottomNavigationBar: cubit.noteId != null
                 ? BottomIconBar(

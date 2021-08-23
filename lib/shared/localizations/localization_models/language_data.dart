@@ -8,7 +8,7 @@ class LanguageData {
   static List<LanguageData> languageList() {
     return <LanguageData>[
       LanguageData("🇺🇸", "English", 'en'),
-      LanguageData("eg", "اَلْعَرَبِيَّةُ‎", "ar"),
+      LanguageData("🇸🇦", "اَلْعَرَبِيَّةُ‎", "ar"),
       // LanguageData("🇮🇳", "हिंदी", 'hi'),
     ];
   }

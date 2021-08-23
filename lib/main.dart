@@ -83,9 +83,11 @@ class _MyAppState extends State<MyApp> {
               for (var supportedLocale in supportedLocales) {
                 if (supportedLocale.languageCode == locale?.languageCode &&
                     supportedLocale.countryCode == locale?.countryCode) {
+                  print(supportedLocale);
                   return supportedLocale;
                 }
               }
+              print('no language find');
               return supportedLocales.first;
             },
           );

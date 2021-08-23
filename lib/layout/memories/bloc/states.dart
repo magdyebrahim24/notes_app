@@ -36,5 +36,6 @@ class AddMemoryAddCachedImagesPathToDatabaseState extends AppMemoryStates {}
 class AddMemoryGetCachedImagesPathsFromDatabaseState extends AppMemoryStates {}
 
 class AddMemoryDeleteOneImageState extends AppMemoryStates {}
+class AddMemoryDeleteUnSavedImageState extends AppMemoryStates {}
 class AddMemoryFavoriteState extends AppMemoryStates {}
 class AddMemoryToSecretState extends AppMemoryStates {}

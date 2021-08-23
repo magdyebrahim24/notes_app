@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -11,7 +10,6 @@ import 'package:notes_app/shared/localizations/localization_models/language_data
 import 'package:url_launcher/url_launcher.dart';
 
 class Setting extends StatelessWidget {
-  final String defaultLocale = Platform.localeName;
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SettingCubit, SettingStates>(
@@ -85,7 +83,7 @@ class Setting extends StatelessWidget {
               ),
 
               _createLanguageDropDown(context),
-              Text( cubit.language.toString() + defaultLocale.toString(),style: TextStyle(color: Colors.grey,fontSize: 20),),
+              Text( cubit.language.toString() + '  ' ,style: TextStyle(color: Colors.grey,fontSize: 20),),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,

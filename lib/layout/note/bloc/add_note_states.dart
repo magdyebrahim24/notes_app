@@ -29,6 +29,7 @@ class AddNoteUpdateTitleAndBodyState extends AddNoteState {}
 
 class AddNoteDeleteOneNoteState extends AddNoteState {}
 class AddNoteDeleteOneImageState extends AddNoteState {}
+class AddNoteDeleteUnSavedImageState extends AddNoteState {}
 
 class AddNoteAddImagesToCacheState extends AddNoteState {}
 

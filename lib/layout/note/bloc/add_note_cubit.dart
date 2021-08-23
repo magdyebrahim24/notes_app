@@ -236,16 +236,22 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteUpdateTitleAndBodyState());
   }
 
-  void deleteImage({required int imageID, required int index}) async {
+  void deleteSavedImage({required int imageID, required int index}) async {
     print(imageID);
     await database.rawDelete(
         'DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
-      getNoteImagesFromDatabase(imageID);
+      cachedImagesList.removeAt(index);
+      // getNoteImagesFromDatabase(imageID);
       emit(AddNoteDeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
+  }
+  void deleteUnSavedImage({required int index}) async {
+
+    selectedGalleryImagesList.removeAt(index);
+      emit(AddNoteDeleteUnSavedImageState());
   }
 
   void addToFavorite() {

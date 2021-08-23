@@ -284,12 +284,17 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     print(imageID);
     await database.rawDelete('DELETE FROM memories_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
-      getMemoryImagesFromDatabase(imageID);
+      cachedImagesList.removeAt(index);
       emit(AddMemoryDeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
 
+  }
+
+  void deleteUnSavedImage({required int index}) async {
+    selectedGalleryImagesList.removeAt(index);
+    emit(AddMemoryDeleteUnSavedImageState());
   }
 
   @override
