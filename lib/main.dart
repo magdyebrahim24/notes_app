@@ -10,6 +10,7 @@ import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/styles/theme.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/localizations/localization/localizations_delegate.dart';
+import 'package:notes_app/test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

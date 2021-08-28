@@ -17,3 +17,7 @@ class GetNotesData extends AppStates {}
 class GetTasksData extends AppStates {}
 
 class GetMemoriesData extends AppStates {}
+
+class AddToFavoriteState extends AppStates {}
+class DeleteItemState extends AppStates {}
+class AddToSecretItemState extends AppStates {}

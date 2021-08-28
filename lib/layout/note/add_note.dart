@@ -19,8 +19,7 @@ class AddNote extends StatelessWidget {
       create: (BuildContext context) =>
           AddNoteCubit()..onBuildAddNoteScreen(data),
       child: BlocConsumer<AddNoteCubit, AddNoteState>(
-        listener: (context, AddNoteState state) {
-        },
+        listener: (context, AddNoteState state) {},
         builder: (context, state) {
           // AppCubit appCubit = AppCubit.get(context);
           AddNoteCubit cubit = AddNoteCubit.get(context);
@@ -28,6 +27,21 @@ class AddNote extends StatelessWidget {
             key: _scaffoldKey,
             appBar: AppBar(
               actions: [
+
+                ElevatedButton(
+                  onPressed: ()=> cubit.newRecord(context),
+                  //color: Colors.white,
+                  //disabledColor: Colors.grey,
+                  child: Text(cubit.mRecorder!.isRecording ? 'Stop' : 'Record'),
+                ),
+
+                ElevatedButton(
+                  onPressed: cubit.getPlaybackFn(),
+                  //color: Colors.white,
+                  //disabledColor: Colors.grey,
+                  child: Text(cubit.mPlayer!.isPlaying ? 'Stop' : 'Play'),
+                ),
+
                 cubit.bodyFocus.hasFocus
                     ? IconButton(
                         tooltip: 'Undo',
@@ -54,6 +68,8 @@ class AddNote extends StatelessWidget {
                         cubit.selectedGalleryImagesList.isNotEmpty
                     ? IconButton(
                         onPressed: () {
+                          // cubit.database.rawQuery('select MAX(id) from notes').then((value) => print(value.toString()));
+
                           if (cubit.noteId == null) {
                             cubit.insertNewNote(
                               context,
@@ -134,19 +150,22 @@ class AddNote extends StatelessWidget {
                     ),
                   ),
                   SizedBox(),
-                  GridViewForImages(cubit.selectedGalleryImagesList,
-                  deleteFun: (id,index){
-                    cubit.deleteUnSavedImage(index: index);
-                  },
+                  GridViewForImages(
+                    cubit.selectedGalleryImagesList,
+                    deleteFun: (id, index) {
+                      cubit.deleteUnSavedImage(index: index);
+                    },
                     expansionTileHeader: 'Un Saved Images',
-
                   ),
                   GridViewForImages(
-                      cubit.cachedImagesList, deleteFun:(id,index){
-                    cubit.deleteSavedImage(imageID: id, index: index);
-                  },                      expansionTileHeader: 'Saved Images',
+                    cubit.cachedImagesList,
+                    deleteFun: (id, index) {
+                      cubit.deleteSavedImage(imageID: id, index: index);
+                    },
+                    expansionTileHeader: 'Saved Images',
                   ),
-                ], ),
+                ],
+              ),
             ),
             bottomNavigationBar: cubit.noteId != null
                 ? BottomIconBar(

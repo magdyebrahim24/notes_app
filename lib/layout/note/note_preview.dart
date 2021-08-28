@@ -1,15 +1,16 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 
 class NotePreview extends StatelessWidget {
   final data;
   final navFun;
   final isLoading;
-
+  final onLongPress;
   NotePreview(
-      {Key? key, required this.data, this.navFun, this.isLoading = false})
-      : super(key: key);
+      {required this.data,
+      this.navFun,
+      this.isLoading = false,
+      this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -20,17 +21,21 @@ class NotePreview extends StatelessWidget {
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
               return NoteCard(
-                  data: data[index], onTapFun: () => navFun(data[index]));
+                  onLongTapFun: () => onLongPress(data[index], index),
+                  data: data[index],
+                  onTapFun: () => navFun(data[index]));
             });
   }
 }
 
 class NoteCard extends StatelessWidget {
   final onTapFun;
+  final onLongTapFun;
   final data;
   final isFavorite;
 
-  const NoteCard({ this.onTapFun, this.data,this.isFavorite=false});
+  const NoteCard(
+      {this.onTapFun, this.data, this.isFavorite = false, this.onLongTapFun});
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +49,7 @@ class NoteCard extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTapFun,
+        onLongPress: onLongTapFun,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15, vertical: 11),
           child: Row(
@@ -57,15 +63,17 @@ class NoteCard extends StatelessWidget {
                       maxLines: 1,
                       softWrap: true,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 22),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline5!
+                          .copyWith(fontSize: 22),
                     ),
                     data['images'].isEmpty && data['body'].toString().isNotEmpty
                         ? Padding(
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
                               data['body'],
-                              style:
-                                 Theme.of(context).textTheme.bodyText2,
+                              style: Theme.of(context).textTheme.bodyText2,
                               maxLines: 1,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
@@ -84,7 +92,7 @@ class NoteCard extends StatelessWidget {
                             child: Text(
                               '${data['createdDate']}',
                               maxLines: 1,
-                              style:Theme.of(context).textTheme.subtitle1,
+                              style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ),
                           SizedBox(
@@ -94,7 +102,7 @@ class NoteCard extends StatelessWidget {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                '${data[isFavorite?'type':'createdTime']}',
+                                '${data[isFavorite ? 'type' : 'createdTime']}',
                                 maxLines: 1,
                                 softWrap: true,
                                 overflow: TextOverflow.clip,

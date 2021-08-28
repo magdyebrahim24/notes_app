@@ -38,3 +38,12 @@ class AddNoteAddCachedImagesPathToDatabaseState extends AddNoteState {}
 class AddNoteGetCachedImagesPathsFromDatabaseState extends AddNoteState {}
 class AddNoteFavoriteState extends AddNoteState {}
 class AddNoteToSecretState extends AddNoteState {}
+
+
+class OpenAudioSessionState extends AddNoteState {}
+class OpenTheRecorderState extends AddNoteState {}
+class RecordAudioState extends AddNoteState {}
+class StopRecorderState extends AddNoteState {}
+class PlayAudioState extends AddNoteState {}
+class AfterPlayAudioState extends AddNoteState {}
+class StopPlayAudio extends AddNoteState {}

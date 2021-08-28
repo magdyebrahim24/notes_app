@@ -19,12 +19,6 @@ class MenuDashboardPage extends StatefulWidget {
 
 class _MenuDashboardPageState extends State<MenuDashboardPage>
     with TickerProviderStateMixin {
-  // @override
-  // void dispose() {
-  //   _controller!.dispose();
-  //   super.dispose();
-  // }
-
   double? screenWidth, screenHeight;
 
   @override
@@ -84,7 +78,8 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                     text: 'Secret',
                     leading: Icons.lock_open_outlined,
                     fun: () {
-                      String? pass = CacheHelper.getString(key: 'secret_password');
+                      String? pass =
+                          CacheHelper.getString(key: 'secret_password');
                       if (pass == null) {
                         Navigator.push(
                             context,
@@ -153,7 +148,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             clipBehavior: Clip.antiAliasWithSaveLayer,
             child: Stack(
               children: [
-                Home(cubit, cubit.database),
+                Home(),
                 GestureDetector(
                   onTap: cubit.isDrawerCollapsed ? null : cubit.openDrawer,
                   onHorizontalDragUpdate: cubit.isDrawerCollapsed

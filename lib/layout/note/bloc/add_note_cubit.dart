@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +13,11 @@ import 'package:notes_app/verify/login.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:undo/undo.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AddNoteCubit extends Cubit<AddNoteState> {
   AddNoteCubit() : super(AddNoteInitialState());
@@ -28,6 +34,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   List noteList = [];
   bool isFavorite = false;
 
+  String? recordsDirectoryPath ;
+
   late Database database;
   onBuildAddNoteScreen(data) async {
     var db = await openDatabase('database.db');
@@ -39,8 +47,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
+    recordsDirectoryPath = await createRecordsDirectory();
+    initState();
     emit(OnBuildAddNoteInitialState());
-
   }
 
   void onFocusBodyChange() {
@@ -150,7 +159,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       value.forEach((element) {
         print(element);
       });
-      cachedImagesList = value ;
+      cachedImagesList = value;
       emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
   }
@@ -248,14 +257,15 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       print(error);
     });
   }
-  void deleteUnSavedImage({required int index}) async {
 
+  void deleteUnSavedImage({required int index}) async {
     selectedGalleryImagesList.removeAt(index);
-      emit(AddNoteDeleteUnSavedImageState());
+    emit(AddNoteDeleteUnSavedImageState());
   }
 
   void addToFavorite() {
-    database.rawUpdate('UPDATE notes SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+    database.rawUpdate(
+        'UPDATE notes SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
         [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
       isFavorite = !isFavorite;
       print('$val $isFavorite is done');
@@ -272,10 +282,172 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreatePass(id: noteId,table: 'notes',)));
+              builder: (context) => CreatePass(
+                    id: noteId,
+                    table: 'notes',
+                  )));
     } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Login(id: noteId,table: 'notes',)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Login(
+                    id: noteId,
+                    table: 'notes',
+                  )));
     }
+  }
+
+  createRecordsDirectory() async{
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+
+    // create new folder
+    Directory directoryPath =
+        await Directory('$appDocPath/recorders').create(recursive: true);
+    return directoryPath.path;
+  }
+
+
+
+  newRecord(context) async{
+    int id = 0;
+    await database.rawQuery('select MAX(id) from voices').then((value) {
+      id = int.parse(jsonEncode(value[0]['MAX(id)'] ?? 0));
+    });
+
+    _mPath = '$recordsDirectoryPath/record$id.mp4';
+
+    getRecorderFn(context);
+
+
+
+  }
+
+  final theSource = AudioSource.microphone;
+
+  // recorder code
+
+  Codec _codec = Codec.aacMP4;
+  String _mPath = '' ;
+  FlutterSoundPlayer? mPlayer = FlutterSoundPlayer();
+  FlutterSoundRecorder? mRecorder = FlutterSoundRecorder();
+  bool _mPlayerIsInited = false;
+  bool _mRecorderIsInited = false;
+  bool _mplaybackReady = false;
+
+  void initState() {
+    mPlayer!.openAudioSession().then((value) {
+      _mPlayerIsInited = true;
+      emit(OpenAudioSessionState());
+    });
+
+    openTheRecorder().then((value) {
+      _mRecorderIsInited = true;
+      emit(OpenTheRecorderState());
+    });
+  }
+
+  Future<void> openTheRecorder() async {
+    if (!kIsWeb) {
+      var status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        throw RecordingPermissionException('Microphone permission not granted');
+      }
+    }
+    await mRecorder!.openAudioSession();
+    if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
+      _codec = Codec.opusWebM;
+      _mPath = 'tau_file.webm';
+      if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
+        _mRecorderIsInited = true;
+        return;
+      }
+    }
+    _mRecorderIsInited = true;
+  }
+
+  // ----------------------  Here is the code for recording and playback -------
+
+  void record()  {
+    print(_mPath.toString());
+    mRecorder!
+        .startRecorder(
+      toFile: _mPath,
+      codec: _codec,
+      audioSource: theSource,
+    )
+        .then((value) {
+      emit(RecordAudioState());
+    });
+  }
+
+  void stopRecorder(context) async {
+    print('stop');
+    await mRecorder!.stopRecorder().then((url) {
+      // var url = value;
+      if(noteId == null)
+        insertNewNote(context, title: '', body: '');
+
+
+      database.transaction((txn) async{
+        txn
+            .rawInsert(
+            'INSERT INTO voices (link ,note_id) VALUES ("$url",$noteId)');}).then((value) {
+        print(url.toString() + ' added success');
+
+      });
+      print(url.toString());
+      _mplaybackReady = true;
+      emit(StopRecorderState());
+    });
+  }
+
+  void play() {
+    assert(_mPlayerIsInited &&
+        _mplaybackReady &&
+        mRecorder!.isStopped &&
+        mPlayer!.isStopped);
+    mPlayer!
+        .startPlayer(
+            fromURI: _mPath,
+            //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
+            whenFinished: () {
+              emit(PlayAudioState());
+            })
+        .then((value) {
+      emit(AfterPlayAudioState());
+    });
+  }
+
+  void stopPlayer() {
+    mPlayer!.stopPlayer().then((value) {
+      emit(StopPlayAudio());
+    });
+  }
+
+// ----------------------------- UI --------------------------------------------
+  getRecorderFn(context) {
+
+    if (!_mRecorderIsInited || !mPlayer!.isStopped) {
+      return null;
+    }
+    return mRecorder!.isStopped ? record() : stopRecorder(context);
+  }
+
+  getPlaybackFn() {
+    if (!_mPlayerIsInited || !_mplaybackReady || !mRecorder!.isStopped) {
+      return null;
+    }
+    return mPlayer!.isStopped ? play : stopPlayer;
+  }
+
+  @override
+  Future<void> close() {
+    mPlayer!.closeAudioSession();
+    mPlayer = null;
+
+    mRecorder!.closeAudioSession();
+    mRecorder = null;
+    return super.close();
   }
 }

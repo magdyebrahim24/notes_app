@@ -7,7 +7,10 @@ import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/bloc/states/states.dart';
+import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/verify/create_pass.dart';
+import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {
@@ -109,13 +112,15 @@ class AppCubit extends Cubit<AppStates> {
                 'CREATE TABLE voices (id INTEGER PRIMARY KEY ,link TEXT ,note_id INTEGER,FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE)')
             .then((value) => print('voices table created'))
             .catchError((error) => print('subtask error' + error.toString()));
+
+
       },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
       },
       onOpen: (database) {},
-    ).then((value){
-     database = value;
+    ).then((value) {
+      database = value;
       getDataAndRebuild();
       emit(AppCreateDatabaseState());
     });
@@ -138,7 +143,8 @@ class AppCubit extends Cubit<AppStates> {
   void getNotesDataWithItsImages() async {
     // get all notes data
     List<Map<String, dynamic>> notesDataList = [];
-    await database!.rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]).then((value) {
+    await database!
+        .rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]).then((value) {
       notesDataList = value;
     });
     // get all notes images data
@@ -172,7 +178,8 @@ class AppCubit extends Cubit<AppStates> {
   void getAllTasksDataWithItSubTasks() async {
     // get all task data
     List<Map<String, dynamic>> tasksDataList = [];
-    database!.rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [0]).then((value) {
+    database!
+        .rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [0]).then((value) {
       tasksDataList = value;
     });
 
@@ -203,13 +210,13 @@ class AppCubit extends Cubit<AppStates> {
 
     allTasksDataList = allTasksCompleteData;
     emit(GetTasksData());
-
   }
 
   void getAllMemoriesDataWithItsImages() async {
     // get all user memories
     List<Map<String, dynamic>> memoriesDataList = [];
-    await database!.rawQuery('SELECT * FROM memories WHERE is_secret = ?', [0]).then((value) {
+    await database!.rawQuery(
+        'SELECT * FROM memories WHERE is_secret = ?', [0]).then((value) {
       memoriesDataList = value;
     });
     // get memories images
@@ -228,7 +235,8 @@ class AppCubit extends Cubit<AppStates> {
       oneMemoryData = memoriesDataModified[i];
       oneMemoryData.putIfAbsent('images', () => []);
       for (int y = 0; y < cachedMemoriesImagesList.length; y++) {
-        if (memoriesDataModified[i]['id'] == cachedMemoriesImagesList[y]['memory_id']) {
+        if (memoriesDataModified[i]['id'] ==
+            cachedMemoriesImagesList[y]['memory_id']) {
           oneMemoryImagesList.add(cachedMemoriesImagesList[y]);
         }
       }
@@ -244,34 +252,71 @@ class AppCubit extends Cubit<AppStates> {
   void addFABBtnRoutes(context) {
     if (tabBarController!.index == 0) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AddNote(
-                  ))).then((value) {
+              context, MaterialPageRoute(builder: (context) => AddNote()))
+          .then((value) {
         getNotesDataWithItsImages();
       });
     } else if (tabBarController!.index == 1) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AddTask())).then((value) {
-                    getAllTasksDataWithItSubTasks();
+              context, MaterialPageRoute(builder: (context) => AddTask()))
+          .then((value) {
+        getAllTasksDataWithItSubTasks();
       });
     } else {
       Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => AddMemory()))
+              context, MaterialPageRoute(builder: (context) => AddMemory()))
           .then((value) {
-            getAllMemoriesDataWithItsImages();
+        getAllMemoriesDataWithItsImages();
       });
     }
   }
 
+  void addToFavorite(context,{isFavorite, noteId, tableName, isFavoriteItem,index}) {
+    database!.rawUpdate(
+        'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
+          List<Map<String,dynamic>> temp = isFavoriteItem ;
+          Map <String,dynamic> item = temp[index];
+          item['is_favorite'] = !isFavorite == true ? 1 : 0 ;
+          isFavoriteItem[index] = item ;
+
+      print('$val $isFavorite is done');
+      emit(AddToFavoriteState());
+      Navigator.pop(context);
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  void deleteNote(context, {required int id, tableName, index,listOfData}) async {
+    print(id);
+    await database!
+        .rawDelete('DELETE FROM $tableName WHERE id = ?', [id]).then((value) {
+      listOfData.removeAt(index);
+      Navigator.pop(context);
+      emit(DeleteItemState());
+    }).catchError((error) {
+      print(error);
+    });
+  }
+  void addToSecret(context,id,tableName,listOfData,index) {
+    String? pass = CacheHelper.getString(key: 'secret_password');
+    Navigator.pop(context);
+    if (pass == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreatePass(id: id,table: tableName,)));
+    } else {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Login(id: id,table: tableName,)));
+    }
+    // listOfData.removeAt(index);
+    emit(AddToSecretItemState());
+  }
 
   @override
   Future<void> close() {
-    // database!.close();
     return super.close();
   }
 }
