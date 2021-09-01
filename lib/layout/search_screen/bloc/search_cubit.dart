@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
-import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SearchCubit extends Cubit<SearchStates> {

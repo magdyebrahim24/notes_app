@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/task/add_task.dart';
-import 'package:notes_app/shared/bloc/states/states.dart';
+import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:notes_app/verify/create_pass.dart';
 import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
@@ -36,7 +36,7 @@ class AppCubit extends Cubit<AppStates> {
   int tabBarSelectedIndex = 0;
 
   // init state function
-  void onBuildPage(x) {
+  void onBuildPage(x){
     createDatabase();
     drawerController = AnimationController(vsync: x, duration: drawerDuration);
     drawerScaleAnimation =
@@ -71,7 +71,7 @@ class AppCubit extends Cubit<AppStates> {
     emit(OpenDrawerState());
   }
 
-  void createDatabase() async {
+  void createDatabase()  {
     openDatabase(
       'database.db',
       version: 1,
@@ -112,8 +112,6 @@ class AppCubit extends Cubit<AppStates> {
                 'CREATE TABLE voices (id INTEGER PRIMARY KEY ,link TEXT ,note_id INTEGER,FOREIGN KEY (note_id) REFERENCES notes (id) ON DELETE CASCADE)')
             .then((value) => print('voices table created'))
             .catchError((error) => print('subtask error' + error.toString()));
-
-
       },
       onConfigure: (Database db) async {
         await db.execute('PRAGMA foreign_keys = ON');
@@ -126,126 +124,53 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  Future appData() async {
-    getNotesDataWithItsImages();
-    getAllTasksDataWithItSubTasks();
-    getAllMemoriesDataWithItsImages();
-  }
-
   void getDataAndRebuild() async {
     isLoading = true;
     emit(AppLoaderState());
-    await appData();
+    await getNotesDataWithItsImages();
+    await getAllTasksDataWithItSubTasks();
+    await  getAllMemoriesDataWithItsImages();
     isLoading = false;
     emit(AppLoaderState());
   }
 
-  void getNotesDataWithItsImages() async {
-    // get all notes data
-    List<Map<String, dynamic>> notesDataList = [];
-    await database!
-        .rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]).then((value) {
-      notesDataList = value;
-    });
-    // get all notes images data
-    List cachedNotesImagesList = [];
-    await database!.rawQuery('SELECT * FROM notes_images').then((value) {
-      cachedNotesImagesList = value;
-    });
-    List notesDataModified = makeModifiableResults(notesDataList);
-    List oneNoteImagesList = [];
-    Map<String, dynamic> oneNoteData = {};
-    List<Map<String, dynamic>> allNotesCompleteData = [];
+  Future getNotesDataWithItsImages() async {
+    // get  notes data
+    List<Map<String, dynamic>> notesDataList = await database!
+        .rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]);
+    // get notes images data
+    List cachedNotesImagesList =
+        await database!.rawQuery('SELECT * FROM notes_images');
 
-    for (int i = 0; i < notesDataModified.length; i++) {
-      oneNoteImagesList = [];
-      oneNoteData = notesDataModified[i];
-      oneNoteData.putIfAbsent('images', () => []);
-      for (int y = 0; y < cachedNotesImagesList.length; y++) {
-        if (notesDataModified[i]['id'] == cachedNotesImagesList[y]['note_id']) {
-          oneNoteImagesList.add(cachedNotesImagesList[y]);
-        }
-      }
-      if (oneNoteImagesList.isNotEmpty)
-        oneNoteData.update('images', (dynamic val) => oneNoteImagesList);
-      allNotesCompleteData.add(oneNoteData);
-    }
+    allNotesDataList = assignSubListToData(
+        notesDataList, cachedNotesImagesList, 'images', 'note_id');
 
-    allNotesDataList = allNotesCompleteData;
     emit(GetNotesData());
   }
 
-  void getAllTasksDataWithItSubTasks() async {
+  Future getAllTasksDataWithItSubTasks() async {
     // get all task data
-    List<Map<String, dynamic>> tasksDataList = [];
-    database!
-        .rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [0]).then((value) {
-      tasksDataList = value;
-    });
+    List<Map<String, dynamic>> tasksDataList = await database!
+        .rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [0]);
 
     // get all task sub tasks data
-    List subTasksList = [];
-    await database!.rawQuery('SELECT * FROM subTasks').then((value) {
-      subTasksList = value;
-    });
-    List tasksDataModified = makeModifiableResults(tasksDataList);
-    List oneSubTaskList = [];
-    Map<String, dynamic> oneTaskData = {};
-    List<Map<String, dynamic>> allTasksCompleteData = [];
+    List subTasksList = await database!.rawQuery('SELECT * FROM subTasks');
 
-    // get tasks data
-    for (int i = 0; i < tasksDataModified.length; i++) {
-      oneSubTaskList = [];
-      oneTaskData = tasksDataModified[i];
-      oneTaskData.putIfAbsent('subTasks', () => []);
-      for (int y = 0; y < subTasksList.length; y++) {
-        if (tasksDataModified[i]['id'] == subTasksList[y]['tasks_id']) {
-          oneSubTaskList.add(subTasksList[y]);
-        }
-      }
-      if (oneSubTaskList.isNotEmpty)
-        oneTaskData.update('subTasks', (dynamic val) => oneSubTaskList);
-      allTasksCompleteData.add(oneTaskData);
-    }
-
-    allTasksDataList = allTasksCompleteData;
+    allTasksDataList = assignSubListToData(
+        tasksDataList, subTasksList, 'subTasks', 'tasks_id');
     emit(GetTasksData());
   }
 
-  void getAllMemoriesDataWithItsImages() async {
+  Future getAllMemoriesDataWithItsImages() async {
     // get all user memories
-    List<Map<String, dynamic>> memoriesDataList = [];
-    await database!.rawQuery(
-        'SELECT * FROM memories WHERE is_secret = ?', [0]).then((value) {
-      memoriesDataList = value;
-    });
+    List<Map<String, dynamic>> memoriesDataList = await database!
+        .rawQuery('SELECT * FROM memories WHERE is_secret = ?', [0]);
     // get memories images
-    List cachedMemoriesImagesList = [];
-    await database!.rawQuery('SELECT * FROM memories_images').then((value) {
-      cachedMemoriesImagesList = value;
-    });
-    List memoriesDataModified = makeModifiableResults(memoriesDataList);
-    List oneMemoryImagesList = [];
-    Map<String, dynamic> oneMemoryData = {};
-    List<Map<String, dynamic>> allMemoriesCompleteData = [];
+    List cachedMemoriesImagesList =
+        await database!.rawQuery('SELECT * FROM memories_images');
 
-    // get memories data and images in one list
-    for (int i = 0; i < memoriesDataModified.length; i++) {
-      oneMemoryImagesList = [];
-      oneMemoryData = memoriesDataModified[i];
-      oneMemoryData.putIfAbsent('images', () => []);
-      for (int y = 0; y < cachedMemoriesImagesList.length; y++) {
-        if (memoriesDataModified[i]['id'] ==
-            cachedMemoriesImagesList[y]['memory_id']) {
-          oneMemoryImagesList.add(cachedMemoriesImagesList[y]);
-        }
-      }
-      if (oneMemoryImagesList.isNotEmpty)
-        oneMemoryData.update('images', (dynamic val) => oneMemoryImagesList);
-      allMemoriesCompleteData.add(oneMemoryData);
-    }
-
-    allMemoriesDataList = allMemoriesCompleteData;
+    allMemoriesDataList = assignSubListToData(
+        memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
     emit(GetTasksData());
   }
 
@@ -271,14 +196,15 @@ class AppCubit extends Cubit<AppStates> {
     }
   }
 
-  void addToFavorite(context,{isFavorite, noteId, tableName, isFavoriteItem,index}) {
+  void addToFavorite(context,
+      {isFavorite, noteId, tableName, isFavoriteItem, index}) {
     database!.rawUpdate(
         'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
         [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
-          List<Map<String,dynamic>> temp = isFavoriteItem ;
-          Map <String,dynamic> item = temp[index];
-          item['is_favorite'] = !isFavorite == true ? 1 : 0 ;
-          isFavoriteItem[index] = item ;
+      List<Map<String, dynamic>> temp = isFavoriteItem;
+      Map<String, dynamic> item = temp[index];
+      item['is_favorite'] = !isFavorite == true ? 1 : 0;
+      isFavoriteItem[index] = item;
 
       print('$val $isFavorite is done');
       emit(AddToFavoriteState());
@@ -288,7 +214,8 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  void deleteNote(context, {required int id, tableName, index,listOfData}) async {
+  void deleteNote(context,
+      {required int id, tableName, index, listOfData}) async {
     print(id);
     await database!
         .rawDelete('DELETE FROM $tableName WHERE id = ?', [id]).then((value) {
@@ -299,17 +226,26 @@ class AppCubit extends Cubit<AppStates> {
       print(error);
     });
   }
-  void addToSecret(context,id,tableName,listOfData,index) {
+
+  void addToSecret(context, id, tableName, listOfData, index) {
     String? pass = CacheHelper.getString(key: 'secret_password');
     Navigator.pop(context);
     if (pass == null) {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => CreatePass(id: id,table: tableName,)));
+              builder: (context) => CreatePass(
+                    id: id,
+                    table: tableName,
+                  )));
     } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Login(id: id,table: tableName,)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Login(
+                    id: id,
+                    table: tableName,
+                  )));
     }
     // listOfData.removeAt(index);
     emit(AddToSecretItemState());
@@ -317,6 +253,11 @@ class AppCubit extends Cubit<AppStates> {
 
   @override
   Future<void> close() {
+    tabBarController!.dispose();
+    fABController!.dispose();
+    drawerController!.dispose();
     return super.close();
   }
 }
+
+

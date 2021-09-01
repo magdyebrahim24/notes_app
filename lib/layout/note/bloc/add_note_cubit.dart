@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:notes_app/verify/create_pass.dart';
 import 'package:notes_app/verify/login.dart';
 import 'package:path_provider/path_provider.dart';
@@ -44,7 +45,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       noteId = data['id'];
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
-      cachedImagesList = data['images'];
+      cachedImagesList = data['images'] ;
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     getRecordsFromDatabase(noteId);
@@ -160,10 +161,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     cachedImagesList = [];
     database.rawQuery(
         'SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
-      value.forEach((element) {
-        print(element);
-      });
-      cachedImagesList = value;
+          cachedImagesList = makeModifiableResults(value);
+      // cachedImagesList = value;
       emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
   }

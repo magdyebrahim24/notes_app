@@ -61,11 +61,3 @@ class DefaultFormField extends StatelessWidget {
     );
   }}
 
-// fun to convert RawQuery type to List<Map<String, dynamic>>
-  List<Map<String, dynamic>> makeModifiableResults(
-      List<Map<String, dynamic>> results) {
-    // Generate modifiable
-    return List<Map<String, dynamic>>.generate(
-        results.length, (index) => Map<String, dynamic>.from(results[index]),
-        growable: true);
-  }

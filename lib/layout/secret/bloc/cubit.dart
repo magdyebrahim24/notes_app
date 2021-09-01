@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/states.dart';
-import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 

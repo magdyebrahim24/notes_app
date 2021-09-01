@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
-import 'package:notes_app/modules/drawer/drawer.dart';
-import 'package:notes_app/shared/bloc/bloc_observer.dart';
+import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
+import 'package:notes_app/shared/bloc_observer.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/styles/theme.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
@@ -83,11 +83,9 @@ class _MyAppState extends State<MyApp> {
               for (var supportedLocale in supportedLocales) {
                 if (supportedLocale.languageCode == locale?.languageCode &&
                     supportedLocale.countryCode == locale?.countryCode) {
-                  print(supportedLocale);
                   return supportedLocale;
                 }
               }
-              print('no language find');
               return supportedLocales.first;
             },
           );

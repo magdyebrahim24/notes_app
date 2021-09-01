@@ -8,7 +8,7 @@ import 'package:notes_app/layout/secret/bloc/cubit.dart';
 import 'package:notes_app/layout/secret/bloc/states.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
-import 'package:notes_app/modules/drawer/drawer.dart';
+import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
 
 class Secret extends StatelessWidget {
   @override

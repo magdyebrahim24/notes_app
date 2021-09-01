@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/note/note_preview.dart';
@@ -9,8 +8,8 @@ import 'package:notes_app/layout/search_screen/search_screen.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/memories/memories_preview.dart';
-import 'package:notes_app/shared/bloc/cubit/cubit.dart';
-import 'package:notes_app/shared/bloc/states/states.dart';
+import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
+import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -52,17 +51,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     ),
                     automaticallyImplyLeading: true,
                     actions: [
-                      IconButton(
-                          onPressed: () async{
-                            List<XFile>? images = await ImagePicker().pickMultiImage();
-                            // scaffoldKey.currentState!.showBottomSheet(
-                            //   (context) => Container(
-                            //     height: 100,
-                            //     color: Colors.white,
-                            //   ),
-                            // );
-                          },
-                          icon: Icon(Icons.star)),
+                      // IconButton(
+                      //     onPressed: () async{
+                      //       scaffoldKey.currentState!.showBottomSheet(
+                      //         (context) => Container(
+                      //           height: 100,
+                      //           color: Colors.white,
+                      //         ),
+                      //       );
+                      //     },
+                      //     icon: Icon(Icons.star)),
                       IconButton(
                           onPressed: () {
                             Navigator.push(

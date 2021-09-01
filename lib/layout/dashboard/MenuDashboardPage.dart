@@ -7,8 +7,8 @@ import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/verify/create_pass.dart';
 import 'package:notes_app/verify/login.dart';
 import 'package:notes_app/layout/setting/setting.dart';
-import 'package:notes_app/shared/bloc/cubit/cubit.dart';
-import 'package:notes_app/shared/bloc/states/states.dart';
+import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
+import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 
 final Color backgroundColor = Color(0xFF4A4A58);
 
