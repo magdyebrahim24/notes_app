@@ -35,12 +35,6 @@ class AddNote extends StatelessWidget {
                   child: Text(cubit.mRecorder!.isRecording ? 'Stop' : 'Record'),
                 ),
 
-                ElevatedButton(
-                  onPressed: cubit.getPlaybackFn(),
-                  //color: Colors.white,
-                  //disabledColor: Colors.grey,
-                  child: Text(cubit.mPlayer!.isPlaying ? 'Stop' : 'Play'),
-                ),
 
                 cubit.bodyFocus.hasFocus
                     ? IconButton(
@@ -164,6 +158,22 @@ class AddNote extends StatelessWidget {
                     },
                     expansionTileHeader: 'Saved Images',
                   ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: cubit.recordsList.length,
+                      itemBuilder:(context,index)=> Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed:()=> cubit.getPlaybackFn(cubit.recordsList[index]['link'],index),
+                            // color: Colors.white,
+                            //disabledColor: Colors.grey,
+                            child: Text(cubit.mPlayer!.isPlaying&&index==cubit.item ? 'Stop' : 'Play'),
+                          ),
+                          IconButton(onPressed: ()=>cubit.deleteSavedRecord(recordID: cubit.recordsList[index]['id'], index: index), icon: Icon(Icons.clear_rounded))
+                        ],
+                      ),
+                  )
                 ],
               ),
             ),

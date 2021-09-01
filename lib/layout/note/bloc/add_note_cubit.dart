@@ -47,6 +47,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
+    getRecordsFromDatabase(noteId);
     recordsDirectoryPath = await createRecordsDirectory();
     initState();
     emit(OnBuildAddNoteInitialState());
@@ -164,9 +165,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     });
   }
 
-  void deleteAllNoteCachedImages() {
+  Future deleteAllNoteCachedImages() async{
     for (int i = 0; i < cachedImagesList.length; i++) {
-      File('${cachedImagesList[i]}').delete(recursive: true);
+      File('${cachedImagesList[i]['link']}').delete(recursive: true);
     }
   }
 
@@ -216,8 +217,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   void deleteNote(context, {required int id}) async {
     print(id);
     await database
-        .rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) {
-      deleteAllNoteCachedImages();
+        .rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) async{
+      await deleteAllNoteCachedImages();
+      await deleteAllNoteCachedRecords();
       Navigator.pop(context);
       getNoteDataFromDatabase();
     }).catchError((error) {
@@ -315,7 +317,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       id = int.parse(jsonEncode(value[0]['MAX(id)'] ?? 0));
     });
 
-    _mPath = '$recordsDirectoryPath/record$id.mp4';
+    mPath = '$recordsDirectoryPath/record$id.mp4';
 
     getRecorderFn(context);
 
@@ -328,7 +330,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   // recorder code
 
   Codec _codec = Codec.aacMP4;
-  String _mPath = '' ;
+  String mPath = '' ;
   FlutterSoundPlayer? mPlayer = FlutterSoundPlayer();
   FlutterSoundRecorder? mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
@@ -357,7 +359,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     await mRecorder!.openAudioSession();
     if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
       _codec = Codec.opusWebM;
-      _mPath = 'tau_file.webm';
+      mPath = 'tau_file.webm';
       if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
         _mRecorderIsInited = true;
         return;
@@ -368,11 +370,11 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   // ----------------------  Here is the code for recording and playback -------
 
-  void record()  {
-    print(_mPath.toString());
+  void record() async {
+    print(mPath.toString());
     mRecorder!
         .startRecorder(
-      toFile: _mPath,
+      toFile: mPath,
       codec: _codec,
       audioSource: theSource,
     )
@@ -383,13 +385,13 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   void stopRecorder(context) async {
     print('stop');
-    await mRecorder!.stopRecorder().then((url) {
+    await mRecorder!.stopRecorder().then((url) async{
       // var url = value;
       if(noteId == null)
         insertNewNote(context, title: '', body: '');
 
 
-      database.transaction((txn) async{
+    await  database.transaction((txn) async{
         txn
             .rawInsert(
             'INSERT INTO voices (link ,note_id) VALUES ("$url",$noteId)');}).then((value) {
@@ -398,18 +400,30 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       });
       print(url.toString());
       _mplaybackReady = true;
+      getRecordsFromDatabase(noteId);
+
+    });
+  }
+
+  List recordsList=[];
+  void getRecordsFromDatabase(id){
+    recordsList = [];
+    database.rawQuery(
+        'SELECT * FROM voices WHERE note_id = ?', [id]).then((value) {
+      value.forEach((element) {
+        recordsList = value;
+        print(element);
+      });
       emit(StopRecorderState());
     });
   }
 
-  void play() {
-    assert(_mPlayerIsInited &&
-        _mplaybackReady &&
-        mRecorder!.isStopped &&
-        mPlayer!.isStopped);
+  void play(path) async{
+    print(path);
+
     mPlayer!
         .startPlayer(
-            fromURI: _mPath,
+            fromURI: path,
             //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
             whenFinished: () {
               emit(PlayAudioState());
@@ -427,18 +441,36 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
 // ----------------------------- UI --------------------------------------------
   getRecorderFn(context) {
-
     if (!_mRecorderIsInited || !mPlayer!.isStopped) {
       return null;
     }
     return mRecorder!.isStopped ? record() : stopRecorder(context);
   }
-
-  getPlaybackFn() {
-    if (!_mPlayerIsInited || !_mplaybackReady || !mRecorder!.isStopped) {
+  int? item;
+  getPlaybackFn(path,index) {
+         item=index;
+         emit(GetIndexState());
+    if (!_mPlayerIsInited ) {
       return null;
     }
-    return mPlayer!.isStopped ? play : stopPlayer;
+
+    return mPlayer!.isStopped ? play(path) : stopPlayer();
+  }
+  Future deleteAllNoteCachedRecords() async{
+    for (int i = 0; i < recordsList.length; i++) {
+      File('${recordsList[i]['link']}').delete(recursive: true);
+    }
+  }
+  void deleteSavedRecord({required int recordID, required int index}) async {
+    await database.rawDelete(
+        'DELETE FROM voices WHERE id = ?', [recordID]).then((value) async{
+      File('${recordsList[index]['link']}').delete(recursive: true);
+     await recordsList.removeAt(index);
+      // getRecordsFromDatabase(noteId);
+      emit(AddNoteDeleteOneRecordState());
+    }).catchError((error) {
+      print(error);
+    });
   }
 
   @override

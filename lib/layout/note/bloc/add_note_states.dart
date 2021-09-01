@@ -47,3 +47,6 @@ class StopRecorderState extends AddNoteState {}
 class PlayAudioState extends AddNoteState {}
 class AfterPlayAudioState extends AddNoteState {}
 class StopPlayAudio extends AddNoteState {}
+class GetRecordsFromDatabaseState extends AddNoteState {}
+class GetIndexState extends AddNoteState {}
+class AddNoteDeleteOneRecordState extends AddNoteState {}
