@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notes_app/shared/components/show_full_image.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 
 class GridViewForImages extends StatelessWidget {
   final List imagesList;
@@ -84,7 +85,7 @@ class GridViewForImages extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: MaterialButton(
-                    minWidth: 60,
+                    minWidth: 50,
                     splashColor: Colors.transparent,
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
@@ -106,6 +107,25 @@ class GridViewForImages extends StatelessWidget {
                 ),
                 Expanded(
                   child: MaterialButton(
+                    minWidth: 50,
+                    splashColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      share([data['link']]);
+                    },
+                    child: Icon(
+                      Icons.ios_share_outlined,
+                      color: Theme.of(context).accentColor,
+                    ),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                ),
+                Expanded(
+                  child: MaterialButton(
                     splashColor: Colors.transparent,
                     hoverColor: Colors.transparent,
                     highlightColor: Colors.transparent,
@@ -115,7 +135,7 @@ class GridViewForImages extends StatelessWidget {
                       Navigator.pop(context);
                     },
                     // height: 30,
-                    minWidth: 60,
+                    minWidth: 50,
                     child: Icon(
                       Icons.delete_outline_rounded,
                       color: Colors.redAccent,

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/note/note_preview.dart';
@@ -52,12 +53,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     automaticallyImplyLeading: true,
                     actions: [
                       IconButton(
-                          onPressed: () {
-                            scaffoldKey.currentState!
-                                .showBottomSheet((context) => Container(
-                                      height: 100,
-                                      color: Colors.white,
-                                    ),);
+                          onPressed: () async{
+                            List<XFile>? images = await ImagePicker().pickMultiImage();
+                            // scaffoldKey.currentState!.showBottomSheet(
+                            //   (context) => Container(
+                            //     height: 100,
+                            //     color: Colors.white,
+                            //   ),
+                            // );
                           },
                           icon: Icon(Icons.star)),
                       IconButton(
@@ -105,8 +108,11 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       onLongPress: (data, index) {
                         showOptionBar(context,
                             favFun: () => cubit.addToFavorite(context,
-                                isFavorite:
-                                cubit.allNotesDataList[index]['is_favorite'] == 0 ? false : true,
+                                isFavorite: cubit.allNotesDataList[index]
+                                            ['is_favorite'] ==
+                                        0
+                                    ? false
+                                    : true,
                                 noteId: data['id'],
                                 tableName: 'notes',
                                 isFavoriteItem: cubit.allNotesDataList,
@@ -186,7 +192,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               ),
             ),
           ),
-extendBody: false,resizeToAvoidBottomInset: true,
+          extendBody: false,
+          resizeToAvoidBottomInset: true,
         );
       },
       listener: (context, state) {},

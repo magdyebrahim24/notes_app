@@ -97,9 +97,12 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }
 
   pickImageFromGallery(ImageSource src) async {
-    XFile? _image = await ImagePicker().pickImage(source: src);
-    if (_image != null) {
-      selectedGalleryImagesList.add({'link': _image.path});
+    List<XFile>? imagesList = await ImagePicker().pickMultiImage();
+    // XFile? _image = await ImagePicker().pickImage(source: src);
+    if (imagesList!.isNotEmpty) {
+      imagesList.forEach((element) {
+        selectedGalleryImagesList.add({'link': element.path});
+      });
       emit(AddNoteAddImageState());
     } else {
       print('No Image Selected');
