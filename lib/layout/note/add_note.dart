@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
@@ -35,48 +34,11 @@ class AddNote extends StatelessWidget {
                   child: Text(cubit.mRecorder!.isRecording ? 'Stop' : 'Record'),
                 ),
 
-
-                cubit.bodyFocus.hasFocus
-                    ? IconButton(
-                        tooltip: 'Undo',
-                        icon: Icon(
-                          Icons.undo,
-                        ),
-                        onPressed: cubit.stackController!.state == '' &&
-                                !(cubit.stackController!.canUndo)
-                            ? null
-                            : cubit.undoFun,
-                      )
-                    : SizedBox(),
-                cubit.bodyFocus.hasFocus
-                    ? IconButton(
-                        tooltip: 'Redo',
-                        icon: Icon(Icons.redo),
-                        onPressed: !cubit.stackController!.canRedo
-                            ? null
-                            : cubit.redoFun,
-                      )
-                    : SizedBox(),
                 cubit.titleController.text.isNotEmpty ||
                         cubit.noteTextController.text.isNotEmpty ||
-                        cubit.selectedGalleryImagesList.isNotEmpty
+                        cubit.pickedGalleryImagesList.isNotEmpty
                     ? IconButton(
-                        onPressed: () {
-                          // cubit.database.rawQuery('select MAX(id) from notes').then((value) => print(value.toString()));
-
-                          if (cubit.noteId == null) {
-                            cubit.insertNewNote(
-                              context,
-                              title: cubit.titleController.text,
-                              body: cubit.noteTextController.text,
-                            );
-                          } else {
-                            cubit.updateNote(context,
-                                id: cubit.noteId!,
-                                body: cubit.noteTextController.text,
-                                title: cubit.titleController.text);
-                          }
-                        },
+                        onPressed: ()=> cubit.onSave(context),
                         icon: Icon(Icons.done))
                     : SizedBox(),
               ],
@@ -95,14 +57,10 @@ class AddNote extends StatelessWidget {
                     ),
                     controller: cubit.titleController,
                     focusNode: cubit.titleFocus,
-                    onTap: () {
-                      cubit.onFocusTitleChange();
-                    },
-                    onChanged: (value) {
-                      cubit.onTitleChange();
-                    },
-                    maxLines: null,
-                    minLines: null,
+                    onTap: () => cubit.onFocusTitleChange(),
+                    onChanged: (val)=> cubit.onTextChange(),
+                    maxLines: 2,
+                    minLines: 1,
                     fillColor: Theme.of(context).primaryColor,
                     hintText: 'title',
                     hintStyle: TextStyle(
@@ -124,16 +82,12 @@ class AddNote extends StatelessWidget {
                     child: DefaultFormField(
                       focusNode: cubit.bodyFocus,
                       controller: cubit.noteTextController,
-                      onTap: () {
-                        cubit.onFocusBodyChange();
-                      },
+                      onTap: () => cubit.onFocusBodyChange(),
+                      onChanged:(val)=> cubit.onTextChange(),
                       style: TextStyle(
                         color: Theme.of(context).textTheme.headline4!.color,
                         fontSize: 20,
                       ),
-                      onChanged: (value) {
-                        cubit.onNoteTextChanged(value);
-                      },
                       maxLines: null,
                       minLines: null,
                       keyboardType: TextInputType.multiline,
@@ -142,14 +96,6 @@ class AddNote extends StatelessWidget {
                       hintStyle: TextStyle(
                           color: Theme.of(context).hintColor, fontSize: 20),
                     ),
-                  ),
-                  SizedBox(),
-                  GridViewForImages(
-                    cubit.selectedGalleryImagesList,
-                    deleteFun: (id, index) {
-                      cubit.deleteUnSavedImage(index: index);
-                    },
-                    expansionTileHeader: 'Un Saved Images',
                   ),
                   GridViewForImages(
                     cubit.cachedImagesList,
@@ -180,19 +126,15 @@ class AddNote extends StatelessWidget {
             bottomNavigationBar: cubit.noteId != null
                 ? BottomIconBar(
                     isFavorite: cubit.isFavorite,
-                    deleteFun: () =>
-                        cubit.deleteNote(context, id: cubit.noteId!),
-                    addImageFun: () =>
-                        cubit.pickImageFromGallery(ImageSource.gallery),
-                    addToFavoriteFun: () => cubit.addToFavorite(),
-                    addToSecretFun: () => cubit.addToSecret(context),
+                    deleteFun: () => cubit.deleteNote(context),
+                    addImageFun: ()=> cubit.pickMultiImageFromGallery(context),
+                    addToFavoriteFun: cubit.favFun,
+                    addToSecretFun: () => cubit.addNoteToSecret(context),
                   )
                 : SizedBox(),
             floatingActionButton: cubit.noteId == null
                 ? FloatingActionButton(
-                    onPressed: () {
-                      cubit.pickImageFromGallery(ImageSource.gallery);
-                    },
+                    onPressed: () => cubit.pickMultiImageFromGallery(context),
                     child: Icon(Icons.add_photo_alternate_outlined),
                   )
                 : SizedBox(),

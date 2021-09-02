@@ -4,16 +4,11 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
-import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
-import 'package:notes_app/verify/create_pass.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:undo/undo.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_sound_lite/flutter_sound.dart';
@@ -29,15 +24,15 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   TextEditingController titleController = TextEditingController();
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
-  List selectedGalleryImagesList = [];
+  List pickedGalleryImagesList = [];
   List cachedImagesList = [];
   int? noteId;
-  List noteList = [];
   bool isFavorite = false;
 
-  String? recordsDirectoryPath ;
+  String? recordsDirectoryPath;
 
   late Database database;
+
   onBuildAddNoteScreen(data) async {
     var db = await openDatabase('database.db');
     database = db;
@@ -45,7 +40,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       noteId = data['id'];
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
-      cachedImagesList = data['images'] ;
+      cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     getRecordsFromDatabase(noteId);
@@ -54,6 +49,9 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(OnBuildAddNoteInitialState());
   }
 
+  onTextChange() {
+    emit(OnNoteTextChangeState());
+  }
   void onFocusBodyChange() {
     titleFocus.unfocus();
     bodyFocus.requestFocus();
@@ -66,114 +64,27 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     emit(AddNoteFocusTitleChangeState());
   }
 
-  SimpleStack? stackController = SimpleStack<dynamic>(
-    '',
-    onUpdate: (val) {},
-  );
-
-  void clearStack() {
-    stackController!.clearHistory();
-    emit(AddNoteClearStackState());
-  }
-
-  undoFun() {
-    stackController!.undo();
-    noteTextController.text = stackController!.state;
-    emit(AddNoteUndoState());
-  }
-
-  redoFun() {
-    stackController!.redo();
-    noteTextController.text = stackController!.state;
-    emit(AddNoteRedoState());
-  }
-
-  onNoteTextChanged(value) {
-    stackController!.modify(value);
-    emit(AddNoteOnNoteTextChangedState());
-  }
-
-  onTitleChange() {
-    emit(AddNoteTitleChangedState());
-  }
-
-  pickImageFromGallery(ImageSource src) async {
-    List<XFile>? imagesList = await ImagePicker().pickMultiImage();
-    // XFile? _image = await ImagePicker().pickImage(source: src);
-    if (imagesList!.isNotEmpty) {
-      imagesList.forEach((element) {
-        selectedGalleryImagesList.add({'link': element.path});
+  pickMultiImageFromGallery(context) =>
+      pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
+        if (noteId == null) await insertNewNote(context, title: '', body: '');
+        savePickedImages();
       });
-      emit(AddNoteAddImageState());
-    } else {
-      print('No Image Selected');
-    }
-  }
 
-  Future saveSelectedImagesToPhoneCache() async {
-    // get app path
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
+  void savePickedImages() => savePickedImagesToPhoneCacheAndDataBase(database, pickedGalleryImagesList, noteId, 'notes_images', 'note_id', 'notes_images')
+          .then((value) {
+        pickedGalleryImagesList = [];
+        getNoteImagesFromDatabase(noteId);
+      });
 
-    // create new folder
-    Directory directoryPath =
-        await Directory('$appDocPath/notes_images').create(recursive: true);
-
-    XFile? _currentImageToSave;
-
-    List cachedImagesPaths = [];
-    for (int index = 0; index < selectedGalleryImagesList.length; index++) {
-      String imageName =
-          selectedGalleryImagesList[index]['link'].split('/').last;
-      final String filePath = '${directoryPath.path}/$imageName';
-      _currentImageToSave = XFile(selectedGalleryImagesList[index]['link']);
-      await _currentImageToSave.saveTo(filePath);
-      cachedImagesPaths.add(filePath);
-    }
-    selectedGalleryImagesList = [];
-    insertCachedImagedToDatabase(images: cachedImagesPaths);
-    // List listOfFiles = await directoryPath.list(recursive: true).toList();
-    emit(AddNoteAddImagesToCacheState());
-  }
-
-  // add cached images path to database
-
-  Future insertCachedImagedToDatabase({required List images}) async {
-    await database.transaction((txn) {
-      for (int i = 0; i < images.length; i++) {
-        txn
-            .rawInsert(
-                'INSERT INTO notes_images (link ,note_id) VALUES ("${images[i]}","$noteId")')
-            .then((value) {
-          print(value);
-        }).catchError((error) {
-          print(error.toString());
-        });
-      }
-      getNoteImagesFromDatabase(noteId);
-      return Future.value(true);
-    });
-
-    emit(AddNoteAddCachedImagesPathToDatabaseState());
-  }
-
-  void getNoteImagesFromDatabase(id) async {
+  void getNoteImagesFromDatabase(id) {
     cachedImagesList = [];
     database.rawQuery(
         'SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
-          cachedImagesList = makeModifiableResults(value);
-      // cachedImagesList = value;
+          print(value);
+      cachedImagesList = makeModifiableResults(value);
       emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
   }
-
-  Future deleteAllNoteCachedImages() async{
-    for (int i = 0; i < cachedImagesList.length; i++) {
-      File('${cachedImagesList[i]['link']}').delete(recursive: true);
-    }
-  }
-
-  // start coding database
 
   Future insertNewNote(
     context, {
@@ -188,65 +99,36 @@ class AddNoteCubit extends Cubit<AddNoteState> {
               'INSERT INTO notes (title ,body ,createdTime ,createdDate,type) VALUES ("$title","$body","$createdTime","$createdDate","note")')
           .then((value) {
         noteId = value;
-        if (selectedGalleryImagesList.isNotEmpty) {
-          saveSelectedImagesToPhoneCache();
-          getNoteImagesFromDatabase(value);
-        }
-        print(value);
       }).catchError((error) {
         print(error.toString());
       });
-
       return Future.value(true);
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
     emit(AddNoteInsertDatabaseState());
+    return noteId;
   }
 
-  void getNoteDataFromDatabase() async {
-    noteList = [];
-    // emit(AppLoaderState());
-    database.rawQuery('SELECT * FROM notes').then((value) {
-      noteList = value;
-      value.forEach((element) {
-        print(element);
-      });
-      emit(AddNoteGetDatabaseState());
-    });
-  }
-
-  void deleteNote(context, {required int id}) async {
-    print(id);
-    await database
-        .rawDelete('DELETE FROM notes WHERE id = ?', [id]).then((value) async{
-      await deleteAllNoteCachedImages();
-      await deleteAllNoteCachedRecords();
-      Navigator.pop(context);
-      getNoteDataFromDatabase();
-    }).catchError((error) {
-      print(error);
-    });
-    emit(AddNoteDeleteOneNoteState());
+  void deleteNote(context) {
+    deleteOneItem(context, database,
+        id: noteId,
+        tableName: 'notes',
+        cachedImagesList: cachedImagesList,
+        recordsList: recordsList);
   }
 
   void updateNote(context,
       {required String title, required String body, required int id}) async {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
-
     database.rawUpdate(
         'UPDATE notes SET title = ? , body = ? , createdTime = ? ,createdDate = ? WHERE id = ?',
         ['$title', '$body', '$createdTime', '$createdDate', id]).then((value) {
-      if (selectedGalleryImagesList.isNotEmpty) {
-        saveSelectedImagesToPhoneCache();
-        getNoteImagesFromDatabase(noteId);
-      }
-      getNoteDataFromDatabase();
       titleFocus.unfocus();
       bodyFocus.unfocus();
     });
-    emit(AddNoteUpdateTitleAndBodyState());
+    emit(UpdateNoteState());
   }
 
   void deleteSavedImage({required int imageID, required int index}) async {
@@ -255,53 +137,37 @@ class AddNoteCubit extends Cubit<AddNoteState> {
         'DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
       cachedImagesList.removeAt(index);
-      // getNoteImagesFromDatabase(imageID);
       emit(AddNoteDeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
   }
 
-  void deleteUnSavedImage({required int index}) async {
-    selectedGalleryImagesList.removeAt(index);
-    emit(AddNoteDeleteUnSavedImageState());
+  favFun() async {
+    isFavorite = await favoriteFun(database, 'notes', isFavorite, noteId);
+    emit(NoteFavoriteState());
   }
 
-  void addToFavorite() {
-    database.rawUpdate(
-        'UPDATE notes SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
-      isFavorite = !isFavorite;
-      print('$val $isFavorite is done');
-      emit(AddNoteFavoriteState());
-      getNoteDataFromDatabase();
-    }).catchError((error) {
-      print(error);
-    });
-  }
+  void addNoteToSecret(context) => addToSecret(context, noteId, 'notes');
 
-  void addToSecret(context) {
-    String? pass = CacheHelper.getString(key: 'secret_password');
-    if (pass == null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreatePass(
-                    id: noteId,
-                    table: 'notes',
-                  )));
+  onSave(context){
+    if (noteId == null) {
+      insertNewNote(
+        context,
+        title: titleController.text,
+        body: noteTextController.text,
+      );
     } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Login(
-                    id: noteId,
-                    table: 'notes',
-                  )));
+      updateNote(context,
+          id: noteId!,
+          body: noteTextController.text,
+          title: titleController.text);
     }
   }
+// ---------------------------------------------------------------------------------------------
+// record functions
 
-  createRecordsDirectory() async{
+  createRecordsDirectory() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
 
@@ -311,9 +177,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     return directoryPath.path;
   }
 
-
-
-  newRecord(context) async{
+  newRecord(context) async {
     int id = 0;
     await database.rawQuery('select MAX(id) from voices').then((value) {
       id = int.parse(jsonEncode(value[0]['MAX(id)'] ?? 0));
@@ -322,9 +186,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     mPath = '$recordsDirectoryPath/record$id.mp4';
 
     getRecorderFn(context);
-
-
-
   }
 
   final theSource = AudioSource.microphone;
@@ -332,12 +193,11 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   // recorder code
 
   Codec _codec = Codec.aacMP4;
-  String mPath = '' ;
+  String mPath = '';
   FlutterSoundPlayer? mPlayer = FlutterSoundPlayer();
   FlutterSoundRecorder? mRecorder = FlutterSoundRecorder();
   bool _mPlayerIsInited = false;
   bool _mRecorderIsInited = false;
-  bool _mplaybackReady = false;
 
   void initState() {
     mPlayer!.openAudioSession().then((value) {
@@ -387,31 +247,26 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   void stopRecorder(context) async {
     print('stop');
-    await mRecorder!.stopRecorder().then((url) async{
+    await mRecorder!.stopRecorder().then((url) async {
       // var url = value;
-      if(noteId == null)
-        insertNewNote(context, title: '', body: '');
+      if (noteId == null) insertNewNote(context, title: '', body: '');
 
-
-    await  database.transaction((txn) async{
-        txn
-            .rawInsert(
-            'INSERT INTO voices (link ,note_id) VALUES ("$url",$noteId)');}).then((value) {
+      await database.transaction((txn) async {
+        txn.rawInsert(
+            'INSERT INTO voices (link ,note_id) VALUES ("$url",$noteId)');
+      }).then((value) {
         print(url.toString() + ' added success');
-
       });
       print(url.toString());
-      _mplaybackReady = true;
       getRecordsFromDatabase(noteId);
-
     });
   }
 
-  List recordsList=[];
-  void getRecordsFromDatabase(id){
+  List recordsList = [];
+  void getRecordsFromDatabase(id) {
     recordsList = [];
-    database.rawQuery(
-        'SELECT * FROM voices WHERE note_id = ?', [id]).then((value) {
+    database
+        .rawQuery('SELECT * FROM voices WHERE note_id = ?', [id]).then((value) {
       value.forEach((element) {
         recordsList = value;
         print(element);
@@ -420,7 +275,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     });
   }
 
-  void play(path) async{
+  void play(path) async {
     print(path);
 
     mPlayer!
@@ -448,26 +303,23 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     }
     return mRecorder!.isStopped ? record() : stopRecorder(context);
   }
+
   int? item;
-  getPlaybackFn(path,index) {
-         item=index;
-         emit(GetIndexState());
-    if (!_mPlayerIsInited ) {
+  getPlaybackFn(path, index) {
+    item = index;
+    emit(GetIndexState());
+    if (!_mPlayerIsInited) {
       return null;
     }
 
     return mPlayer!.isStopped ? play(path) : stopPlayer();
   }
-  Future deleteAllNoteCachedRecords() async{
-    for (int i = 0; i < recordsList.length; i++) {
-      File('${recordsList[i]['link']}').delete(recursive: true);
-    }
-  }
+
   void deleteSavedRecord({required int recordID, required int index}) async {
     await database.rawDelete(
-        'DELETE FROM voices WHERE id = ?', [recordID]).then((value) async{
+        'DELETE FROM voices WHERE id = ?', [recordID]).then((value) async {
       File('${recordsList[index]['link']}').delete(recursive: true);
-     await recordsList.removeAt(index);
+      await recordsList.removeAt(index);
       // getRecordsFromDatabase(noteId);
       emit(AddNoteDeleteOneRecordState());
     }).catchError((error) {
@@ -482,6 +334,10 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
     mRecorder!.closeAudioSession();
     mRecorder = null;
+    titleController.dispose();
+    noteTextController.dispose();
+    titleFocus.dispose();
+    bodyFocus.dispose();
     return super.close();
   }
 }
