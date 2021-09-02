@@ -36,7 +36,7 @@ class FavoriteScreen extends StatelessWidget {
                                     context,
                                     AddNote(data: cubit.allData[index]),
                                     cubit
-                                        .getNotesDataWithItsImages());
+                                        .getNotesDataWithItsImages);
                               },
                               data: cubit.allData[index])
                           : cubit.allData[index]['type'] == 'task'
@@ -46,7 +46,7 @@ class FavoriteScreen extends StatelessWidget {
                                         context,
                                         AddTask(data: cubit.allData[index]),
                                         cubit
-                                            .getAllTasksDataWithItSubTasks());
+                                            .getAllTasksDataWithItSubTasks);
                                   },
                                   data: cubit.allData[index],
                                   isFavorite: cubit.isFavorite,
@@ -56,8 +56,7 @@ class FavoriteScreen extends StatelessWidget {
                                     cubit.updateDataWhenGetOut(
                                         context,
                                         AddMemory(data: cubit.allData[index]),
-                                        cubit
-                                            .getAllMemoriesDataWithItsImages());
+                                         cubit.getAllMemoriesDataWithItsImages);
                                   },
                                   data: cubit.allData[index],
                                   isFavorite: cubit.isFavorite,
