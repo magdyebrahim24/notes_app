@@ -15,7 +15,7 @@ import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class AddNoteCubit extends Cubit<AddNoteState> {
+class AddNoteCubit extends Cubit<AddNoteStates> {
   AddNoteCubit() : super(AddNoteInitialState());
 
   static AddNoteCubit get(context) => BlocProvider.of(context);
@@ -46,7 +46,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     getRecordsFromDatabase(noteId);
     recordsDirectoryPath = await createRecordsDirectory();
     initState();
-    emit(OnBuildAddNoteInitialState());
+    emit(OnBuildAddNoteState());
   }
 
   onTextChange() {
@@ -55,13 +55,13 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   void onFocusBodyChange() {
     titleFocus.unfocus();
     bodyFocus.requestFocus();
-    emit(AddNoteFocusBodyChangeState());
+    emit(FocusBodyChangeState());
   }
 
   void onFocusTitleChange() {
     bodyFocus.unfocus();
     titleFocus.requestFocus();
-    emit(AddNoteFocusTitleChangeState());
+    emit(FocusTitleChangeState());
   }
 
   pickMultiImageFromGallery(context) =>
@@ -82,7 +82,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     database.rawQuery(
         'SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
       cachedImagesList = makeModifiableResults(value);
-      emit(AddNoteGetCachedImagesPathsFromDatabaseState());
+      emit(GetCachedImagesPathsFromDatabaseState());
     });
   }
 
@@ -105,7 +105,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
-    emit(AddNoteInsertDatabaseState());
+    emit(InsertNewNoteState());
     return noteId;
   }
 
@@ -136,7 +136,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
         'DELETE FROM notes_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
       cachedImagesList.removeAt(index);
-      emit(AddNoteDeleteOneImageState());
+      emit(DeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
@@ -330,14 +330,12 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   Future<void> close() {
     mPlayer!.closeAudioSession();
     mPlayer = null;
-
     mRecorder!.closeAudioSession();
     mRecorder = null;
     titleController.dispose();
     noteTextController.dispose();
     titleFocus.dispose();
     bodyFocus.dispose();
-    // onSave(context);
     return super.close();
   }
 }

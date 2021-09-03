@@ -14,18 +14,7 @@ class TimeAndDate{
     String formatter = time.format(context).toString();
     return formatter ;
   }
- // static String? getDdatePicker(context, {required firstDate,required lastDate}) {
-  //   String? formatDate;
-  //   var date=
-  //   showDatePicker(
-  //     context: context,
-  //     initialDate: DateTime.now(),
-  //     firstDate: firstDate,
-  //     lastDate: lastDate,
-  //   );
-  //     if(date !=null)  formatDate =DateFormat.yMMMd().format(date);
-  //   return formatDate;
-  // }
+
  static Future<String?> getDatePicker(context, {required firstDate,required lastDate})async {
     String? date;
    await showDatePicker(
@@ -38,4 +27,17 @@ class TimeAndDate{
     }).catchError((error) {});
     return date;
   }
+
+  static Future<String?> getTimePicker(context) async {
+    String? time;
+    await  showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+      initialEntryMode: TimePickerEntryMode.input,
+    ).then((value) {
+      time = value!.format(context).toString();
+    }).catchError((error) {print(error);});
+    return time;
+  }
 }
+

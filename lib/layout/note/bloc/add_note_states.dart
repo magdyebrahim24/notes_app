@@ -1,65 +1,43 @@
-abstract class AddNoteState {}
+abstract class AddNoteStates {}
 
-class AddNoteInitialState extends AddNoteState {}
+class AddNoteInitialState extends AddNoteStates {}
 
-class OnBuildAddNoteInitialState extends AddNoteState {}
+class OnBuildAddNoteState extends AddNoteStates {}
 
-class AddNoteClearStackState extends AddNoteState {}
+class FocusBodyChangeState extends AddNoteStates {}
 
-class AddNoteUndoState extends AddNoteState {}
+class FocusTitleChangeState extends AddNoteStates {}
 
-class AddNoteShowUndoRedoState extends AddNoteState {}
+class OnNoteTextChangedState extends AddNoteStates {}
 
-class AddNoteFocusBodyChangeState extends AddNoteState {}
+class OnNoteTextChangeState extends AddNoteStates {}
 
-class AddNoteFocusTitleChangeState extends AddNoteState {}
+class InsertNewNoteState extends AddNoteStates {}
 
-class AddNoteRedoState extends AddNoteState {}
+class UpdateNoteState extends AddNoteStates {}
 
-class AddNoteOnNoteTextChangedState extends AddNoteState {}
+class DeleteOneImageState extends AddNoteStates {}
 
-class OnNoteTextChangeState extends AddNoteState {}
+class GetCachedImagesPathsFromDatabaseState extends AddNoteStates {}
 
-class AddNoteAddImageState extends AddNoteState {}
+class NoteFavoriteState extends AddNoteStates {}
 
-class AddNoteInsertDatabaseState extends AddNoteState {}
+// record states
 
-class AddNoteGetDatabaseState extends AddNoteState {}
+class OpenAudioSessionState extends AddNoteStates {}
 
-class UpdateNoteState extends AddNoteState {}
+class OpenTheRecorderState extends AddNoteStates {}
 
-class AddNoteDeleteOneNoteState extends AddNoteState {}
+class RecordAudioState extends AddNoteStates {}
 
-class AddNoteDeleteOneImageState extends AddNoteState {}
+class StopRecorderState extends AddNoteStates {}
 
-class AddNoteDeleteUnSavedImageState extends AddNoteState {}
+class PlayAudioState extends AddNoteStates {}
 
-class AddNoteAddImagesToCacheState extends AddNoteState {}
+class AfterPlayAudioState extends AddNoteStates {}
 
-class AddNoteAddCachedImagesPathToDatabaseState extends AddNoteState {}
+class StopPlayAudio extends AddNoteStates {}
 
-class AddNoteGetCachedImagesPathsFromDatabaseState extends AddNoteState {}
+class GetIndexState extends AddNoteStates {}
 
-class NoteFavoriteState extends AddNoteState {}
-
-class AddNoteToSecretState extends AddNoteState {}
-
-class OpenAudioSessionState extends AddNoteState {}
-
-class OpenTheRecorderState extends AddNoteState {}
-
-class RecordAudioState extends AddNoteState {}
-
-class StopRecorderState extends AddNoteState {}
-
-class PlayAudioState extends AddNoteState {}
-
-class AfterPlayAudioState extends AddNoteState {}
-
-class StopPlayAudio extends AddNoteState {}
-
-class GetRecordsFromDatabaseState extends AddNoteState {}
-
-class GetIndexState extends AddNoteState {}
-
-class AddNoteDeleteOneRecordState extends AddNoteState {}
+class AddNoteDeleteOneRecordState extends AddNoteStates {}

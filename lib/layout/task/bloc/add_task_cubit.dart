@@ -3,9 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:notes_app/layout/task/bloc/states/states.dart';
+import 'package:notes_app/layout/task/bloc/add_task_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:notes_app/verify/create_pass.dart';
 import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,16 +16,15 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
 
   static AddTaskCubit get(context) => BlocProvider.of(context);
   List newTasksList = [];
-  String? dateController;
-  String? timeController;
+  String? taskDate;
+  String? taskTime;
   int? taskID;
-  List taskList = [];
   List subTasksList = [];
   List subTasksStoredDBList = [];
   late Database database;
   bool isFavorite = false;
   FocusNode titleFocus = new FocusNode();
-
+  TextEditingController titleController = TextEditingController();
 
   onBuild(data) async {
     var db = await openDatabase('database.db');
@@ -33,39 +33,40 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     if (data != null) {
       taskID = data['id'];
       titleController.text = data['title'];
-     if(data['taskDate'].toString() != 'null') dateController = data['taskDate'];
-     if(data['taskTime'].toString() != 'null') timeController = data['taskTime'];
+      if (data['taskDate'].toString() != 'null')
+        taskDate = data['taskDate'];
+      if (data['taskTime'].toString() != 'null')
+        taskTime = data['taskTime'];
       subTasksList = modifySubTasksList(data['subTasks']);
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     emit(AppTaskBuildState());
   }
 
-  TextEditingController titleController = TextEditingController();
 
   void changeCheckbox(index) {
     subTasksList[index]['isDone'] = !subTasksList[index]['isDone'];
-    emit(AppTaskChengCheckboxState());
+    emit(ChangeCheckboxState());
   }
 
-  void changeNewSubTAskCheckbox(index) {
+  void changeNewSubTaskCheckbox(index) {
     newTasksList[index]['isDone'] = !newTasksList[index]['isDone'];
-    emit(AppTaskChengCheckboxState());
+    emit(ChangeCheckboxState());
   }
 
-  void addNewTask() {
+  void addNewSubTask() {
     newTasksList.add({'isDone': false, 'body': TextEditingController()});
-    emit(AppTaskNewTaskState());
+    emit(AddNewSubTaskState());
   }
 
-  void deleteSubTaskFromDataBase(index, context) async {
+  void deleteOneSubTaskFrom(index, context) async {
     database.rawDelete('DELETE FROM subTasks WHERE id = ?',
         [subTasksList[index]['id']]).then((value) {
       print('sub task id ==> ' +
           subTasksList[index]['id'].toString() +
           'has been deleted');
       subTasksList.removeAt(index);
-      emit(AppTaskRemoveSubTaskState());
+      emit(RemoveSubTaskState());
     }).catchError((error) {
       print(error);
     });
@@ -73,44 +74,23 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
 
   void deleteUnSavedSubTask(index) {
     newTasksList.removeAt(index);
-    emit(AppTaskRemoveSubTaskState());
+    emit(RemoveSubTaskState());
   }
 
-  void deleteTask(context) {
-    database
-        .rawDelete('DELETE FROM tasks WHERE id = ?', [taskID]).then((value) {
-      Navigator.pop(context);
-      print('task $taskID ==> ' + 'has been deleted');
-      // emit(DeleteTaskState());
-    }).catchError((error) {
-      print(error);
-    });
+  void deleteTask(context)=> deleteOneItem(context, database, id: taskID, tableName: 'tasks', cachedImagesList: [], recordsList: []);
+
+  void datePicker(context) async{
+    taskDate = await TimeAndDate.getDatePicker(context, firstDate: DateTime.now(), lastDate:DateTime.now().add(Duration(days: 1000)));
+    emit(TaskDateTimePickerState());
   }
 
-  void datePicker(context) {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(Duration(days: 1000)),
-    ).then((value) {
-      dateController = DateFormat.yMMMd().format(value!);
-      emit(AppTaskTimePickerState());
-    }).catchError((error) {});
-  }
-
-  void timePicker(context) {
-    showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    ).then((value) {
-      timeController = value!.format(context).toString();
-      emit(AppTaskTimePickerState());
-    }).catchError((error) {});
+  void timePicker(context) async {
+    taskTime = await TimeAndDate.getTimePicker(context);
+    emit(TaskDateTimePickerState());
   }
 
   Future insertNewTask(
-      context, {
+    context, {
     required String title,
     required String taskDate,
     required String taskTime,
@@ -123,44 +103,24 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
               'INSERT INTO tasks (title ,createdTime ,createdDate ,taskDate ,taskTime,type) VALUES ("$title","$createdTime","$createdDate","${taskDate.toString()}","${taskTime.toString()}","task")')
           .then((value) {
         taskID = value;
-        getTaskDataFromDatabase();
         if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
       }).catchError((error) {
         print(error.toString());
       });
-
       return Future.value(true);
     });
-    // titleFocus.unfocus();
-    // bodyFocus.unfocus();
-    emit(AddTaskInsertDatabaseState());
-  }
-
-  void getTaskDataFromDatabase() async {
-    taskList = [];
-    // emit(AppLoaderState());
-    database.rawQuery('SELECT * FROM tasks').then((value) {
-      taskList = value;
-      value.forEach((element) {
-        print(element);
-      });
-      emit(AddTaskGetSubTasksFromDatabaseState());
-    });
+    titleFocus.unfocus();
+    emit(InsertNewTaskState());
   }
 
   void getSubTaskData() async {
     subTasksList = [];
     subTasksStoredDBList = [];
-    // emit(AppLoaderState());
-    print('all sub tasks ------------------------');
     database.rawQuery(
         'SELECT * FROM subTasks WHERE tasks_id = ?', [taskID]).then((value) {
-      value.forEach((element) {
-        print(element);
-      });
       subTasksStoredDBList = value;
       subTasksList = modifySubTasksList(value);
-      emit(AddTaskGetSubTasksFromDatabaseState());
+      emit(GetSubTasksFromDatabaseState());
     });
   }
 
@@ -178,22 +138,19 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       }
       return Future.value(true);
     });
-
     getSubTaskData();
     newTasksList = [];
     emit(AddSubTasksIntoDatabaseState());
   }
 
-  void updateTask(
-  context,{required String title,
+  void updateTask(context,
+      {required String title,
       required String taskDate,
       required String taskTime,
       required int id}) async {
-
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
-
-    database.rawUpdate(
+   await database.rawUpdate(
         'UPDATE tasks SET title = ? , createdTime = ? ,createdDate = ? ,taskDate = ? ,taskTime = ? WHERE id = ?',
         [
           '$title',
@@ -203,11 +160,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
           '$taskTime',
           id
         ]).then((value) {
-      getTaskDataFromDatabase();
-
-      // titleFocus.unfocus();
-      // bodyFocus.unfocus();
-      emit(AddTaskUpdateTitleAndBodyState());
+      titleFocus.unfocus();
+      emit(UpdateTaskTitleState());
     });
   }
 
@@ -216,27 +170,21 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       insertNewTask(
         context,
         title: titleController.text,
-        taskDate: dateController.toString(),
-        taskTime: timeController.toString(),
+        taskDate: taskDate.toString(),
+        taskTime: taskTime.toString(),
       );
       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
     } else {
       updateTask(context,
           id: taskID!,
-          taskDate: dateController.toString(),
-          taskTime: timeController.toString(),
+          taskDate: taskDate.toString(),
+          taskTime: taskTime.toString(),
           title: titleController.text);
-
       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
-
       updateSubTasks();
     }
     titleFocus.unfocus();
   }
-  // void unFocusTitle(){
-  //   titleFocus.unfocus();
-  //   emit(AddNoteTitleUnFocusState());
-  // }
 
   void updateSubTasks() async {
     for (int i = 0; i < subTasksStoredDBList.length; i++) {
@@ -251,7 +199,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       }
     }
     getSubTaskData();
-    emit(AddSubTasksUpdateSubTaskState());
+    emit(UpdateSubTaskState());
   }
 
   modifySubTasksList(List databaseValues) {
@@ -265,37 +213,21 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
         'body': TextEditingController(text: databaseValues[i]['body'])
       });
     }
-    print('----------------------');
-    temp.forEach((element) {
-      print(element);
-    });
-
     return temp;
   }
 
-  void addToFavorite(){
-    print('1/');
-    database.rawUpdate(
-        'UPDATE tasks SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-        [!isFavorite,DateTime.now().toString() , taskID]).then((val){
-      isFavorite = !isFavorite ;
-      print('$val $isFavorite is done');
-      emit(AddTaskToFavoriteState());
-      getTaskDataFromDatabase();
-    }).catchError((error){
-      print(error);
-    });
+  addToFavorite() async {
+    isFavorite = await favoriteFun(database, 'notes', isFavorite, taskID);
+    emit(TaskFavoriteState());
   }
-  void addToSecret(context) {
-    String? pass = CacheHelper.getString(key: 'secret_password');
-    if (pass == null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreatePass(id: taskID,table: 'tasks',)));
-    } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Login(id: taskID,table: 'tasks',)));
-    }
+
+  void addTaskToSecret(context) => addToSecret(context, taskID, 'tasks');
+
+  @override
+  Future<void> close() {
+    titleFocus.dispose();
+    titleController.dispose();
+    return super.close();
   }
+
 }

@@ -17,8 +17,8 @@ class AddNote extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) =>
           AddNoteCubit()..onBuildAddNoteScreen(data),
-      child: BlocConsumer<AddNoteCubit, AddNoteState>(
-        listener: (context, AddNoteState state) {},
+      child: BlocConsumer<AddNoteCubit, AddNoteStates>(
+        listener: (context, AddNoteStates state) {},
         builder: (context, state) {
           // AppCubit appCubit = AppCubit.get(context);
           AddNoteCubit cubit = AddNoteCubit.get(context);

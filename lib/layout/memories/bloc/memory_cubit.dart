@@ -86,7 +86,6 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     emit(AppMemoryTimePickerState());
   }
 
-
   pickMultiImageFromGallery(context) =>
       pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
         if (memoryID == null) await insertNewMemory(context, title: titleController.text, body: memoryTextController.text,memoryDate: memoryDate??'');

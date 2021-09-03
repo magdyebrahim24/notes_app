@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'bloc/cubit/add_task_cubit.dart';
-import 'bloc/states/states.dart';
+import 'bloc/add_task_cubit.dart';
+import 'bloc/add_task_states.dart';
 
 class AddTask extends StatelessWidget {
   final data;
@@ -112,7 +112,7 @@ class AddTask extends StatelessWidget {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8),
                                           child: Text(
-                                            cubit.dateController ?? 'Add',
+                                            cubit.taskDate ?? 'Add',
                                             style: Theme.of(context).textTheme.bodyText2,
                                           ),
                                         ),
@@ -156,7 +156,7 @@ class AddTask extends StatelessWidget {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 8),
                                           child: Text(
-                                            cubit.timeController ?? 'Add',
+                                            cubit.taskTime ?? 'Add',
                                               style: Theme.of(context).textTheme.bodyText2,
                                           ),
                                         ),
@@ -215,7 +215,7 @@ class AddTask extends StatelessWidget {
                                   ),
                                   IconButton(
                                       onPressed: () =>
-                                          cubit.deleteSubTaskFromDataBase(
+                                          cubit.deleteOneSubTaskFrom(
                                               index, context),
                                       icon: Icon(Icons.clear,
                                           color: Theme.of(context).textTheme.bodyText1!.color, size: 19)),
@@ -229,7 +229,7 @@ class AddTask extends StatelessWidget {
                                 children: [
                                   Checkbox(
                                     onChanged: (value) {
-                                      cubit.changeNewSubTAskCheckbox(index);
+                                      cubit.changeNewSubTaskCheckbox(index);
                                     },
                                     value: cubit.newTasksList[index]['isDone'],
                                   ),
@@ -268,7 +268,7 @@ class AddTask extends StatelessWidget {
                       TextButton(
                         onPressed: () {
                           if (formKey.currentState!.validate())
-                            cubit.addNewTask();
+                            cubit.addNewSubTask();
                         },
                         style: ButtonStyle(),
                         child: Text(
@@ -286,7 +286,7 @@ class AddTask extends StatelessWidget {
                     deleteFun: () => cubit.deleteTask(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
                     isFavorite: cubit.isFavorite,
-                    addToSecretFun: () => cubit.addToSecret(context),
+                    addToSecretFun: () => cubit.addTaskToSecret(context),
                   )
                 : SizedBox(),
           );
