@@ -2,17 +2,13 @@ import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/memories/bloc/memory_states.dart';
-import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
-import 'package:notes_app/verify/create_pass.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddMemoryCubit extends Cubit<AppMemoryStates> {
-  AddMemoryCubit() : super(AppMemoryInitialState());
+  AddMemoryCubit() : super(InitialState());
 
   static AddMemoryCubit get(context) => BlocProvider.of(context);
 
@@ -22,10 +18,8 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   FocusNode titleFocus = new FocusNode();
   int? memoryID;
   String? memoryDate;
-  List memoryList = [];
   List pickedGalleryImagesList=[];
   List cachedImagesList = [];
-  XFile? image;
   bool isFavorite = false ;
   late Database database ;
 
@@ -62,28 +56,28 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
-    emit(AppMemoryOnBuildState());
+    emit(OnBuildState());
   }
 
   void onFocusBodyChange() {
     titleFocus.unfocus();
     bodyFocus.requestFocus();
-    emit(AddMemoryFocusBodyChangeState());
+    emit(FocusBodyChangeState());
   }
 
   void onFocusTitleChange() {
     bodyFocus.unfocus();
     titleFocus.requestFocus();
-    emit(AddMemoryFocusTitleChangeState());
+    emit(FocusTitleChangeState());
   }
 
   onTextChange() {
-    emit(AddMemoryOnMemoryTextChangedState());
+    emit(OnMemoryTextChangedState());
   }
 
   void datePicker(context) async{
     memoryDate= await TimeAndDate.getDatePicker(context, firstDate: DateTime.parse('1900-09-22'), lastDate: DateTime.now(),);
-    emit(AppMemoryTimePickerState());
+    emit(TimePickerState());
   }
 
 
@@ -104,16 +98,16 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     cachedImagesList = [];
     database.rawQuery('SELECT * FROM memories_images WHERE memory_id = ?', [id]).then((value) {
       cachedImagesList = makeModifiableResults(value);
-      emit(AddMemoryGetCachedImagesPathsFromDatabaseState());
+      emit(GetCachedImagesPathsFromDatabaseState());
     });
 
   }
 
-  void deleteAllMemoryCachedImages() {
-    for (int i = 0; i < cachedImagesList.length; i++) {
-      File('${cachedImagesList[i]}').delete(recursive: true);
-    }
-  }
+  // void deleteAllMemoryCachedImages() {
+  //   for (int i = 0; i < cachedImagesList.length; i++) {
+  //     File('${cachedImagesList[i]}').delete(recursive: true);
+  //   }
+  // }
 
   Future insertNewMemory(
       context, {
@@ -140,7 +134,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
-    emit(AddMemoryInsertDatabaseState());
+    emit(InsertDatabaseState());
     return memoryID;
   }
 
@@ -181,19 +175,26 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       titleFocus.unfocus();
       bodyFocus.unfocus();
     });
-    emit(AddMemoryUpdateTitleAndBodyState());
+    emit(UpdateTitleAndBodyState());
   }
 
-  void deleteMemory( context, {required int id}) async {
-    print(id);
-    await database.rawDelete('DELETE FROM memories WHERE id = ?', [id]).then((value) {
-      deleteAllMemoryCachedImages();
-      Navigator.pop(context);
-      // getMemoryDataFromDatabase();
-    }).catchError((error) {
-      print(error);
-    });
-    emit(AddMemoryDeleteOneMemoryState());
+  // void deleteMemory( context, {required int id}) async {
+  //   print(id);
+  //   await database.rawDelete('DELETE FROM memories WHERE id = ?', [id]).then((value) {
+  //     deleteAllMemoryCachedImages();
+  //     Navigator.pop(context);
+  //     // getMemoryDataFromDatabase();
+  //   }).catchError((error) {
+  //     print(error);
+  //   });
+  //   emit(AddMemoryDeleteOneMemoryState());
+  // }
+  void deleteMemory(context) {
+    deleteOneItem(context, database,
+        id: memoryID,
+        tableName: 'memories',
+        cachedImagesList: cachedImagesList,
+        );
   }
 
   void deleteImage( {required int imageID ,required int index}) async {
@@ -201,47 +202,51 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     await database.rawDelete('DELETE FROM memories_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);
       cachedImagesList.removeAt(index);
-      emit(AddMemoryDeleteOneImageState());
+      emit(DeleteOneImageState());
     }).catchError((error) {
       print(error);
     });
 
   }
 
-  void deleteUnSavedImage({required int index}) async {
-    // selectedGalleryImagesList.removeAt(index);
-    emit(AddMemoryDeleteUnSavedImageState());
+
+
+
+  // void addToFavorite(){
+  //   database.rawUpdate(
+  //       'UPDATE memories SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+  //       [!isFavorite, DateTime.now().toString() , memoryID]).then((val){
+  //     isFavorite = !isFavorite ;
+  //     print('$val $isFavorite is done');
+  //     emit(AddMemoryFavoriteState());
+  //     // getMemoryDataFromDatabase();
+  //   }).catchError((error){
+  //     print(error);
+  //   });
+  // }
+  addToFavorite() async {
+    isFavorite = await favoriteFun(database, 'memories', isFavorite, memoryID);
+    emit(FavoriteState());
   }
+
+  void addNoteToSecret(context) => addToSecret(context, memoryID, 'memories');
+
+  // void addNoteToSecret(context) {
+  //   String? pass = CacheHelper.getString(key: 'secret_password');
+  //   if (pass == null) {
+  //     Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //             builder: (context) => CreatePass(id: memoryID,table: 'memories',)));
+  //   } else {
+  //     Navigator.push(context,
+  //         MaterialPageRoute(builder: (context) => Login(id: memoryID,table: 'memories',)));
+  //   }
+  // }
 
   @override
   Future<void> close() async{
     // database.close();
     return super.close();
-  }
-
-  void addToFavorite(){
-    database.rawUpdate(
-        'UPDATE memories SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-        [!isFavorite, DateTime.now().toString() , memoryID]).then((val){
-      isFavorite = !isFavorite ;
-      print('$val $isFavorite is done');
-      emit(AddMemoryFavoriteState());
-      // getMemoryDataFromDatabase();
-    }).catchError((error){
-      print(error);
-    });
-  }
-
-  void addToSecret(context) {
-    String? pass = CacheHelper.getString(key: 'secret_password');
-    if (pass == null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreatePass(id: memoryID,table: 'memories',)));
-    } else {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => Login(id: memoryID,table: 'memories',)));
-    }
   }
 }

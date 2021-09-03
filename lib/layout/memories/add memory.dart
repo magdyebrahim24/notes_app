@@ -167,11 +167,11 @@ class AddMemory extends StatelessWidget {
                 ? BottomIconBar(
                     isFavorite: cubit.isFavorite,
                     deleteFun: () =>
-                        cubit.deleteMemory(context, id: cubit.memoryID!),
+                        cubit.deleteMemory(context),
                     addImageFun: () =>
                         cubit.pickMultiImageFromGallery(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
-                    addToSecretFun: ()=> cubit.addToSecret(context),
+                    addToSecretFun: ()=> cubit.addNoteToSecret(context),
                   )
                 : SizedBox(),
             floatingActionButton: cubit.memoryID == null
