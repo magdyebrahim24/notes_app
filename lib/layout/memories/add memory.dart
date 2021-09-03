@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:notes_app/layout/memories/bloc/cubit.dart';
-import 'package:notes_app/layout/memories/bloc/states.dart';
+import 'package:notes_app/layout/memories/bloc/memory_cubit.dart';
+import 'package:notes_app/layout/memories/bloc/memory_states.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
@@ -23,30 +23,9 @@ class AddMemory extends StatelessWidget {
           return Scaffold(
             appBar: AppBar(
               actions: [
-                cubit.bodyFocus.hasFocus
-                    ? IconButton(
-                        tooltip: 'Undo',
-                        icon: Icon(
-                          Icons.undo,
-                        ),
-                        onPressed: cubit.stackController!.state == '' &&
-                                !(cubit.stackController!.canUndo)
-                            ? null
-                            : cubit.undoFun,
-                      )
-                    : SizedBox(),
-                cubit.bodyFocus.hasFocus
-                    ? IconButton(
-                        tooltip: 'Redo',
-                        icon: Icon(Icons.redo),
-                        onPressed: !cubit.stackController!.canRedo
-                            ? null
-                            : cubit.redoFun,
-                      )
-                    : SizedBox(),
                 cubit.titleController.text.isNotEmpty ||
                         cubit.memoryTextController.text.isNotEmpty ||
-                        cubit.selectedGalleryImagesList.isNotEmpty
+                        cubit.pickedGalleryImagesList.isNotEmpty
                     ? IconButton(
                         onPressed: () => cubit.saveButton(context),
                         icon: Icon(Icons.done))
@@ -72,7 +51,7 @@ class AddMemory extends StatelessWidget {
                           cubit.onFocusTitleChange();
                         },
                         onChanged: (value) {
-                          cubit.onTitleChange();
+                          cubit.onTextChange();
                         },
                         maxLines: null,
                         minLines: null,
@@ -133,7 +112,7 @@ class AddMemory extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 8),
                                   child: Text(
-                                    cubit.dateController ?? 'Add',
+                                    cubit.memoryDate ?? 'Add',
                                     style: Theme.of(context).textTheme.bodyText2,
                                   ),
                                 ),
@@ -161,7 +140,7 @@ class AddMemory extends StatelessWidget {
                         fontSize: 20,
                       ),
                       onChanged: (value) {
-                        cubit.onMemoryTextChanged(value);
+                        cubit.onTextChange();
                       },
                       maxLines: null,
                       minLines: null,
@@ -173,12 +152,6 @@ class AddMemory extends StatelessWidget {
                     SizedBox(
                       height: 15,
                     ),
-                    GridViewForImages(cubit.selectedGalleryImagesList,
-                      deleteFun: (id,index){
-                        cubit.deleteUnSavedImage(index: index);
-                      },
-                      expansionTileHeader: 'Un Saved Images',
-                        ),
                     GridViewForImages(cubit.cachedImagesList,
                       deleteFun:(id,index){
                         cubit.deleteImage(imageID: id, index: index);
@@ -196,7 +169,7 @@ class AddMemory extends StatelessWidget {
                     deleteFun: () =>
                         cubit.deleteMemory(context, id: cubit.memoryID!),
                     addImageFun: () =>
-                        cubit.pickImageFromGallery(ImageSource.gallery),
+                        cubit.pickMultiImageFromGallery(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
                     addToSecretFun: ()=> cubit.addToSecret(context),
                   )
@@ -204,7 +177,7 @@ class AddMemory extends StatelessWidget {
             floatingActionButton: cubit.memoryID == null
                 ? FloatingActionButton(
               onPressed: () {
-                cubit.pickImageFromGallery(ImageSource.gallery);
+                cubit.pickMultiImageFromGallery(context);
               },
               child: Icon(Icons.add_photo_alternate_outlined),
             )

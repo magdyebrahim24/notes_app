@@ -66,7 +66,8 @@ class AddNoteCubit extends Cubit<AddNoteState> {
 
   pickMultiImageFromGallery(context) =>
       pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
-        if (noteId == null) await insertNewNote(context, title: '', body: '');
+        if (noteId == null) await insertNewNote(context, title: titleController.text, body: noteTextController.text);
+
         savePickedImages();
       });
 
@@ -80,7 +81,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     cachedImagesList = [];
     database.rawQuery(
         'SELECT * FROM notes_images WHERE note_id = ?', [id]).then((value) {
-          print(value);
       cachedImagesList = makeModifiableResults(value);
       emit(AddNoteGetCachedImagesPathsFromDatabaseState());
     });
@@ -93,7 +93,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
   }) async {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
-    await database.transaction((txn) {
+    await database.transaction((txn) async{
       txn
           .rawInsert(
               'INSERT INTO notes (title ,body ,createdTime ,createdDate,type) VALUES ("$title","$body","$createdTime","$createdDate","note")')
@@ -102,7 +102,6 @@ class AddNoteCubit extends Cubit<AddNoteState> {
       }).catchError((error) {
         print(error.toString());
       });
-      return Future.value(true);
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
@@ -249,7 +248,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     print('stop');
     await mRecorder!.stopRecorder().then((url) async {
       // var url = value;
-      if (noteId == null) insertNewNote(context, title: '', body: '');
+      if (noteId == null) insertNewNote(context, title: titleController.text, body: noteTextController.text);
 
       await database.transaction((txn) async {
         txn.rawInsert(
@@ -338,6 +337,7 @@ class AddNoteCubit extends Cubit<AddNoteState> {
     noteTextController.dispose();
     titleFocus.dispose();
     bodyFocus.dispose();
+    // onSave(context);
     return super.close();
   }
 }

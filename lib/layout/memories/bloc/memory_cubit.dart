@@ -1,36 +1,34 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:notes_app/layout/memories/bloc/states.dart';
-import 'package:intl/intl.dart';
+import 'package:notes_app/layout/memories/bloc/memory_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
+import 'package:notes_app/shared/functions/functions.dart';
 import 'package:notes_app/verify/create_pass.dart';
 import 'package:notes_app/verify/login.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:undo/undo.dart';
 
 class AddMemoryCubit extends Cubit<AppMemoryStates> {
   AddMemoryCubit() : super(AppMemoryInitialState());
 
   static AddMemoryCubit get(context) => BlocProvider.of(context);
 
+  TextEditingController memoryTextController = TextEditingController();
+  TextEditingController titleController = TextEditingController();
   FocusNode bodyFocus = new FocusNode();
   FocusNode titleFocus = new FocusNode();
   int? memoryID;
-  String? dateController;
+  String? memoryDate;
   List memoryList = [];
+  List pickedGalleryImagesList=[];
   List cachedImagesList = [];
-  TextEditingController memoryTextController = TextEditingController();
-  TextEditingController titleController = TextEditingController();
-  List selectedGalleryImagesList = [];
   XFile? image;
   bool isFavorite = false ;
   late Database database ;
+
   final formKey = GlobalKey<FormState>();
 
 
@@ -39,7 +37,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       if (memoryID == null) {
         insertNewMemory(
           context,
-          memoryDate: dateController.toString(),
+          memoryDate: memoryDate.toString(),
           title: titleController.text,
           body: memoryTextController.text,
         );
@@ -47,22 +45,20 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
         updateMemory(context,
             id: memoryID!,
             body: memoryTextController.text,
-            memoryDate: dateController.toString(),
+            memoryDate: memoryDate.toString(),
             title: titleController.text);
       }
     }
   }
+
   void onBuild(data) async{
     var db = await openDatabase('database.db');
     database = db ;
-
-    print('memory data --------------------------');
-    print(data.toString());
     if (data != null) {
       memoryID = data['id'];
       titleController.text = data['title'].toString();
       memoryTextController.text = data['body'].toString();
-     if(data['memoryDate'] != 'null') dateController = data['memoryDate'];
+     if(data['memoryDate'] != 'null') memoryDate = data['memoryDate'];
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
@@ -81,111 +77,33 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     emit(AddMemoryFocusTitleChangeState());
   }
 
-  SimpleStack? stackController = SimpleStack<dynamic>(
-    '',
-    onUpdate: (val) {},
-  );
-
-  void clearStack() {
-    stackController!.clearHistory();
-    emit(AddMemoryClearStackState());
-  }
-
-  undoFun() {
-    stackController!.undo();
-    memoryTextController.text = stackController!.state;
-    emit(AddMemoryUndoState());
-  }
-
-  redoFun() {
-    stackController!.redo();
-    memoryTextController.text = stackController!.state;
-    emit(AddMemoryRedoState());
-  }
-
-  onMemoryTextChanged(value) {
-    stackController!.modify(value);
+  onTextChange() {
     emit(AddMemoryOnMemoryTextChangedState());
   }
 
-  onTitleChange() {
-    emit(AddMemoryTitleChangedState());
+  void datePicker(context) async{
+    memoryDate= await TimeAndDate.getDatePicker(context, firstDate: DateTime.parse('1900-09-22'), lastDate: DateTime.now(),);
+    emit(AppMemoryTimePickerState());
   }
 
 
-  void datePicker(context) {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.parse('1900-09-22'),
-      lastDate: DateTime.now(),
-    ).then((value) {
-      dateController = DateFormat.yMMMd().format(value!);
-      emit(AppMemoryTimePickerState());
-    }).catchError((error) {});
-  }
+  pickMultiImageFromGallery(context) =>
+      pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
+        if (memoryID == null) await insertNewMemory(context, title: titleController.text, body: memoryTextController.text,memoryDate: memoryDate??'');
+        print('$memoryID ///////////////////////////////');
+        savePickedImages();
+      });
 
-  pickImageFromGallery(ImageSource src) async {
-    XFile? _image = await ImagePicker().pickImage(source: src);
-    if (_image != null) {
-      selectedGalleryImagesList.add({'link':_image.path});
-      emit(AddMemoryAddImageStateState());
-    } else {
-      print('No Image Selected');
-    }
-  }
-
-  Future saveSelectedImagesToPhoneCache() async {
-    // get app path
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-
-    // create new folder
-    Directory directoryPath =
-        await Directory('$appDocPath/memories_images').create(recursive: true);
-
-    XFile? _currentImageToSave;
-
-    List cachedImagesPaths = [];
-    for (int index = 0; index < selectedGalleryImagesList.length; index++) {
-      String imageName = selectedGalleryImagesList[index]['link'].split('/').last;
-      final String filePath = '${directoryPath.path}/$imageName';
-      _currentImageToSave = XFile(selectedGalleryImagesList[index]['link']);
-      await _currentImageToSave.saveTo(filePath);
-      cachedImagesPaths.add(filePath);
-    }
-    selectedGalleryImagesList = [];
-    insertCachedImagedToDatabase(images: cachedImagesPaths);
-    // List listOfFiles = await directoryPath.list(recursive: true).toList();
-    emit(AddMemoryAddImagesToCacheState());
-  }
-
-  Future insertCachedImagedToDatabase({required List images}) async {
-    await database.transaction((txn) {
-      for (int i = 0; i < images.length; i++) {
-        txn
-            .rawInsert(
-            'INSERT INTO memories_images (link ,memory_id) VALUES ("${images[i]}","$memoryID")')
-            .then((value) {
-          print(value);
-        }).catchError((error) {
-          print(error.toString());
-        });
-      }
-      getMemoryImagesFromDatabase(memoryID);
-      return Future.value(true);
-    });
-
-    emit(AddMemoryAddCachedImagesPathToDatabaseState());
-  }
+  void savePickedImages() => savePickedImagesToPhoneCacheAndDataBase(database, pickedGalleryImagesList, memoryID, 'memories_images', 'memory_id', 'memories_images')
+      .then((value) {
+    pickedGalleryImagesList = [];
+    getMemoryImagesFromDatabase(memoryID);
+  });
 
   void getMemoryImagesFromDatabase(id) async {
     cachedImagesList = [];
     database.rawQuery('SELECT * FROM memories_images WHERE memory_id = ?', [id]).then((value) {
-      value.forEach((element) {
-        print(element);
-      });
-      cachedImagesList = value ;
+      cachedImagesList = makeModifiableResults(value);
       emit(AddMemoryGetCachedImagesPathsFromDatabaseState());
     });
 
@@ -207,38 +125,36 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
 
-    database.transaction((txn) {
+   await database.transaction((txn) async{
       txn
           .rawInsert(
               'INSERT INTO memories (title ,body ,createdTime ,createdDate, memoryDate,type) VALUES ("$title","$body","$createdTime","$createdDate","${memoryDate.toString()}","memory")')
           .then((value) {
         memoryID = value;
-        saveSelectedImagesToPhoneCache();
-        getMemoryImagesFromDatabase( memoryID);
-        getMemoryDataFromDatabase();
+        // getMemoryImagesFromDatabase( memoryID);
+        // getMemoryDataFromDatabase();
         print(value);
       }).catchError((error) {
         print(error.toString());
       });
-
-      return Future.value(true);
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
     emit(AddMemoryInsertDatabaseState());
+    return memoryID;
   }
 
-  void getMemoryDataFromDatabase() async {
-    memoryList = [];
-    // emit(AppLoaderState());
-    database.rawQuery('SELECT * FROM memories').then((value) {
-      value.forEach((element) {
-        print(element);
-        memoryList.add(element);
-      });
-      emit(AddMemoryGetDatabaseState());
-    });
-  }
+  // void getMemoryDataFromDatabase() async {
+  //   memoryList = [];
+  //   // emit(AppLoaderState());
+  //   database.rawQuery('SELECT * FROM memories').then((value) {
+  //     value.forEach((element) {
+  //       print(element);
+  //       memoryList.add(element);
+  //     });
+  //     emit(AddMemoryGetDatabaseState());
+  //   });
+  // }
 
   void updateMemory(context,
       {required String title,
@@ -259,9 +175,9 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
           '$memoryDate',
           id
         ]).then((value) {
-      saveSelectedImagesToPhoneCache();
+      // saveSelectedImagesToPhoneCache();
       getMemoryImagesFromDatabase(memoryID);
-      getMemoryDataFromDatabase();
+      // getMemoryDataFromDatabase();
       titleFocus.unfocus();
       bodyFocus.unfocus();
     });
@@ -273,7 +189,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     await database.rawDelete('DELETE FROM memories WHERE id = ?', [id]).then((value) {
       deleteAllMemoryCachedImages();
       Navigator.pop(context);
-      getMemoryDataFromDatabase();
+      // getMemoryDataFromDatabase();
     }).catchError((error) {
       print(error);
     });
@@ -293,7 +209,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   }
 
   void deleteUnSavedImage({required int index}) async {
-    selectedGalleryImagesList.removeAt(index);
+    // selectedGalleryImagesList.removeAt(index);
     emit(AddMemoryDeleteUnSavedImageState());
   }
 
@@ -310,7 +226,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       isFavorite = !isFavorite ;
       print('$val $isFavorite is done');
       emit(AddMemoryFavoriteState());
-      getMemoryDataFromDatabase();
+      // getMemoryDataFromDatabase();
     }).catchError((error){
       print(error);
     });

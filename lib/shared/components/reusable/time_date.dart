@@ -14,4 +14,28 @@ class TimeAndDate{
     String formatter = time.format(context).toString();
     return formatter ;
   }
+ // static String? getDdatePicker(context, {required firstDate,required lastDate}) {
+  //   String? formatDate;
+  //   var date=
+  //   showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: firstDate,
+  //     lastDate: lastDate,
+  //   );
+  //     if(date !=null)  formatDate =DateFormat.yMMMd().format(date);
+  //   return formatDate;
+  // }
+ static Future<String?> getDatePicker(context, {required firstDate,required lastDate})async {
+    String? date;
+   await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: firstDate,
+      lastDate: lastDate,
+    ).then((value) {
+      date = DateFormat.yMMMd().format(value!);
+    }).catchError((error) {});
+    return date;
+  }
 }
