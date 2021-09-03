@@ -1,41 +1,23 @@
 abstract class AppMemoryStates {}
 
-class AppMemoryInitialState extends AppMemoryStates {}
-class AppMemoryOnBuildState extends AppMemoryStates {}
+class InitialState extends AppMemoryStates {}
 
-class AppMemoryTimePickerState extends AppMemoryStates {}
+class OnBuildState extends AppMemoryStates {}
 
-class AddMemoryAddImageStateState extends AppMemoryStates {}
+class TimePickerState extends AppMemoryStates {}
 
-class AddMemoryFocusBodyChangeState extends AppMemoryStates {}
+class FocusBodyChangeState extends AppMemoryStates {}
 
-class AddMemoryFocusTitleChangeState extends AppMemoryStates {}
+class FocusTitleChangeState extends AppMemoryStates {}
 
-class AddMemoryClearStackState extends AppMemoryStates {}
+class OnMemoryTextChangedState extends AppMemoryStates {}
 
-class AddMemoryUndoState extends AppMemoryStates {}
+class InsertDatabaseState extends AppMemoryStates {}
 
-class AddMemoryRedoState extends AppMemoryStates {}
+class UpdateTitleAndBodyState extends AppMemoryStates {}
 
-class AddMemoryTitleChangedState extends AppMemoryStates {}
+class GetCachedImagesPathsFromDatabaseState extends AppMemoryStates {}
 
-class AddMemoryOnMemoryTextChangedState extends AppMemoryStates {}
+class DeleteOneImageState extends AppMemoryStates {}
 
-class AddMemoryInsertDatabaseState extends AppMemoryStates {}
-
-class AddMemoryGetDatabaseState extends AppMemoryStates {}
-
-class AddMemoryUpdateTitleAndBodyState extends AppMemoryStates {}
-
-class AddMemoryDeleteOneMemoryState extends AppMemoryStates {}
-
-class AddMemoryAddImagesToCacheState extends AppMemoryStates {}
-
-class AddMemoryAddCachedImagesPathToDatabaseState extends AppMemoryStates {}
-
-class AddMemoryGetCachedImagesPathsFromDatabaseState extends AppMemoryStates {}
-
-class AddMemoryDeleteOneImageState extends AppMemoryStates {}
-class AddMemoryDeleteUnSavedImageState extends AppMemoryStates {}
-class AddMemoryFavoriteState extends AppMemoryStates {}
-class AddMemoryToSecretState extends AppMemoryStates {}
+class FavoriteState extends AppMemoryStates {}
