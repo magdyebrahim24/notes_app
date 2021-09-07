@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:notes_app/layout/favorite/bloc/favorite_cubit.dart';
-import 'package:notes_app/layout/favorite/bloc/states.dart';
+import 'package:notes_app/layout/favorite/bloc/favorite_states.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/memories/memories_preview.dart';
 import 'package:notes_app/layout/note/add_note.dart';

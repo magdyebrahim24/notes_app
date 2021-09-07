@@ -7,10 +7,10 @@ import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
+import 'package:notes_app/layout/verify/create_pass.dart';
+import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/functions/functions.dart';
-import 'package:notes_app/verify/create_pass.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AppCubit extends Cubit<AppStates> {

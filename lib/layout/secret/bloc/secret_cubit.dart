@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/secret_states.dart';
+import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/functions/functions.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SecretCubit extends Cubit<SecretStates> {
@@ -43,12 +43,14 @@ class SecretCubit extends Cubit<SecretStates> {
     // get all notes data
     List<Map<String, dynamic>> notesDataList =
         await database.rawQuery('SELECT * FROM notes WHERE is_secret = ?', [1]);
+    // print(notesDataList);
     // get all notes images data
-    List cachedNotesImagesList =
-        await database.rawQuery('SELECT * FROM notes_images JOIN notes WHERE is_secret = ? ',[1]);
+    List cachedNotesImagesList = await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_secret=? ' ,[1]);
+   // print(notesDataList);
     notes = assignSubListToData(
         notesDataList, cachedNotesImagesList, 'images', 'note_id');
     emit(SecretGetDataState());
+    return true ;
   }
 
   Future getAllTasksDataWithItSubTasks() async {
@@ -56,7 +58,7 @@ class SecretCubit extends Cubit<SecretStates> {
     List<Map<String, dynamic>> tasksDataList =
         await database.rawQuery('SELECT * FROM tasks WHERE is_secret = ?', [1]);
     // get all task sub tasks data
-    List subTasksList = await database.rawQuery('SELECT * FROM subTasks JOIN tasks WHERE is_secret = ? ',[1]);
+    List subTasksList = await database.rawQuery('SELECT subTasks.id,subTasks.body,subTasks.isDone,subTasks.tasks_id FROM subTasks INNER JOIN tasks ON tasks.id=subTasks.tasks_id AND tasks.is_secret=?',[1]);
 
     tasks = assignSubListToData(
         tasksDataList, subTasksList, 'subTasks', 'tasks_id');
@@ -70,7 +72,7 @@ class SecretCubit extends Cubit<SecretStates> {
         'SELECT * FROM memories WHERE is_secret = ?', [1]);
     // get memories images
     List cachedMemoriesImagesList =
-    await database.rawQuery('SELECT * FROM memories_images JOIN memories WHERE is_secret = ? ',[1]);
+    await database.rawQuery('SELECT memories_images.id,memories_images.link,memories_images.memory_id FROM memories_images INNER JOIN memories ON memories.id=memories_images.memory_id AND memories.is_secret=? ' ,[1]);
 
     memories = assignSubListToData(
         memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
