@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notes_app/layout/favorite/bloc/states.dart';
+import 'package:notes_app/layout/favorite/bloc/favorite_states.dart';
 import 'package:notes_app/shared/functions/functions.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -57,9 +57,11 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
         'SELECT * FROM notes WHERE is_favorite = ? AND is_secret = ?', [1, 0]);
     // get all notes images data
     List cachedNotesImagesList =
-    await database.rawQuery('SELECT * FROM notes_images JOIN notes WHERE is_favorite = ? AND is_secret = ? ',[1,0]);
+    await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_favorite=? AND notes.is_secret=? ' ,[1,0]);
+    // 'SELECT basket.id, basket.name, basket.imageUrl FROM basket INNER JOIN items ON basket.id = items.basketId'
     notes = assignSubListToData(
         notesDataList, cachedNotesImagesList, 'images', 'note_id');
+    print(cachedNotesImagesList);
     emit(FavoriteGetDataState());
   }
 
@@ -67,12 +69,11 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
     // get all task data
     List<Map<String, dynamic>> tasksDataList = await database.rawQuery(
         'SELECT * FROM tasks WHERE is_favorite = ? AND is_secret = ?', [1, 0]);
-
     // get all task sub tasks data
-    List subTasksList = await database.rawQuery('SELECT * FROM subTasks JOIN tasks WHERE is_favorite = ? AND is_secret = ? ',[1,0]);
+    List subTasksList = await database.rawQuery('SELECT subTasks.id,subTasks.body,subTasks.isDone,subTasks.tasks_id FROM subTasks INNER JOIN tasks ON tasks.id=subTasks.tasks_id AND tasks.is_favorite=? AND tasks.is_secret=?',[1,0]);
     tasks = assignSubListToData(
         tasksDataList, subTasksList, 'subTasks', 'tasks_id');
-
+    print(subTasksList);
     emit(FavoriteGetDataState());
   }
 
@@ -83,12 +84,10 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
         [1, 0]);
     // get memories images
     List cachedMemoriesImagesList =
-    await database.rawQuery('SELECT * FROM memories_images JOIN memories WHERE is_favorite = ? AND is_secret = ? ',[1,0]);
+    await database.rawQuery('SELECT memories_images.id,memories_images.link,memories_images.memory_id FROM memories_images INNER JOIN memories ON memories.id=memories_images.memory_id AND memories.is_favorite=? AND memories.is_secret=? ' ,[1,0]);
     memories = assignSubListToData(
         memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
-    print(memories);
-    print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-    print(memoriesDataList);
+    print(cachedMemoriesImagesList);
     emit(FavoriteGetDataState());
   }
 
@@ -96,9 +95,6 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page))
         .then((value) async {
       await thenFun();
-      sortedAllDataList(notes, tasks, memories);
-
-    });
-
+      sortedAllDataList(notes, tasks, memories);});
   }
 }

@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:notes_app/layout/verify/create_pass.dart';
+import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:notes_app/verify/create_pass.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:path_provider/path_provider.dart';
 
 

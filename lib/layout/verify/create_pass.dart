@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
-import 'package:notes_app/verify/bloc/state.dart';
 import 'bloc/cubit.dart';
 
 class CreatePass extends StatelessWidget {
@@ -31,7 +31,7 @@ class CreatePass extends StatelessWidget {
                         SizedBox(
                           height: size.height * .22,
                         ),
-                        IconButton(onPressed: (){cubit.goToVerify();}, icon: Icon(Icons.check,color: Colors.white,size: 30,)),
+                        IconButton(onPressed: (){if(cubit.isCompleted)cubit.goToVerify();}, icon: Icon(Icons.check,color: Colors.white,size: 30,)),
                         Text(cubit.verifyPass==null?'Create Password':'Confirm Password',style: them.headline4,),
                         SizedBox(height: 10,),
                         Row(
@@ -51,7 +51,7 @@ class CreatePass extends StatelessWidget {
                             SizedBox(width: 60,),
                             IconButton(
                                 onPressed: () {
-                                  cubit.removeFromList();
+                                  cubit.deleteEnteredPassDigit();
                                 },
                                 icon: Icon(
                                   Icons.backspace_outlined,

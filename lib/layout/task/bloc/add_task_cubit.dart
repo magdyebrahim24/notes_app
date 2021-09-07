@@ -2,13 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:notes_app/layout/task/bloc/add_task_states.dart';
-import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
-import 'package:notes_app/verify/create_pass.dart';
-import 'package:notes_app/verify/login.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddTaskCubit extends Cubit<AppTaskStates> {
@@ -217,7 +213,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   addToFavorite() async {
-    isFavorite = await favoriteFun(database, 'notes', isFavorite, taskID);
+    isFavorite = await favoriteFun(database, 'tasks', isFavorite, taskID);
     emit(TaskFavoriteState());
   }
 

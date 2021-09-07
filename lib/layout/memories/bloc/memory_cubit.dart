@@ -176,7 +176,6 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   }
 
   void deleteImage({required int imageID, required int index}) async {
-    print(imageID);
     await database.rawDelete(
         'DELETE FROM memories_images WHERE id = ?', [imageID]).then((value) {
       File('${cachedImagesList[index]['link']}').delete(recursive: true);

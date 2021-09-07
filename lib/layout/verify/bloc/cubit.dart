@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/secret.dart';
+import 'package:notes_app/layout/verify/bloc/state.dart';
+import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:notes_app/verify/bloc/state.dart';
-import 'package:notes_app/verify/create_pass.dart';
 import 'package:sqflite/sqflite.dart';
 
 class LoginCubit extends Cubit<VerifyStates> {
@@ -50,25 +50,17 @@ class LoginCubit extends Cubit<VerifyStates> {
           if (isUpdate == true) {
            await Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>CreatePass()));
           }else if(id != null){
-            database.rawQuery('SELECT is_secret FROM $table WHERE id = ?',
-                [id]).then((value) {
+           await database.rawQuery('SELECT is_secret FROM $table WHERE id = ?',
+                [id]).then((value) async{
               var isSecret = value[0]['is_secret'];
               if (isSecret == 0) {
-                database.rawUpdate(
+              await  database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',
-                    [1, id]).then((val) {
-                  emit(UpdateTableState());
-                }).catchError((error) {
-                  print(error);
-                });
+                    [1, id]);
               } else {
-                database.rawUpdate(
+              await  database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',
-                    [0, id]).then((val) {
-                  emit(UpdateTableState());
-                }).catchError((error) {
-                  print(error);
-                });
+                    [0, id]);
               }
             });
           }
@@ -82,7 +74,7 @@ class LoginCubit extends Cubit<VerifyStates> {
     }
   }
 
-  void createPassAndAddToSecrete({context, index, id, table}) {
+  void createPassAndAddToSecrete({context, index, id, table}) async{
     if (verifyPass == null) {
       if (passwordDigitsList.length < 4) {
         passwordDigitsList.add(index + 1);
@@ -95,7 +87,6 @@ class LoginCubit extends Cubit<VerifyStates> {
           });
           print('pass is created');
           isCompleted = true;
-          // Navigator.push(context, MaterialPageRoute(builder: (context)=>CreatePass()));
         }
       }
       emit(VerifyAddToListState());
@@ -109,15 +100,10 @@ class LoginCubit extends Cubit<VerifyStates> {
           });
           if (verifyPass == passwordText) {
             if (id != null) {
-              database.rawUpdate('UPDATE $table SET is_secret = ? WHERE id = ?',
-                  [1, id]).then((val) {
-                print('$val  is done');
-                emit(UpdateTableState());
-              }).catchError((error) {
-                print(error);
-              });
+             await database.rawUpdate('UPDATE $table SET is_secret = ? WHERE id = ?',
+                  [1, id]);
             }
-            CacheHelper.putString(key: 'secret_password', value: passwordText);
+          await  CacheHelper.putString(key: 'secret_password', value: passwordText);
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Secret()));
           }
@@ -139,11 +125,17 @@ class LoginCubit extends Cubit<VerifyStates> {
     CacheHelper.sharedPreferences!.remove('secret_password');
   }
 
-  void removeFromList() {
+  void deleteEnteredPassDigit() {
     if (passwordDigitsList.isNotEmpty) {
       passwordDigitsList.removeLast();
       print(passwordDigitsList);
       emit(VerifyRemoveFromListState());
     }
+  }
+
+  @override
+  Future<void> close() {
+    print('Closed -------------------------------------------------------------');
+    return super.close();
   }
 }

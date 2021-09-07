@@ -22,44 +22,44 @@ class Secret extends StatelessWidget {
           List<Widget> bodyList = [
             NotePreview(
               data: cubit.notes,
-              navFun: (data) {
-                Navigator.push(
+              navFun: (data) async{
+               await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddNote(
                         data: data,
                       ),
-                    )).then((value) {
+                    ));
                   cubit.getNotesDataWithItsImages();
-                });
+
               },
               isLoading: cubit.isLoading,
             ),
             TasksPreview(body: cubit.tasks,
-                onTapFun: (data) {
-              Navigator.push(
+                onTapFun: (data) async{
+             await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddTask(
                       data: data,
                     ),
-                  )).then((value) {
+                  ));
                 cubit.getAllTasksDataWithItSubTasks();
-              });
+
             },isLoading:  cubit.isLoading),
             MemoriesPreview(
                 data: cubit.memories,
                 isLoading: cubit.isLoading,
-                onTapFun: (data) {
-                  Navigator.push(
+                onTapFun: (data) async {
+                 await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddMemory(
                           data: data,
                         ),
-                      )).then((value) {
+                      ));
                     cubit.getAllMemoriesDataWithItsImages();
-                  });
+
                 }),
           ];
           return Scaffold(
@@ -75,14 +75,6 @@ class Secret extends StatelessWidget {
               ),
               actions: [
                 _offsetPopup(context,()=>cubit.upDatePassword(context) ),
-                // MaterialButton(
-                //     child: Text(
-                //       'Update Password',
-                //       style: TextStyle(color: Colors.white),
-                //     ),
-                //     onPressed: () {
-                //       cubit.upDatePassword(context);
-                //     }),
               ],
             ),
             body: bodyList[cubit.navBarIndex],

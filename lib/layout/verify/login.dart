@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
-import 'package:notes_app/verify/bloc/state.dart';
 import 'bloc/cubit.dart';
 
 class Login extends StatelessWidget {
   final isUpdate;
   final id;
   final table;
-  Login({this.id,this.table,this.isUpdate});
+  Login({this.id, this.table, this.isUpdate});
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     var them = Theme.of(context).textTheme;
 
     return BlocProvider(
-      create: (BuildContext context)=>LoginCubit()..onBuild(),
-      child: BlocConsumer<LoginCubit,VerifyStates>(
-        listener: (context,state){},
-        builder: (context,state){
-          LoginCubit cubit =LoginCubit.get(context);
+      create: (BuildContext context) => LoginCubit()..onBuild(),
+      child: BlocConsumer<LoginCubit, VerifyStates>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          LoginCubit cubit = LoginCubit.get(context);
           return Scaffold(
             body: SingleChildScrollView(
               child: Center(
@@ -32,9 +32,18 @@ class Login extends StatelessWidget {
                         SizedBox(
                           height: size.height * .22,
                         ),
-                        IconButton(onPressed: (){cubit.z();}, icon: Icon(Icons.remove)),
-                        Text('Enter Password',style: them.headline4,),
-                        SizedBox(height: 10,),
+                        IconButton(
+                            onPressed: () {
+                              cubit.z();
+                            },
+                            icon: Icon(Icons.remove)),
+                        Text(
+                          'Enter Password',
+                          style: them.headline4,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
@@ -44,15 +53,19 @@ class Login extends StatelessWidget {
                                 width: 15,
                                 height: 15,
                                 decoration: BoxDecoration(
-                                  color: cubit.passwordDigitsList.length >=i ? Colors.grey:Colors.transparent,
+                                  color: cubit.passwordDigitsList.length >= i
+                                      ? Colors.grey
+                                      : Colors.transparent,
                                   border: Border.all(color: Colors.grey),
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                            SizedBox(width: 60,),
+                            SizedBox(
+                              width: 60,
+                            ),
                             IconButton(
                                 onPressed: () {
-                                  cubit.removeFromList();
+                                  cubit.deleteEnteredPassDigit();
                                 },
                                 icon: Icon(
                                   Icons.backspace_outlined,
@@ -63,11 +76,12 @@ class Login extends StatelessWidget {
                         ),
                         Center(
                           child: GridView.builder(
-                              padding: EdgeInsets.only(right: 20, left: 20, top: 20),
+                              padding:
+                                  EdgeInsets.only(right: 20, left: 20, top: 20),
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
                               gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
                                 // mainAxisSpacing: 10,
                                 // crossAxisSpacing: 30,
@@ -76,7 +90,12 @@ class Login extends StatelessWidget {
                               itemBuilder: (BuildContext context, int index) {
                                 return IconForSecret(
                                   onPressed: () {
-                                    cubit.loginAndAddToSecret(index:index,context:context,id: id,table: table,isUpdate: isUpdate);
+                                    cubit.loginAndAddToSecret(
+                                        index: index,
+                                        context: context,
+                                        id: id,
+                                        table: table,
+                                        isUpdate: isUpdate);
                                   },
                                   body: (index + 1).toString(),
                                 );
@@ -89,7 +108,14 @@ class Login extends StatelessWidget {
                             children: [
                               IconForSecret(
                                 body: '0',
-                                onPressed: (){cubit.loginAndAddToSecret(index:-1,context:context,id: id,table: table,isUpdate: isUpdate);},
+                                onPressed: () {
+                                  cubit.loginAndAddToSecret(
+                                      index: -1,
+                                      context: context,
+                                      id: id,
+                                      table: table,
+                                      isUpdate: isUpdate);
+                                },
                               ),
                               MaterialButton(
                                 onPressed: () {
@@ -99,7 +125,8 @@ class Login extends StatelessWidget {
                                   'BACK',
                                   style: them.headline6,
                                 ),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
                               )
                             ],
                           ),
