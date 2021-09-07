@@ -5,12 +5,12 @@ import 'package:notes_app/layout/introduction/bloc/intro_states.dart';
 
 class IntroPage extends StatelessWidget {
 
-  List introImages = [
+ final List introImages = [
     'assets/intro/notes.png',
     'assets/intro/tasks.png',
     'assets/intro/memories.png',
   ];
-  List text = [
+  final List text = [
     {
       'title': 'Notes',
       'body':

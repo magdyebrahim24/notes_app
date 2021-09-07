@@ -113,7 +113,7 @@ class GridViewForImages extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     onPressed: () {
                       Navigator.of(context).pop();
-                      share([data['link']]);
+                      share([data['link']],text:' This Images Shared From Nota App');
                     },
                     child: Icon(
                       Icons.ios_share_outlined,

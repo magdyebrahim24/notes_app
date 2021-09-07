@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 import 'package:share/share.dart';
 
 class SettingCubit extends Cubit<SettingStates> {
@@ -38,31 +39,21 @@ class SettingCubit extends Cubit<SettingStates> {
     emit(SettingChangeModeState());
   }
 
-  onShare(context) async {
-    // A builder is used to retrieve the context immediately
-    // surrounding the ElevatedButton.
-    //
-    // The context's `findRenderObject` returns the first
-    // RenderObject in its descendent tree when it's not
-    // a RenderObjectWidget. The ElevatedButton's RenderObject
-    // has its position and size after it's built.
-    final RenderBox box = context.findRenderObject() as RenderBox;
-
-    // await Share.shareFiles(imagePaths,
-    //     text: text,
-    //     subject: subject,
-    //     sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-    //
-    await Share.share('Notes App',
-        subject: 'Download Notes App Application Via Link',
-        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
-  }
-
-  Future onShareWithEmptyOrigin(context) async {
-    await Share.share(
-      'Notes App',
-      subject:
-          'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
-    );
-  }
+  shareApp(context) => share([],text: 'Download Nota App From AppStore . \n To save your notes , memories and tasks',
+      subject: 'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
+  );
+  final Uri emailLaunchUri =
+  Uri(
+      scheme: 'Nota App',
+      path: 'migoamasha27@gmail.com',
+      queryParameters: {
+        'subject': 'Please Write Your Problem .',
+      });
+  // async {
+  //   await Share.share(
+  //     'Download Nota App From AppStore . \n To save your notes , memories and tasks',
+  //     subject:
+  //         'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
+  //   );
+  // }
 }

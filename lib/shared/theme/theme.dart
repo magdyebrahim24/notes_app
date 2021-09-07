@@ -25,7 +25,7 @@ import 'package:notes_app/shared/constants.dart';
 // );
 ThemeData lightTheme = ThemeData(
   textSelectionTheme: TextSelectionThemeData(selectionHandleColor: purpleColor),
-  dividerColor: Colors.grey[200],
+  dividerColor: Color(0xff707070),
   hintColor: lightgreyColor,
   checkboxTheme: CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
@@ -85,12 +85,13 @@ ThemeData lightTheme = ThemeData(
     fillColor: Colors.grey.withOpacity(.1),
   ),
   textTheme: TextTheme(
+    // intro headline
     headline4: TextStyle(color: titleColor ,fontSize: 40 , fontWeight: FontWeight.bold), // edited
-    headline5: TextStyle(color: darkGeryColor),
+    headline5: TextStyle(color: titleColor), // page title
+    headline6: TextStyle(color: Color(0xff4F4F4F)), // setting tile title
     subtitle1: TextStyle(fontSize: 13, color: lightgreyColor),
     bodyText1: TextStyle(color: Colors.white60, decoration: TextDecoration.lineThrough),
     bodyText2: TextStyle(fontSize: 14, color: bodyTextColor), // edited
-    headline6: TextStyle(color: darkGeryColor),
     headline1: TextStyle(color: Colors.white60, fontSize: 18),
 
   ),
