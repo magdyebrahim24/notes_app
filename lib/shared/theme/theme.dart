@@ -56,10 +56,10 @@ ThemeData lightTheme = ThemeData(
   ),
   primaryColor: Colors.white,
   accentColor: accentColor,
-  // scaffoldBackgroundColor: Colors.grey[50],
+  scaffoldBackgroundColor: Colors.white,
   appBarTheme: AppBarTheme(
     brightness: Brightness.light,
-    backgroundColor: Colors.grey[50],
+    backgroundColor: Colors.white,
     elevation: 0.0,
   ),
   inputDecorationTheme: InputDecorationTheme(

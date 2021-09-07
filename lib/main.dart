@@ -2,15 +2,14 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:notes_app/layout/introduction/intro_page.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
 import 'package:notes_app/shared/bloc_observer.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:notes_app/shared/styles/theme.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/localizations/localization/localizations_delegate.dart';
+import 'package:notes_app/shared/theme/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,7 +61,7 @@ class _MyAppState extends State<MyApp> {
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: cubit.darkMode ? ThemeMode.dark : ThemeMode.light,
-            home: IntroPage(),
+            home: MenuDashboardPage(),
             builder: (context, child) {
               return MediaQuery(
                 child: child!,

@@ -15,11 +15,13 @@ class Setting extends StatelessWidget {
     return BlocConsumer<SettingCubit, SettingStates>(
       listener: (context, state) {},
       builder: (context, state) {
+        var theme = Theme.of(context).textTheme;
         SettingCubit cubit = SettingCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            title: Text('Setting'),
-            centerTitle: true,
+            leading: IconButton(onPressed: ()=> Navigator.pop(context),
+            icon: Icon(Icons.arrow_back_ios,size: 20,),),
+            title: Text('Setting',style: theme.headline4!.copyWith(fontSize: 24),),
           ),
           body: Column(
             children: [
