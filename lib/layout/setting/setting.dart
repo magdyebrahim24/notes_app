@@ -99,7 +99,8 @@ class Setting extends StatelessWidget {
                   tileIcon(context,
                       icon: Icons.mail,
                       title: 'Gmail',
-                      fun: () => launch(cubit.emailLaunchUri.toString())),
+                      fun: () => launch('mailto:<migoamasha27@gmail.com>?subject=<Contact To Nota App Team>&body=<type your problem here .>')
+                  ),
                   tileIcon(context,
                       icon: FontAwesomeIcons.linkedinIn,
                       title: 'Linked In',
@@ -114,7 +115,7 @@ class Setting extends StatelessWidget {
     );
   }
 
-  createLanguageDropDown(context) {
+  _createLanguageDropDown(context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       color: Colors.white,

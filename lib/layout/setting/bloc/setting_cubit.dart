@@ -7,6 +7,7 @@ import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
+import 'package:share/share.dart';
 
 class SettingCubit extends Cubit<SettingStates> {
   SettingCubit() : super(SettingInitialState());
@@ -42,11 +43,11 @@ class SettingCubit extends Cubit<SettingStates> {
       subject: 'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
   );
 
-  final Uri emailLaunchUri =
-  Uri(
-      scheme: 'Nota App',
-      path: 'migoamasha27@gmail.com',
-      queryParameters: {
-        'subject': 'Please Write Your Problem .',
-      });
+  // async {
+  //   await Share.share(
+  //     'Download Nota App From AppStore . \n To save your notes , memories and tasks',
+  //     subject:
+  //         'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
+  //   );
+  // }
 }

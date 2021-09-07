@@ -56,8 +56,8 @@ class TermsOfUse extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 15),
       child: Text(
-        text,
-        style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 20)
+          text,
+          style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 20)
       ),
     );
   }
