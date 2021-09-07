@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 
 class BottomIconBar extends StatelessWidget {
@@ -22,25 +23,18 @@ final bool isFavorite  ;
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                color: Theme.of(context).accentColor,
-                  onPressed: addToSecretFun, icon: Icon(Icons.lock_open_outlined)),
+                  onPressed: addToSecretFun, icon: SvgPicture.asset('assets/icons/share.svg')),
               IconButton(
-                  color: Theme.of(context).accentColor,
+                  onPressed: addToSecretFun, icon: SvgPicture.asset('assets/icons/unlock.svg')),
+              IconButton(
                   onPressed: addToFavoriteFun,
-                  icon: Icon(
-                    isFavorite ? Icons.star : Icons.star_border,
-                    size: 28,
-                  )),
-              if(addImageFun != null)
-                IconButton(
-                    color: Theme.of(context).accentColor,onPressed:  addImageFun, icon: Icon(Icons.add_photo_alternate_outlined)) ,
+                  icon: SvgPicture.asset('assets/icons/star.svg'),),
+              // if(addImageFun != null)
+              //   IconButton(
+              //       color: Theme.of(context).accentColor,onPressed:  addImageFun, icon: Icon(Icons.add_photo_alternate_outlined)) ,
               IconButton(
                   onPressed: deleteFun,
-                  icon: Icon(
-                    Icons.delete_outline_outlined,
-                    color: Colors.redAccent,
-                    size: 28,
-                  )),
+                  icon: SvgPicture.asset('assets/icons/trash.svg')),
             ],
           ),
         ),
