@@ -114,7 +114,7 @@ class Setting extends StatelessWidget {
     );
   }
 
-  _createLanguageDropDown(context) {
+  createLanguageDropDown(context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       color: Colors.white,

@@ -87,7 +87,7 @@ ThemeData lightTheme = ThemeData(
   textTheme: TextTheme(
     // intro headline
     headline4: TextStyle(color: titleColor ,fontSize: 40 , fontWeight: FontWeight.bold), // edited
-    headline5: TextStyle(color: titleColor), // page title
+    headline5: TextStyle(color: titleColor,), // page title
     headline6: TextStyle(color: Color(0xff4F4F4F)), // setting tile title
     subtitle1: TextStyle(fontSize: 13, color: lightgreyColor),
     bodyText1: TextStyle(color: Colors.white60, decoration: TextDecoration.lineThrough),
