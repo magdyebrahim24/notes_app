@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 27 27">
+  <g id="menu" transform="translate(-684 -380)">
+    <g id="menu-2" data-name="menu" transform="translate(684 380)">
+      <path id="Vector" d="M21.635,1.5H.865A.82.82,0,0,1,0,.75.82.82,0,0,1,.865,0H21.635A.82.82,0,0,1,22.5.75.82.82,0,0,1,21.635,1.5Z" transform="translate(2.25 7.083)" fill="#2f2f2f"/>
+      <path id="Vector-2" data-name="Vector" d="M21.635,1.5H.865A.82.82,0,0,1,0,.75.82.82,0,0,1,.865,0H21.635A.82.82,0,0,1,22.5.75.82.82,0,0,1,21.635,1.5Z" transform="translate(2.25 12.75)" fill="#2f2f2f"/>
+      <path id="Vector-3" data-name="Vector" d="M21.635,1.5H.865A.82.82,0,0,1,0,.75.82.82,0,0,1,.865,0H21.635A.82.82,0,0,1,22.5.75.82.82,0,0,1,21.635,1.5Z" transform="translate(2.25 18.417)" fill="#2f2f2f"/>
+      <path id="Vector-4" data-name="Vector" d="M0,0H27V27H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

@@ -25,15 +25,17 @@ class AddNote extends StatelessWidget {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios_rounded,size: 20,),
+                onPressed: () {Navigator.pop(context);},
+              ),
               actions: [
-
                 ElevatedButton(
                   onPressed: ()=> cubit.newRecord(context),
                   //color: Colors.white,
                   //disabledColor: Colors.grey,
                   child: Text(cubit.mRecorder!.isRecording ? 'Stop' : 'Record'),
                 ),
-
                 cubit.titleController.text.isNotEmpty ||
                         cubit.noteTextController.text.isNotEmpty ||
                         cubit.pickedGalleryImagesList.isNotEmpty

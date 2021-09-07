@@ -9,17 +9,17 @@ final bool isFavorite  ;
   const BottomIconBar({this.deleteFun, this.addImageFun, this.addToFavoriteFun, this.addToSecretFun, required this.isFavorite}) ;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 30,left: 30,bottom: 15,
-      top: 5),
-      child: Material(
-        color: Theme.of(context).cardTheme.color,
-        elevation: 15,
-        borderRadius: BorderRadius.circular(20),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 1),
+    return Material(
+      color: Theme.of(context).cardTheme.color,
+      // elevation: 15,
+
+      borderRadius: BorderRadius.only(topLeft:Radius.circular(32),topRight: Radius.circular(32)),
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 1),
+        child: Container(
+          height: 72,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
                 color: Theme.of(context).accentColor,
