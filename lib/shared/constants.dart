@@ -30,3 +30,7 @@ Color? lightgreyColor = Colors.grey[600];
 // Color darkGeryColor =Color(0xff1F1D2C);
 
 
+// light Mode
+Color accentColor = Color(0xff3BC1CB);
+Color titleColor = Color(0xff242424);
+Color bodyTextColor = Color(0xff5D5D5D);

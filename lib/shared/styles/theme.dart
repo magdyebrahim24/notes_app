@@ -38,7 +38,7 @@ ThemeData lightTheme = ThemeData(
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: lightColor, selectedItemColor: purpleColor,unselectedItemColor: lightgreyColor),
-  fontFamily: 'PT_Sans',
+  // fontFamily: 'PT_Sans',
   tabBarTheme: TabBarTheme(
     labelStyle: TextStyle(color: purpleColor),
     labelColor: purpleColor,
@@ -54,8 +54,8 @@ ThemeData lightTheme = ThemeData(
     shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10)),
   ),
-  primaryColor: whiteColor,
-  accentColor: purpleColor,
+  primaryColor: Colors.white,
+  accentColor: accentColor,
   // scaffoldBackgroundColor: Colors.grey[50],
   appBarTheme: AppBarTheme(
     brightness: Brightness.light,
@@ -85,14 +85,14 @@ ThemeData lightTheme = ThemeData(
     fillColor: Colors.grey.withOpacity(.1),
   ),
   textTheme: TextTheme(
-    headline4: TextStyle(color: darkGeryColor),
+    headline4: TextStyle(color: titleColor ,fontSize: 40 , fontWeight: FontWeight.bold), // edited
     headline5: TextStyle(color: darkGeryColor),
     subtitle1: TextStyle(fontSize: 13, color: lightgreyColor),
-    bodyText2: TextStyle(fontSize: 16, color: darkGeryColor),
-    bodyText1: TextStyle(
-        color: Colors.white60, decoration: TextDecoration.lineThrough),
+    bodyText1: TextStyle(color: Colors.white60, decoration: TextDecoration.lineThrough),
+    bodyText2: TextStyle(fontSize: 14, color: bodyTextColor), // edited
     headline6: TextStyle(color: darkGeryColor),
     headline1: TextStyle(color: Colors.white60, fontSize: 18),
+
   ),
 );
 
