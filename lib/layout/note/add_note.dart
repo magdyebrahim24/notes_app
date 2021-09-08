@@ -134,12 +134,12 @@ class AddNote extends StatelessWidget {
                     addToSecretFun: () => cubit.addNoteToSecret(context),
                   )
                 : SizedBox(),
-            floatingActionButton: cubit.noteId == null
-                ? FloatingActionButton(
+            floatingActionButton: FloatingActionButton(
                     onPressed: () => cubit.pickMultiImageFromGallery(context),
                     child: Icon(Icons.add_photo_alternate_outlined),
-                  )
-                : SizedBox(),
+                  ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+
           );
         },
       ),

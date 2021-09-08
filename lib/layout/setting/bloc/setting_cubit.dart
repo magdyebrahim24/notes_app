@@ -7,7 +7,6 @@ import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
-import 'package:share/share.dart';
 
 class SettingCubit extends Cubit<SettingStates> {
   SettingCubit() : super(SettingInitialState());

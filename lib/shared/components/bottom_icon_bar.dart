@@ -13,7 +13,6 @@ final bool isFavorite  ;
     return Material(
       color: Theme.of(context).cardTheme.color,
       // elevation: 15,
-
       borderRadius: BorderRadius.only(topLeft:Radius.circular(32),topRight: Radius.circular(32)),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 1),
