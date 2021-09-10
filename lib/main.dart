@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:notes_app/layout/home/home.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
@@ -10,6 +11,7 @@ import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/localizations/localization/localizations_delegate.dart';
 import 'package:notes_app/shared/theme/theme.dart';
+import 'package:notes_app/test.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,13 +52,14 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
+
       create: (context) => SettingCubit()..onBuild(),
       child: BlocConsumer<SettingCubit, SettingStates>(
         listener: (context, state) {},
         builder: (context, state) {
           SettingCubit cubit = SettingCubit.get(context);
           return MaterialApp(
-            title: 'Notes App',
+            title: 'Nota App',
             debugShowCheckedModeBanner: false,
             theme: lightTheme,
             darkTheme: darkTheme,

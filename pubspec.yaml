@@ -49,8 +49,8 @@ flutter:
     - assets/images/
 
 
-  fonts:
-    - family: PT_Sans
-      fonts:
-        - asset: fonts/PTSans-Regular.ttf
+#  fonts:
+#    - family: PT_Sans
+#      fonts:
+#        - asset: fonts/PTSans-Regular.ttf
 

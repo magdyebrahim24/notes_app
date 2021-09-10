@@ -11,7 +11,6 @@ import 'package:notes_app/layout/memories/memories_preview.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
-import 'package:notes_app/shared/constants.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class Home extends StatefulWidget {
@@ -36,31 +35,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 return [
                   SliverAppBar(
                     elevation: 0.0,
-                    title: Text('Notes'),
-                    // leading: IconButton(
-                    //   icon: AnimatedIcon(
-                    //     icon: AnimatedIcons.menu_close,
-                    //     progress: cubit.drawerController,
-                    //     semanticLabel: 'Show menu',
-                    //   ),
-                    //   onPressed: () => cubit.openDrawer(),
-                    // ),
+                    title: Text('Notes',style: Theme.of(context).textTheme.headline5,),
+                    centerTitle: true,
                     leading: IconButton(
-                      icon: Icon(Icons.calendar_view_week),
-                      onPressed: () => cubit.openDrawer(),
-                    ),
-                    automaticallyImplyLeading: true,
+                        onPressed: () => cubit.isDrawerCollapsed ?  cubit.openDrawer() : null,
+                        icon: SvgPicture.asset(
+                          'assets/icons/drawer.svg',
+                        )) ,
                     actions: [
-                      // IconButton(
-                      //     onPressed: () async{
-                      //       scaffoldKey.currentState!.showBottomSheet(
-                      //         (context) => Container(
-                      //           height: 100,
-                      //           color: Colors.white,
-                      //         ),
-                      //       );
-                      //     },
-                      //     icon: Icon(Icons.star)),
                       IconButton(
                           onPressed: () {
                             Navigator.push(
@@ -70,28 +52,26 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           },
                           icon: SvgPicture.asset(
                             'assets/icons/search.svg',
-                            color: greyColor,
                           )),
                       SizedBox(
                         width: 10,
                       )
                     ],
                     pinned: true,
-                    snap: true,
+                    snap: false,
                     floating: true,
+                    expandedHeight: 120,
                     bottom: TabBar(
                       controller: cubit.tabBarController,
                       tabs: [
-                        Tab(
-                          text: 'Notes',
-                        ),
+                        Tab(text: 'Notes',),
                         Tab(text: 'Tasks'),
-                        Tab(
-                          text: 'Memories',
-                        ),
+                        Tab(text: 'Memories',),
                       ],
-                      labelStyle: TextStyle(fontSize: 15),
                       isScrollable: true,
+                      indicatorPadding: EdgeInsets.symmetric(horizontal: 17,),
+                      labelPadding: EdgeInsets.symmetric(horizontal: 25),
+                      indicatorWeight: 3,
                       indicatorSize: TabBarIndicatorSize.label,
                     ),
                   ),
@@ -174,27 +154,24 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   ]),
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => cubit.addFABBtnRoutes(context),
-            tooltip: 'Add New',
-            child: RotationTransition(
-              turns: Tween<double>(begin: 0.0, end: 1.0)
-                  .animate(cubit.fABController!),
-              child: Icon(
-                cubit.tabBarController!.index == 0
-                    ? Icons.article_outlined
-                    : cubit.tabBarController!.index == 1
-                        ? Icons.task_outlined
-                        : Icons.event_available_outlined,
-                size: 30,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: MaterialButton(
+              onPressed: () => cubit.addFABBtnRoutes(context),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
               ),
+              child: Icon(Icons.add,size: 45,) ,
+              color: Theme.of(context).accentColor,
+              height: 85,
+              minWidth: 85,
+              elevation: 6,
             ),
-          ),
-          extendBody: false,
-          resizeToAvoidBottomInset: true,
+          )
         );
       },
       listener: (context, state) {},
     );
   }
 }
+

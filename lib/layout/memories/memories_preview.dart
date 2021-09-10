@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
 
 class MemoriesPreview extends StatelessWidget {
   final isLoading;
@@ -11,19 +12,26 @@ class MemoriesPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true
-        ? Center(child: CircularProgressIndicator())
-        : StaggeredGridView.countBuilder(
-            crossAxisCount: 2,
-            itemCount: data.length,
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-            itemBuilder: (BuildContext context, int index) {
-              return MemoryCard(noTapFun: ()=> onTapFun(data[index]), data: data[index]);
-            },
-            staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-            mainAxisSpacing: 4.0,
-            crossAxisSpacing: 4.0,
-          );
+
+    if (isLoading) {
+      return circleProcessInductor();
+    } else {
+      if (data.length != 0) {
+        return StaggeredGridView.countBuilder(
+          crossAxisCount: 2,
+          itemCount: data.length,
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+          itemBuilder: (BuildContext context, int index) {
+            return MemoryCard(noTapFun: ()=> onTapFun(data[index]), data: data[index]);
+          },
+          staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
+          mainAxisSpacing: 4.0,
+          crossAxisSpacing: 4.0,
+        );
+      } else {
+        return shadedImage('assets/intro/memories.png');
+      }
+    }
   }
 }
 

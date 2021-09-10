@@ -38,15 +38,9 @@ class SettingCubit extends Cubit<SettingStates> {
     emit(SettingChangeModeState());
   }
 
-  shareApp(context) => share([],text: 'Download Nota App From AppStore . \n To save your notes , memories and tasks',
+  shareApp(context)=> shareText(text: 'Download Nota App From AppStore . \nTo save your notes , memories and tasks',
       subject: 'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
   );
 
-  // async {
-  //   await Share.share(
-  //     'Download Nota App From AppStore . \n To save your notes , memories and tasks',
-  //     subject:
-  //         'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
-  //   );
-  // }
+
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:notes_app/layout/about/about.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/terms_of_use/terms_of_use.dart';
@@ -34,17 +35,17 @@ class Setting extends StatelessWidget {
           ),
           body: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+              padding: EdgeInsets.symmetric(vertical: 10,),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ListTile(
                     subtitle: Text("10.1.6", style: theme.bodyText2),
                     title: Text('Version', style: theme.headline6),
-                    contentPadding: EdgeInsets.symmetric(vertical: 10),
+                    contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 25),
                   ),
                   tileItem(context,
-                      fun: () {},
+                      fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => About(),)),
                       title: 'About',
                       leadingIconPath: 'assets/icons/about.svg'),
                   tileItem(context, fun: () {
@@ -75,6 +76,8 @@ class Setting extends StatelessWidget {
                     secondary: SvgPicture.asset(
                       'assets/icons/dark_mode.svg',
                     ),
+
+                    contentPadding: EdgeInsets.symmetric(horizontal: 40),
                   ),
 
                   Padding(
@@ -85,7 +88,7 @@ class Setting extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.symmetric(vertical: 15),
+                    padding: EdgeInsets.symmetric(vertical: 15,horizontal: 25),
                     child: Text(
                       'Contact Us',
                       style: theme.headline6!.copyWith(fontSize: 25),
@@ -115,7 +118,7 @@ class Setting extends StatelessWidget {
     );
   }
 
-  _createLanguageDropDown(context) {
+  createLanguageDropDown(context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
       color: Colors.white,
@@ -185,6 +188,8 @@ class Setting extends StatelessWidget {
         style: Theme.of(context).textTheme.headline6,
       ),
       leading: SvgPicture.asset(leadingIconPath) ,
+      contentPadding: EdgeInsets.symmetric(horizontal: 40),
+      trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,color: Theme.of(context).textTheme.headline6!.color,),
     );
   }
 
@@ -198,6 +203,8 @@ class Setting extends StatelessWidget {
       leading: Icon(
         icon,
       ),
+      contentPadding: EdgeInsets.symmetric(horizontal: 40),
+
     );
   }
 }

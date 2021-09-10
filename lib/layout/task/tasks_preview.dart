@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
 
 class TasksPreview extends StatelessWidget {
   final isLoading;
@@ -12,20 +13,26 @@ class TasksPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true
-        ? Center(child: CircularProgressIndicator())
-        : StaggeredGridView.countBuilder(
-            crossAxisCount: 2,
-            itemCount: body.length,
-            shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) {
-              return TaskCard(onTapFun: () => onTapFun(body[index]), data: body[index]);
-            },
-            staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-            // mainAxisSpacing: 5.0,
-            // crossAxisSpacing: 5.0,
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-          );
+    if (isLoading) {
+      return circleProcessInductor();
+    } else {
+      if (body.length != 0) {
+       return StaggeredGridView.countBuilder(
+          crossAxisCount: 2,
+          itemCount: body.length,
+          shrinkWrap: true,
+          itemBuilder: (BuildContext context, int index) {
+            return TaskCard(onTapFun: () => onTapFun(body[index]), data: body[index]);
+          },
+          staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+          // mainAxisSpacing: 5.0,
+          // crossAxisSpacing: 5.0,
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+        );
+      } else {
+        return shadedImage('assets/intro/tasks.png');
+      }
+    }
   }
 }
 

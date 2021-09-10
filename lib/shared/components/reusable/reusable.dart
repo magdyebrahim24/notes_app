@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:notes_app/shared/constants.dart';
 
 class DefaultFormField extends StatelessWidget {
   final focusNode;
@@ -47,6 +48,8 @@ class DefaultFormField extends StatelessWidget {
       keyboardType: keyboardType,
       style: style,
       maxLines: maxLines,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      cursorColor: Theme.of(context).accentColor,
       minLines: minLines,
       decoration: InputDecoration(
         enabledBorder: InputBorder.none,
@@ -54,10 +57,20 @@ class DefaultFormField extends StatelessWidget {
         hintText: hintText,
         disabledBorder: disableBorder,
         hintStyle: hintStyle,
-        fillColor: fillColor,
+        // fillColor: fillColor ,
         border: border,
       ),
       // selectionControls: TextSelectionControls(DefaultFormField ,context , ),
     );
   }}
 
+Widget circleProcessInductor(){
+  return Center(child: CircularProgressIndicator(color: accentColor,));
+}
+
+Widget shadedImage(imgPath){
+  return Image.asset(imgPath,
+      fit: BoxFit.scaleDown,
+      color: Color.fromRGBO(255, 255, 255, 0.5),
+      colorBlendMode: BlendMode.modulate);
+}

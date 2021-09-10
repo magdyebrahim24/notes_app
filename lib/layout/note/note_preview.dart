@@ -1,5 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/constants.dart';
 
 class NotePreview extends StatelessWidget {
   final data;
@@ -14,9 +18,11 @@ class NotePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading == true
-        ? Center(child: CircularProgressIndicator())
-        : ListView.builder(
+    if (isLoading) {
+      return circleProcessInductor();
+    } else {
+      if (data.length != 0) {
+        return ListView.builder(
             itemCount: data.length,
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
@@ -25,6 +31,10 @@ class NotePreview extends StatelessWidget {
                   data: data[index],
                   onTapFun: () => navFun(data[index]));
             });
+      } else {
+        return shadedImage('assets/intro/notes.png');
+      }
+    }
   }
 }
 
@@ -41,102 +51,107 @@ class NoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 7),
-      elevation: 4,
       clipBehavior: Clip.antiAliasWithSaveLayer,
       semanticContainer: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(14.0),
       ),
       child: InkWell(
         onTap: onTapFun,
         onLongPress: onLongTapFun,
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 11),
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 13),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      data['title'] ?? 'Title',
-                      maxLines: 1,
-                      softWrap: true,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline5!
-                          .copyWith(fontSize: 22),
-                    ),
-                    data['images'].isEmpty && data['body'].toString().isNotEmpty
+                    SizedBox(height: 10,),
+                    // title
+                    data['title'].toString().isNotEmpty ?  Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Text(
+                        data['title'],
+                        maxLines: 1,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline1,
+                      ),
+                    ) : SizedBox(),
+
+                    // show 2 images if body not exist but image exist
+                    data['body'].toString().isEmpty && data['images'].isNotEmpty? Row( children: [
+                      image(data['images'][0]['link']),
+                      data['body'].toString().isEmpty && data['images'].length > 2
+                          ?  image(data['images'][1]['link']) : SizedBox(),
+                    ],):SizedBox(),
+
+                    // body
+                    data['body'].toString().isNotEmpty
                         ? Padding(
-                            padding: const EdgeInsets.only(top: 10),
+                            padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               data['body'],
-                              style: Theme.of(context).textTheme.bodyText2,
-                              maxLines: 1,
+                              style: Theme.of(context).textTheme.caption,
+                              maxLines: 2,
                               softWrap: true,
                               overflow: TextOverflow.ellipsis,
                             ),
                           )
                         : SizedBox(),
-                    SizedBox(
-                      height: 12,
+
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: SvgPicture.asset('assets/icons/voice.svg'),
                     ),
-                    Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${data['createdDate']}',
-                              maxLines: 1,
-                              style: Theme.of(context).textTheme.subtitle1,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 7,
-                          ),
-                          Expanded(
-                            child: Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(
-                                '${data[isFavorite ? 'type' : 'createdTime']}',
-                                maxLines: 1,
-                                softWrap: true,
-                                overflow: TextOverflow.clip,
-                                style: Theme.of(context).textTheme.subtitle1,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
+                    Text(
+                      '${data['createdDate']}',
+                      maxLines: 1,
+                      style: Theme.of(context).textTheme.caption!.copyWith(fontSize: 9.5),
+                    ),
                   ],
                 ),
               ),
-              SizedBox(
-                width: data['images'].isNotEmpty ? 20 : 0,
+              SizedBox(width: 10,),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  data['is_favorite'] == 1 ?  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SvgPicture.asset('assets/icons/fill_star.svg',color: Theme.of(context).textTheme.headline1!.color,),
+                  ):SizedBox(),
+
+                  SizedBox(
+                    height: 15
+                  ),
+                  data['images'].isNotEmpty && data['body'].toString().isNotEmpty
+                      ?  image(data['images'][0]['link']) : SizedBox(),
+                ],
               ),
-              data['images'].isNotEmpty
-                  ? Container(
-                      width: 55,
-                      height: 55,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: FileImage(
-                              File(data['images'][0]['link'].toString()),
-                            ),
-                          )),
-                    )
-                  : SizedBox(),
             ],
           ),
         ),
       ),
+    );
+  }
+  Widget image(imgPath){
+    return Container(
+      width: 65,
+      height: 54,
+      margin: EdgeInsets.only(bottom: 10,left: 5,right: 5),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: FileImage(
+              File(imgPath.toString()),
+            ),
+          )),
     );
   }
 }

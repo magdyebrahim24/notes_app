@@ -22,9 +22,11 @@ class TimeAndDate{
       initialDate: DateTime.now(),
       firstDate: firstDate,
       lastDate: lastDate,
+     initialEntryMode: DatePickerEntryMode.input,
+
     ).then((value) {
       date = DateFormat.yMMMd().format(value!);
-    }).catchError((error) {});
+    }).catchError((error) {print(error);});
     return date;
   }
 

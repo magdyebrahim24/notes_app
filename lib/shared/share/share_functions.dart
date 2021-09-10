@@ -2,6 +2,10 @@
 
 import 'package:share/share.dart';
 
-void share(List<String> imagesPaths,{text,subject}) async{
- await Share.shareFiles(imagesPaths,text: text,subject: subject);
+share(List<String> imagesPaths,{text,subject}) {
+  Share.shareFiles(imagesPaths,text: text,subject: subject);
+}
+
+shareText({text,subject}) {
+ Share.share(text,subject: subject);
 }

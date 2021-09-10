@@ -21,3 +21,5 @@ class GetCachedImagesPathsFromDatabaseState extends AppMemoryStates {}
 class DeleteOneImageState extends AppMemoryStates {}
 
 class FavoriteState extends AppMemoryStates {}
+class ShowDateErrorText extends AppMemoryStates {}
+

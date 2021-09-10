@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/show_full_image.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
@@ -16,11 +17,11 @@ class GridViewForImages extends StatelessWidget {
     return imagesList.isNotEmpty
         ? Theme(
             data: Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-                hoverColor: Colors.transparent,
-                focusColor: Colors.transparent,
-                splashColor:  Colors.transparent,
-                highlightColor: Colors.transparent,
+              dividerColor: Colors.transparent,
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
             child: ExpansionTile(
               childrenPadding: EdgeInsets.zero,
@@ -62,8 +63,8 @@ class GridViewForImages extends StatelessWidget {
                     ),
                   ),
                   staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 7,
+                  crossAxisSpacing: 7.0,
                 ),
               ],
             ),
@@ -113,11 +114,12 @@ class GridViewForImages extends StatelessWidget {
                     highlightColor: Colors.transparent,
                     onPressed: () {
                       Navigator.of(context).pop();
-                      share([data['link']],text:' This Images Shared From Nota App');
+                      share([data['link']],
+                          text:
+                              'This Images Shared From Nota App \nyou can download from play store now.');
                     },
-                    child: Icon(
-                      Icons.ios_share_outlined,
-                      color: Theme.of(context).accentColor,
+                    child: SvgPicture.asset(
+                      'assets/icons/share.svg',
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(
@@ -136,9 +138,10 @@ class GridViewForImages extends StatelessWidget {
                     },
                     // height: 30,
                     minWidth: 50,
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: Colors.redAccent,
+                    child: SvgPicture.asset(
+                      'assets/icons/trash.svg',
+                      height: 21,
+                      width: 21,
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(

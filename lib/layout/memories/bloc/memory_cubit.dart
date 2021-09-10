@@ -22,11 +22,12 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   List cachedImagesList = [];
   bool isFavorite = false;
   late Database database;
-
+  bool showDateErrorText = false ;
   final formKey = GlobalKey<FormState>();
 
   void saveButton(context) {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState!.validate() && memoryDate != null) {
+      showDateErrorText = false ;
       if (memoryID == null) {
         insertNewMemory(
           context,
@@ -41,7 +42,10 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
             memoryDate: memoryDate.toString(),
             title: titleController.text);
       }
+    }else{
+      showDateErrorText = true ;
     }
+    emit(ShowDateErrorText());
   }
 
   void onBuild(data) async {
@@ -73,13 +77,14 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   onTextChange() {
     emit(OnMemoryTextChangedState());
   }
-
   void datePicker(context) async {
     memoryDate = await TimeAndDate.getDatePicker(
       context,
       firstDate: DateTime.parse('1900-09-22'),
       lastDate: DateTime.now(),
-    );
+    ).then((value) {
+      if(value!=null) showDateErrorText = false ;
+    });
     emit(TimePickerState());
   }
 

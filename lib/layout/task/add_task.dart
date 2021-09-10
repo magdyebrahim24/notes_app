@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'bloc/add_task_cubit.dart';
@@ -23,6 +25,7 @@ class AddTask extends StatelessWidget {
           return Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
+              leading: IconButton(onPressed: ()=>Navigator.pop(context),icon: Icon(Icons.arrow_back_ios),iconSize: 20,),
               actions: [
                 IconButton(
                     onPressed: () {
@@ -36,181 +39,81 @@ class AddTask extends StatelessWidget {
               key: formKey,
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  padding: EdgeInsets.fromLTRB(37, 17, 37, 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DefaultFormField(
-                        style: TextStyle(
-                          color: Theme.of(context).textTheme.headline4!.color,
-                          fontSize: 28,
-                        ),
-                        focusNode: cubit.titleFocus,
-                        controller: cubit.titleController,
-                        maxLines: null,
-                        minLines: null,
-                        fillColor: Theme.of(context).primaryColor,
-                        hintText: 'Title',
-                        validator: (value) {
-                          if (value.toString().isEmpty)
-                            return 'task title can\'t be empty';
-                        },
-                        hintStyle: TextStyle(
-                            color: Theme.of(context).hintColor,
-                            fontSize: 28,
-                            fontWeight: FontWeight.normal),
-                      ),
+                      Text('Title',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),),
                       Container(
-                        margin: EdgeInsets.only(
-                          bottom: 10,
+                        margin: EdgeInsets.only(bottom: 20,top: 15),
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
+                        decoration: BoxDecoration(color: Theme.of(context).cardTheme.color,borderRadius: BorderRadius.circular(10)),
+                        child: DefaultFormField(
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.headline4!.color,
+                            fontSize: 16,
+                          ),
+                          focusNode: cubit.titleFocus,
+                          controller: cubit.titleController,
+                          maxLines: 3,
+                          minLines: 2,
+                          hintText: 'Your title...',
+                          validator: (value) {
+                            if (value.toString().isEmpty)
+                              return 'task title can\'t be empty';
+                          },
                         ),
-                        height: 2,
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: Theme.of(context).dividerColor),
                       ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).cardTheme.color,
-                            borderRadius: BorderRadius.circular(10)),
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'Task Date',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Theme.of(context).textTheme.headline4!.color),
-                                  ),
-                                ),
 
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: MaterialButton(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 5),
-                                    color: Theme.of(context).dividerColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    onPressed: () {
-                                      cubit.datePicker(context);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          child: Text(
-                                            cubit.taskDate ?? 'Add',
-                                            style: Theme.of(context).textTheme.bodyText2,
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.expand_more,
-                                          color: Theme.of(context).textTheme.headline6!.color,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'Task Time',
-                                    style: TextStyle(
-                                        fontSize: 18, color: Theme.of(context).textTheme.headline4!.color),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: MaterialButton(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 5),
-                                    color: Theme.of(context).dividerColor,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    onPressed: () {
-                                      cubit.timePicker(context);
-                                    },
-                                    child: Row(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          child: Text(
-                                            cubit.taskTime ?? 'Add',
-                                              style: Theme.of(context).textTheme.bodyText2,
-                                          ),
-                                        ),
-                                        Icon(
-                                          Icons.expand_more,
-                                          color: Theme.of(context).textTheme.headline6!.color,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                      Row(
+                        children: [
+                          Expanded(child: dateTimeWidget(context,label: 'Date',fun: ()=> cubit.datePicker(context) ,height: 48.0,text: cubit.taskDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg')),
+                          SizedBox(width: MediaQuery.of(context).size.width * .1,),
+                          Expanded(child: dateTimeWidget(context,label: 'Time',fun: ()=> cubit.timePicker(context) ,height: 48.0,text: cubit.taskTime ?? '00:00 AM' ,iconPath: 'assets/icons/date.svg')),
+                        ],
                       ),
+                      SizedBox(height: 30,),
                       ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: cubit.subTasksList.length,
+                          itemCount: cubit.subTasksList.length,padding: EdgeInsets.zero,
                           itemBuilder: (context, index) => Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Checkbox(
-
-                                    onChanged: (value) {
-                                      cubit.changeCheckbox(index);
-                                    },
-                                    value: cubit.subTasksList[index]
-                                            ['isDone'] ??
-                                        false,
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Checkbox(
+                                      onChanged: (value) {
+                                        cubit.changeCheckbox(index);
+                                      },
+                                      value: cubit.subTasksList[index]
+                                              ['isDone'] ??
+                                          false,
+                                    ),
                                   ),
                                   Expanded(
                                     child: TextFormField(
                                         controller: cubit.subTasksList[index]
                                             ['body'],
-                                        style: cubit.subTasksList[index]
-                                        ['isDone']?
-                                        Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
+                                        style: cubit.subTasksList[index]['isDone']  ?
+                                        Theme.of(context).textTheme.bodyText1!.copyWith(decoration: TextDecoration.lineThrough) : Theme.of(context).textTheme.bodyText1,
                                         decoration: InputDecoration(
                                           focusedBorder: InputBorder.none,
                                           enabledBorder: InputBorder.none,
-                                          hintText: 'write sub task',
+                                          hintText: 'Your text...',
                                           disabledBorder: InputBorder.none,
                                           hintStyle: TextStyle(
                                               color: Theme.of(context).hintColor,
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.normal),
-                                          fillColor:
-                                              Theme.of(context).primaryColor,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w400),
                                           border: InputBorder.none,
                                         ),
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
                                         validator: (text) {
                                           if (text.toString().isEmpty)
-                                            return 'you must type sub task first';
+                                            return 'can\'t be empty';
                                         }),
                                   ),
                                   IconButton(
@@ -223,22 +126,25 @@ class AddTask extends StatelessWidget {
                               )),
                       ListView.builder(
                           physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
+                          shrinkWrap: true,padding: EdgeInsets.zero,
                           itemCount: cubit.newTasksList.length,
                           itemBuilder: (context, index) => Row(
                                 children: [
-                                  Checkbox(
-                                    onChanged: (value) {
-                                      cubit.changeNewSubTaskCheckbox(index);
-                                    },
-                                    value: cubit.newTasksList[index]['isDone'],
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Checkbox(
+                                      onChanged: (value) {
+                                        cubit.changeNewSubTaskCheckbox(index);
+                                      },
+                                      value: cubit.newTasksList[index]['isDone'],
+                                    ),
                                   ),
                                   Expanded(
                                     child: TextFormField(
                                         controller: cubit.newTasksList[index]
                                             ['body'],
-                                        style: cubit.newTasksList[index]
-                                        ['isDone']?Theme.of(context).textTheme.bodyText1:Theme.of(context).textTheme.bodyText2,
+                                        style: cubit.newTasksList[index]['isDone'] ?
+                                        Theme.of(context).textTheme.bodyText1!.copyWith(decoration: TextDecoration.lineThrough):Theme.of(context).textTheme.bodyText1,
                                         decoration: InputDecoration(
                                           focusedBorder: InputBorder.none,
                                           enabledBorder: InputBorder.none,
@@ -252,9 +158,10 @@ class AddTask extends StatelessWidget {
                                               Theme.of(context).primaryColor,
                                           border: InputBorder.none,
                                         ),
+                                        autovalidateMode: AutovalidateMode.onUserInteraction,
                                         validator: (text) {
                                           if (text.toString().isEmpty)
-                                            return 'you must type sub task first';
+                                            return 'can\'t be empty';
                                         }),
                                   ),
                                   IconButton(
@@ -265,15 +172,26 @@ class AddTask extends StatelessWidget {
                                           color: Theme.of(context).textTheme.bodyText1!.color, size: 19)),
                                 ],
                               )),
-                      TextButton(
+                      SizedBox(height: 10,),
+                      MaterialButton(
                         onPressed: () {
                           if (formKey.currentState!.validate())
                             cubit.addNewSubTask();
                         },
-                        style: ButtonStyle(),
-                        child: Text(
-                          '+  Add sub task',
-                          style: TextStyle(color: Theme.of(context).accentColor,fontSize: 18),
+                        padding: EdgeInsets.zero,
+                        focusColor: Colors.transparent,
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Icon(Icons.add,size: 28,color: Theme.of(context).textTheme.headline5!.color,),
+                            SizedBox(width: 15,),
+                            Text(
+                              'Add SubTask',
+                              style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 21),
+                            ),
+                          ],
                         ),
                       )
                     ],
@@ -282,7 +200,7 @@ class AddTask extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: cubit.taskID != null
-                ? BottomIconBar(
+                ? AddTaskBottomIconBar(
                     deleteFun: () => cubit.deleteTask(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
                     isFavorite: cubit.isFavorite,
@@ -294,4 +212,45 @@ class AddTask extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget dateTimeWidget(context,{label,text,fun,iconPath,height,textSize = 12.0 , errorText}){
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(label,style: TextStyle(color: Theme.of(context).hintColor,fontSize: 20,fontWeight: FontWeight.w400),),
+      SizedBox(height: 10,),
+      MaterialButton(
+        height: height,
+        minWidth: 118,
+        padding: EdgeInsets.symmetric(
+            vertical: 15, horizontal: 15),
+        color: Theme.of(context).cardTheme.color,
+        shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(8)),
+        onPressed: fun,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                    child: Text(
+                      text,
+                      style: TextStyle(color: Theme.of(context).hintColor,fontSize: textSize,fontWeight: FontWeight.w400),)
+                ),
+                SvgPicture.asset(iconPath,color: Theme.of(context).hintColor,),
+
+              ],
+            ),
+            errorText != null ? Padding(
+              padding: const EdgeInsets.only(top: 15),
+              child: Text(errorText.toString(),style: Theme.of(context).inputDecorationTheme.errorStyle!.copyWith(fontSize: 12),),
+            ) : SizedBox(),
+          ],
+        ),
+      ),
+    ],
+  );
 }
