@@ -24,10 +24,9 @@ import 'package:notes_app/shared/constants.dart';
 //   ),
 // );
 ThemeData lightTheme = ThemeData(
-
-    indicatorColor : accentColor,
+  indicatorColor : accentColor,
   textSelectionTheme: TextSelectionThemeData(cursorColor: accentColor),
-  dividerColor: Colors.grey[200],
+  dividerColor: Color(0xff707070),
   hintColor: Color(0xff666666),
   checkboxTheme: CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
@@ -35,20 +34,14 @@ ThemeData lightTheme = ThemeData(
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     splashRadius: 0,
   ),
-  cardTheme: CardTheme(
-    color: Color(0xffE6E6E6),
-  ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: lightColor,
-      selectedItemColor: purpleColor,
-      unselectedItemColor: lightgreyColor),
-  // fontFamily: 'PT_Sans',
+  cardTheme: CardTheme(color: Color(0xffE6E6E6),),
   tabBarTheme: TabBarTheme(
     labelStyle: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: accentColor),
-    unselectedLabelStyle: TextStyle(fontSize: 18,fontWeight: FontWeight.w400,color: Color(0xff494949)),
+    unselectedLabelStyle: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: Color(0xff494949)),
     labelColor: accentColor,
     unselectedLabelColor: Color(0xff494949),
   ),
+  primaryColorLight: Colors.black,
   popupMenuTheme: PopupMenuThemeData(
     color: lightColor,
     textStyle: TextStyle(
@@ -60,9 +53,15 @@ ThemeData lightTheme = ThemeData(
   primaryColor: Colors.white,
   accentColor: accentColor,
   scaffoldBackgroundColor: Colors.white,
+  backgroundColor: Colors.white.withOpacity(.33), // for drawer selected page title bg
+  colorScheme: ColorScheme.light(
+    background: Color(0xff5BC7D0),// for drawer color
+    ),
   appBarTheme: AppBarTheme(
     titleTextStyle: TextStyle(color: titleColor, fontWeight: FontWeight.w500),
     brightness: Brightness.light,
+    centerTitle: true,
+    iconTheme: IconThemeData(color: Colors.black,),
     // backwardsCompatibility: false,
     // systemOverlayStyle: SystemUiOverlayStyle(
     //   statusBarColor: accentColor,
@@ -100,13 +99,13 @@ ThemeData lightTheme = ThemeData(
   iconTheme: IconThemeData(
     color: Color(0xff292D32)
   ),
+
   textTheme: TextTheme(
-    headline1: TextStyle(fontSize: 17,color: Color(0xff181818),fontWeight: FontWeight.w500), // for card title
+    headline1: TextStyle(fontSize: 18,color: Color(0xff181818),fontWeight: FontWeight.w500), // for card title
     headline2: TextStyle(color: Color(0xffE6E6E6),), // color for button in login and secret
-     headline3: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500), // for drawer text
-    headline4: TextStyle(color: Color(0xff242424),
-        fontSize: 40, fontWeight: FontWeight.bold), // intro headline
-    headline5: TextStyle(color: Color(0xff242424), fontWeight: FontWeight.w500), // page title
+    headline3: TextStyle(color: Colors.white,fontSize: 20,fontWeight: FontWeight.w500), // for drawer text
+    headline4: TextStyle(color: Color(0xff242424), fontSize: 40, fontWeight: FontWeight.bold), // intro headline
+    headline5: TextStyle(color: Color(0xff242424), fontWeight: FontWeight.w500,fontSize: 22), // page title
     headline6: TextStyle(color: Color(0xff4F4F4F)), // setting tile title
     subtitle1: TextStyle(color: Color(0xff212121)), // search bar text
     bodyText1: TextStyle(color: Color(0xff4F4F4F), fontSize: 18 ,fontWeight: FontWeight.w400),// subtask theme
@@ -126,29 +125,25 @@ ThemeData lightTheme = ThemeData(
 
 
 ThemeData darkTheme = ThemeData(
-  textSelectionTheme: TextSelectionThemeData(selectionHandleColor: yellowColor),
-  dividerColor: Colors.white24,
-  hintColor: greyColor,
+  indicatorColor : accentColor,
+  textSelectionTheme: TextSelectionThemeData(cursorColor: accentColor),
+  dividerColor: Color(0xff707070),
+  hintColor: Color(0xff666666),
   checkboxTheme: CheckboxThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
     fillColor: MaterialStateProperty.resolveWith((states) => blueColor),
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     splashRadius: 0,
   ),
-  cardTheme: CardTheme(
-    color: Color(0xff2e2e3e),
-  ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: Color(0xff2e2e3e),
-      selectedItemColor: yellowColor,
-      unselectedItemColor: greyColor),
-  // fontFamily: 'PT_Sans',
+  cardTheme: CardTheme(color: Color(0xff2E2E2E),),
   tabBarTheme: TabBarTheme(
-    labelStyle: TextStyle(color: yellowColor),
-    labelColor: yellowColor,
-    // indicator: CircleTabIndicator(color: yellowColor,radius: 3),
-    unselectedLabelColor: greyColor,
+    labelStyle: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,color: accentColor),
+    unselectedLabelStyle: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,
+        color: Color(0xff8C8C8C)),
+    labelColor: accentColor,
+    unselectedLabelColor: Color(0xff8C8C8C),
   ),
+  primaryColorLight: Colors.white, // for icons color
   popupMenuTheme: PopupMenuThemeData(
     color: Color(0xff2e2e3e),
     textStyle: TextStyle(
@@ -157,14 +152,32 @@ ThemeData darkTheme = ThemeData(
     ),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
   ),
-  primaryColor: blackColor,
-  accentColor: yellowColor,
-  scaffoldBackgroundColor: blackColor,
+  primaryColor: Color(0xff181818),
+  accentColor:  accentColor,
+  scaffoldBackgroundColor: Color(0xff181818),
   appBarTheme: AppBarTheme(
-    brightness: Brightness.dark,
-    backgroundColor: blackColor,
+    textTheme: TextTheme(headline5: TextStyle(color: Colors.green)),
+    titleTextStyle: TextStyle(color: Color(0xffB5B5B5), fontWeight: FontWeight.w500,fontSize: 22),
+    brightness: Brightness.dark,centerTitle: true,
+    iconTheme: IconThemeData(color: Colors.white,),
+    // backwardsCompatibility: false,
+    // systemOverlayStyle: SystemUiOverlayStyle(
+    //   statusBarColor: accentColor,
+    //   statusBarIconBrightness: Brightness.light,
+    //   statusBarBrightness: Brightness.light,
+    //
+    // ),
+    // iconTheme: IconThemeData(
+    //   color: Colors.black,
+    // ),
+    // textTheme: TextTheme(),
+    backgroundColor: Color(0xff181818),
     elevation: 0.0,
   ),
+  colorScheme: ColorScheme.dark(
+    background: Color(0xffA4D7DB), // for drawer background color
+  ),
+  backgroundColor: Color(0xff92B7B9), // for drawer selected page title bg
   inputDecorationTheme: InputDecorationTheme(
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(10.0),
@@ -187,13 +200,13 @@ ThemeData darkTheme = ThemeData(
     fillColor: Colors.grey.withOpacity(.1),
   ),
   textTheme: TextTheme(
-    headline4: TextStyle(color: Colors.white),
-    headline5: TextStyle(color: Colors.white),
-    subtitle1: TextStyle(fontSize: 13, color: greyColor),
-    bodyText2: TextStyle(fontSize: 16, color: Colors.white),
-    bodyText1: TextStyle(
-        color: Colors.white60, decoration: TextDecoration.lineThrough),
-    headline6: TextStyle(color: Colors.white),
     headline1: TextStyle(color: Colors.white60, fontSize: 18),
+    headline3: TextStyle(color: Color(0xff181818),fontSize: 20,fontWeight: FontWeight.w500,), // for drawer text
+    headline4: TextStyle(color: Color(0xffD9D9D9), fontSize: 40, fontWeight: FontWeight.bold), // intro headline
+    headline5: TextStyle(color: Color(0xffD9D9D9), fontWeight: FontWeight.w500,fontSize: 21), // page title
+    headline6: TextStyle(color: Color(0xffA5A5A5)), // setting tile title
+    subtitle1: TextStyle(fontSize: 13, color: greyColor),
+    bodyText1: TextStyle(color: Colors.white60, decoration: TextDecoration.lineThrough),
+    bodyText2: TextStyle(fontSize: 14, color: Color(0xff888787)), // edited -- intro sub text
   ),
 );

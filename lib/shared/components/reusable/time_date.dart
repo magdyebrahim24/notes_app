@@ -22,7 +22,7 @@ class TimeAndDate{
       initialDate: DateTime.now(),
       firstDate: firstDate,
       lastDate: lastDate,
-     initialEntryMode: DatePickerEntryMode.input,
+     // initialEntryMode: DatePickerEntryMode.input,
 
     ).then((value) {
       date = DateFormat.yMMMd().format(value!);
@@ -35,7 +35,7 @@ class TimeAndDate{
     await  showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
-      initialEntryMode: TimePickerEntryMode.input,
+      // initialEntryMode: TimePickerEntryMode.input,
     ).then((value) {
       time = value!.format(context).toString();
     }).catchError((error) {print(error);});

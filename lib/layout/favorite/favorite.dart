@@ -49,7 +49,7 @@ class FavoriteScreen extends StatelessWidget {
                                             .getAllTasksDataWithItSubTasks);
                                   },
                                   data: cubit.allData[index],
-                                  isFavorite: cubit.isFavorite,
+                                  // isFavorite: cubit.isFavorite,
                                 )
                               : MemoryCard(
                                   noTapFun: () {

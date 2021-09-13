@@ -1,6 +1,4 @@
 
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'dart:math' as math;
@@ -102,16 +100,16 @@ class _ExpandableFabState extends State<ExpandableFab>
 
   Widget _buildTapFab() {
     return Padding(
-      padding: const EdgeInsets.only(right: 16,bottom: 24),
+      padding: const EdgeInsets.only(right: 15,bottom: 24),
       child: MaterialButton(
         onPressed: _toggle,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
-            side: BorderSide(color: Colors.white, width: 4)),
+            side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor, width: 6)),
         child: Icon(!_open ? Icons.add : Icons.close , size: 36,),
         color: Theme.of(context).accentColor,
-        height: 94,
-        minWidth: 94,
+        height: 96,
+        minWidth: 96,
         elevation: 0,
       ),
     );

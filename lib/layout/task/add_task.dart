@@ -10,7 +10,6 @@ import 'bloc/add_task_states.dart';
 class AddTask extends StatelessWidget {
   final data;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final formKey = GlobalKey<FormState>();
 
   AddTask({this.data});
 
@@ -28,15 +27,12 @@ class AddTask extends StatelessWidget {
               leading: IconButton(onPressed: ()=>Navigator.pop(context),icon: Icon(Icons.arrow_back_ios),iconSize: 20,),
               actions: [
                 IconButton(
-                    onPressed: () {
-                      if (formKey.currentState!.validate())
-                        cubit.saveTaskBTNFun(context);
-                    },
+                    onPressed: ()=>cubit.saveTaskBTNFun(context) ,
                     icon: Icon(Icons.done)),
               ],
             ),
             body: Form(
-              key: formKey,
+              key: cubit.formKey,
               child: SingleChildScrollView(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(37, 17, 37, 10),
@@ -67,10 +63,11 @@ class AddTask extends StatelessWidget {
                       ),
 
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(child: dateTimeWidget(context,label: 'Date',fun: ()=> cubit.datePicker(context) ,height: 48.0,text: cubit.taskDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg')),
+                          Expanded(child: dateTimeWidget(context,label: 'Date',errorText:cubit.showTaskDateValidateText ? 'date required' : null,fun: ()=> cubit.datePicker(context) ,height: 48.0,text: cubit.taskDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg')),
                           SizedBox(width: MediaQuery.of(context).size.width * .1,),
-                          Expanded(child: dateTimeWidget(context,label: 'Time',fun: ()=> cubit.timePicker(context) ,height: 48.0,text: cubit.taskTime ?? '00:00 AM' ,iconPath: 'assets/icons/date.svg')),
+                          Expanded(child: dateTimeWidget(context,label: 'Time',errorText:cubit.showTaskTimeValidateText ? 'time required' : null,fun: ()=> cubit.timePicker(context) ,height: 48.0,text: cubit.taskTime ?? '00:00 AM' ,iconPath: 'assets/icons/date.svg')),
                         ],
                       ),
                       SizedBox(height: 30,),
@@ -175,7 +172,7 @@ class AddTask extends StatelessWidget {
                       SizedBox(height: 10,),
                       MaterialButton(
                         onPressed: () {
-                          if (formKey.currentState!.validate())
+                          // if (formKey.currentState!.validate())
                             cubit.addNewSubTask();
                         },
                         padding: EdgeInsets.zero,

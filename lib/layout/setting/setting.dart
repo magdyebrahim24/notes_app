@@ -25,7 +25,7 @@ class Setting extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               icon: Icon(
                 Icons.arrow_back_ios,
-                size: 20,
+                size: 18,
               ),
             ),
             title: Text(
@@ -39,6 +39,7 @@ class Setting extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // version
                   ListTile(
                     subtitle: Text("10.1.6", style: theme.bodyText2),
                     title: Text('Version', style: theme.headline6),
@@ -47,7 +48,7 @@ class Setting extends StatelessWidget {
                   tileItem(context,
                       fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => About(),)),
                       title: 'About',
-                      leadingIconPath: 'assets/icons/about.svg'),
+                      leadingIconPath: 'assets/icons/about.svg' ,),
                   tileItem(context, fun: () {
                     Navigator.push(
                         context,
@@ -75,25 +76,32 @@ class Setting extends StatelessWidget {
                     inactiveThumbColor: Colors.white,
                     secondary: SvgPicture.asset(
                       'assets/icons/dark_mode.svg',
+                        color: theme.headline6!.color
                     ),
 
                     contentPadding: EdgeInsets.symmetric(horizontal: 40),
                   ),
 
                   Padding(
-                    padding: EdgeInsets.fromLTRB(40, 50, 40, 20),
+                    padding: EdgeInsets.fromLTRB(65, 40, 65, 20),
                     child: Divider(
                       height: 1,
                       thickness: 1,
                     ),
                   ),
+
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15,horizontal: 25),
                     child: Text(
                       'Contact Us',
-                      style: theme.headline6!.copyWith(fontSize: 25),
+                      style: theme.headline6!.copyWith(fontSize: 25,),
                     ),
                   ),
+                  tileIcon(context,
+                      icon: FontAwesomeIcons.linkedinIn,
+                      title: 'Linked In',
+                      fun: () => launch(
+                          'https://www.linkedin.com/in/magdy-ebrahim-30765a202/')),
                   tileIcon(context,
                       icon: FontAwesomeIcons.facebookF,
                       title: 'FaceBook',
@@ -104,11 +112,7 @@ class Setting extends StatelessWidget {
                       title: 'Gmail',
                       fun: () => launch('mailto:<migoamasha27@gmail.com>?subject=<Contact To Nota App Team>&body=<type your problem here .>')
                   ),
-                  tileIcon(context,
-                      icon: FontAwesomeIcons.linkedinIn,
-                      title: 'Linked In',
-                      fun: () => launch(
-                          'https://www.linkedin.com/in/magdy-ebrahim-30765a202/')),
+
                 ],
               ),
             ),
@@ -187,24 +191,33 @@ class Setting extends StatelessWidget {
         title,
         style: Theme.of(context).textTheme.headline6,
       ),
-      leading: SvgPicture.asset(leadingIconPath) ,
+      leading: SvgPicture.asset(leadingIconPath,color: Theme.of(context).textTheme.headline6!.color) ,
       contentPadding: EdgeInsets.symmetric(horizontal: 40),
       trailing: Icon(Icons.arrow_forward_ios_outlined,size: 15,color: Theme.of(context).textTheme.headline6!.color,),
     );
   }
 
-  ListTile tileIcon(context, {fun, title, leadingIconPath, icon}) {
-    return ListTile(
+  Widget tileIcon(context, {fun, title, leadingIconPath, icon}) {
+    return InkWell(
       onTap: fun,
-      title: Text(
-        title,
-        style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 17),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40,vertical: 15),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 18,
+              color: Theme.of(context).textTheme.headline6!.color,
+            ),
+            SizedBox(width: 17,),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.headline6!.copyWith(fontSize: 16),
+            ),
+          ],
+        ),
       ),
-      leading: Icon(
-        icon,
-      ),
-      contentPadding: EdgeInsets.symmetric(horizontal: 40),
-
     );
   }
 }

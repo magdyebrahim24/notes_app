@@ -34,7 +34,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             builder: (BuildContext context, AppStates state) {
               AppCubit cubit = AppCubit.get(context);
               return Scaffold(
-                backgroundColor: Theme.of(context).accentColor,
+                backgroundColor: Theme.of(context).colorScheme.background,
                 body: Stack(
                   children: [
                     menu(context,
@@ -70,6 +70,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  // icon for close
                   Padding(
                     padding: EdgeInsets.fromLTRB(
                         .38 * screenWidth!, .2 * screenHeight!, 0, 40),
@@ -90,6 +91,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                           .withOpacity(.33),
                     ),
                   ),
+                  // app name
                   Text(
                     'Nota',
                     style: Theme.of(context)
@@ -110,15 +112,11 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                     height: 12,
                   ),
                   Container(
-                    width: 0.47 * screenWidth!,
+                    width: 0.45 * screenWidth!,
                     height: 42,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(17),
-                        color: Theme.of(context)
-                            .textTheme
-                            .headline3!
-                            .color!
-                            .withOpacity(.33)),
+                        color: Theme.of(context).backgroundColor),
                     alignment: Alignment.center,
                     margin: EdgeInsets.symmetric(vertical: 10),
                     padding: EdgeInsets.symmetric(horizontal: 15),
@@ -187,7 +185,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
   Widget _drawerItem({text, leadingPath, fun}) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
-      width: 0.47 * screenWidth!,
+      width: 0.46 * screenWidth!,
       child: ListTile(
         title: Text(text, style: Theme.of(context).textTheme.headline3),
         leading: SvgPicture.asset(

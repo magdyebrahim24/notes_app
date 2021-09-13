@@ -26,3 +26,5 @@ class DeleteTaskState extends AppTaskStates {}
 
 class TaskFavoriteState extends AppTaskStates {}
 
+class SaveState extends AppTaskStates {}
+

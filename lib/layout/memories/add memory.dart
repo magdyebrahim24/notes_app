@@ -91,7 +91,7 @@ class AddMemory extends StatelessWidget {
                           maxLines: null,
                           minLines: 4,
                           keyboardType: TextInputType.multiline,
-                          hintText: 'Your Memory text......',
+                          hintText: 'Your Memory details......',
                           fillColor: Theme.of(context).primaryColor,
                           // hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
                         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
@@ -40,7 +41,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     leading: IconButton(
                         onPressed: () => cubit.isDrawerCollapsed ?  cubit.openDrawer() : null,
                         icon: SvgPicture.asset(
-                          'assets/icons/drawer.svg',
+                          'assets/icons/drawer.svg',color: Theme.of(context).primaryColorLight,
                         )) ,
                     actions: [
                       IconButton(
@@ -52,6 +53,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           },
                           icon: SvgPicture.asset(
                             'assets/icons/search.svg',
+                            color: Theme.of(context).primaryColorLight,
                           )),
                       SizedBox(
                         width: 10,
@@ -160,12 +162,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               onPressed: () => cubit.addFABBtnRoutes(context),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50),
+                side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor,width: 5,),
               ),
-              child: Icon(Icons.add,size: 45,) ,
+              child: Icon(Icons.add,size: 45,color: Colors.black,) ,
               color: Theme.of(context).accentColor,
-              height: 85,
-              minWidth: 85,
-              elevation: 6,
+              height: 90,
+              elevation: 0,
+              minWidth: 90,
             ),
           )
         );
