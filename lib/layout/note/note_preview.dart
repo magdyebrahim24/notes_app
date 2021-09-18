@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'package:notes_app/shared/constants.dart';
 
 class NotePreview extends StatelessWidget {
   final data;

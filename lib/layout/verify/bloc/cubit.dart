@@ -1,13 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/secret.dart';
 import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:sqflite/sqflite.dart';
-
 class LoginCubit extends Cubit<VerifyStates> {
   LoginCubit() : super(VerifyInitialState());
 
@@ -25,8 +25,10 @@ class LoginCubit extends Cubit<VerifyStates> {
     checkPass();
   }
 
+
   String passwordText = '';
   String? storedPassword;
+  bool inCorrectPassword = false;
 
   void checkPass() async {
     String? pass = CacheHelper.getString(key: 'secret_password');
@@ -37,7 +39,7 @@ class LoginCubit extends Cubit<VerifyStates> {
 
   }
 
-  void loginAndAddToSecret({index, context, id, table,isUpdate}) async{
+  void loginAndAddToSecret({index, context, id, table,isUpdate,required inCorrectPassFun}) async{
     if (passwordDigitsList.length < 4) {
       passwordDigitsList.add(index + 1);
       print(passwordDigitsList);
@@ -67,14 +69,27 @@ class LoginCubit extends Cubit<VerifyStates> {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (context) => Secret()));
         } else {
-          passwordDigitsList = [];
+         await inCorrectPasswordShakeAndRemovePass(inCorrectPassFun);
         }
       }
       emit(VerifyAddToListState());
     }
   }
 
-  void createPassAndAddToSecrete({context, index, id, table}) async{
+  inCorrectPasswordShakeAndRemovePass(inCorrectPassFun) async{
+    inCorrectPassword = true ;
+    passwordDigitsList.add(0);
+    emit(VerifyAddToListState());
+    HapticFeedback.vibrate();
+    inCorrectPassFun();
+    HapticFeedback.vibrate();
+    passwordDigitsList.add(0);
+    await  Future.delayed(Duration(milliseconds: 500),(){
+      passwordDigitsList = [];
+    });
+  }
+
+  void createPassAndAddToSecrete({context, index, id, table , required inCorrectPassAndShakeFun}) async{
     if (verifyPass == null) {
       if (passwordDigitsList.length < 4) {
         passwordDigitsList.add(index + 1);
@@ -106,6 +121,8 @@ class LoginCubit extends Cubit<VerifyStates> {
           await  CacheHelper.putString(key: 'secret_password', value: passwordText);
             Navigator.pushReplacement(
                 context, MaterialPageRoute(builder: (context) => Secret()));
+          }else{
+           await inCorrectPasswordShakeAndRemovePass(inCorrectPassAndShakeFun);
           }
         }
       }
@@ -121,12 +138,15 @@ class LoginCubit extends Cubit<VerifyStates> {
     }
   }
 
-  void z() {
+  void z(context) async{
     CacheHelper.sharedPreferences!.remove('secret_password');
+    emit(VerifyRemoveFromListState());
+
   }
 
   void deleteEnteredPassDigit() {
     if (passwordDigitsList.isNotEmpty) {
+      isCompleted = false ;
       passwordDigitsList.removeLast();
       print(passwordDigitsList);
       emit(VerifyRemoveFromListState());

@@ -165,7 +165,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor,width: 5,),
               ),
               child: Icon(Icons.add,size: 45,color: Colors.black,) ,
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).colorScheme.secondary,
               height: 90,
               elevation: 0,
               minWidth: 90,

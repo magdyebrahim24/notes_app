@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/verify/bloc/state.dart';
+import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
+import 'package:notes_app/shared/components/shake_animation.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'bloc/cubit.dart';
 
 class CreatePass extends StatelessWidget {
   final id;
   final table;
+  final loginShakeKey = GlobalKey<ShakeWidgetState>();
+
   CreatePass({this.id, this.table});
   @override
   build(BuildContext context) {
@@ -36,44 +40,34 @@ class CreatePass extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: size.height * .07,
+                          height: size.height * .05,
                         ),
-                        Container(
-                          child: Image.asset('assets/images/password.png'),
-                        ),
+                        Image.asset('assets/images/password.png'),
                         SizedBox(
                           height: 30,
                         ),
-                        Text(
+                        cubit.inCorrectPassword ?  Padding(
+                          padding: EdgeInsets.symmetric(vertical: 7.5),
+                          child: Text(
+                            'Passwords isn\'t identical, try again',
+                            textAlign: TextAlign.center,
+                            style: them.headline4!.copyWith(
+                                fontSize: 18,fontWeight: FontWeight.w400),
+                          ),
+                        ) : Text(
                           cubit.verifyPass == null
                               ? 'Create Password'
                               : 'Confirm Password',
                           style: them.headline4!.copyWith(
-                              fontSize: 32, fontWeight: FontWeight.normal),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (int i = 1; i < 5; i++)
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    color: cubit.passwordDigitsList.length >= i
-                                        ? accentColor
-                                        : Colors.transparent,
-                                    border: cubit.passwordDigitsList.length >= i
-                                        ? null
-                                        : Border.all(color: Colors.grey),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              // SizedBox(width: 60,),
-                            ],
-                          ),
+                              fontSize: 31, fontWeight: FontWeight.w400),
+                        ) ,
+
+                        ShakeWidget(
+                            key: loginShakeKey,
+                            shakeCount: 3,
+                            shakeOffset: 10,
+                            shakeDuration: Duration(milliseconds: 500),
+                            child: shakePassword(cubit.passwordDigitsList.length)
                         ),
                         Center(
                           child: GridView.builder(
@@ -88,42 +82,43 @@ class CreatePass extends StatelessWidget {
                               ),
                               itemCount: 12,
                               itemBuilder: (BuildContext context, int index) {
-                                if (index <9) {
+                                if (index < 9) {
                                   return IconForSecret(
                                     onPressed: () {
                                       cubit.createPassAndAddToSecrete(
                                           context: context,
                                           index: index,
                                           id: id,
-                                          table: table);
+                                          table: table,
+                                      inCorrectPassAndShakeFun: (){
+                                        loginShakeKey.currentState!.shake();
+                                      }
+                                      );
                                     },
                                     body: Text('${index + 1}',
                                         style: them.headline4!.copyWith(
                                             fontSize: 20,
-                                            fontWeight: FontWeight.normal)),
-                                    color: them.headline2!.color,
+                                            fontWeight: FontWeight.w500)),
+                                    color: Theme.of(context).cardTheme.color,
                                   );
                                 } else if (index == 11) {
                                   return cubit.verifyPass == null
                                       ? IconForSecret(
                                           body: Icon(
                                             Icons.check,
-                                            color: them.headline4!.color,
+                                            color: Colors.black,
                                             size: 20,
                                           ),
-                                          onPressed: () {
-                                            if (cubit.isCompleted)
-                                              cubit.goToVerify();
-                                          },
+                                          onPressed: cubit.isCompleted ? ()=> cubit.goToVerify() : null,
                                           color: accentColor,
                                         )
                                       : SizedBox();
                                 } else if (index == 9) {
                                   return IconForSecret(
                                     body: Icon(
-                                      Icons.backspace_outlined,
+                                      Icons.backspace_rounded,
                                       size: 20,
-                                      color: them.headline4!.color,
+                                      color: Colors.black,
                                     ),
                                     color: accentColor,
                                     onPressed: () {
@@ -137,59 +132,20 @@ class CreatePass extends StatelessWidget {
                                           context: context,
                                           index: -1,
                                           id: id,
-                                          table: table);
+                                          table: table,
+                                          inCorrectPassAndShakeFun: (){
+                                            loginShakeKey.currentState!.shake();
+                                          });
                                     },
                                     body: Text('0',
                                         style: them.headline4!.copyWith(
                                             fontSize: 20,
                                             fontWeight: FontWeight.normal)),
-                                    color: them.headline2!.color,
+                                    color: Theme.of(context).cardTheme.color,
                                   );
                                 }
                               }),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.symmetric(horizontal: 37),
-                        //   child: Row(
-                        //     mainAxisAlignment: MainAxisAlignment.start,
-                        //     children: [
-                        //       IconButton(
-                        //           onPressed: () {
-                        //             cubit.deleteEnteredPassDigit();
-                        //           },
-                        //           icon: Icon(
-                        //             Icons.backspace_outlined,
-                        //             size: 28,
-                        //             color: Colors.white,
-                        //           )),
-                        //       cubit.verifyPass == null
-                        //           ? IconButton(
-                        //               onPressed: () {
-                        //                 if (cubit.isCompleted)
-                        //                   cubit.goToVerify();
-                        //               },
-                        //               icon: Icon(
-                        //                 Icons.check,
-                        //                 color: Colors.white,
-                        //                 size: 30,
-                        //               ))
-                        //           : SizedBox(),
-                        //       SizedBox(
-                        //         width: 30,
-                        //       ),
-                        //       IconForSecret(
-                        //         body: '0',
-                        //         onPressed: () {
-                        //           cubit.createPassAndAddToSecrete(
-                        //               context: context,
-                        //               index: -1,
-                        //               id: id,
-                        //               table: table);
-                        //         },
-                        //       ),
-                        //     ],
-                        //   ),
-                        // )
                       ]),
                 ),
               ),

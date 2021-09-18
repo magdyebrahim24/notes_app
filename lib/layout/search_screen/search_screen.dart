@@ -8,7 +8,6 @@ import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_cubit.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
 import 'package:notes_app/layout/task/add_task.dart';
-import 'package:notes_app/shared/components/reusable/reusable.dart';
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -54,7 +53,7 @@ class SearchScreen extends StatelessWidget {
                       hintText: 'Search',
                     ),
                     style: Theme.of(context).textTheme.subtitle1,
-                    cursorColor: Theme.of(context).accentColor,
+                    cursorColor: Theme.of(context).colorScheme.secondary,
                     cursorWidth: 3,
                     textInputAction: TextInputAction.search,
                     onEditingComplete: () {

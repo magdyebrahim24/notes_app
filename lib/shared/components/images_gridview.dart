@@ -29,16 +29,16 @@ class GridViewForImages extends StatelessWidget {
               title: Text(
                 expansionTileHeader.toString(),
                 style: TextStyle(
-                    color: Theme.of(context).accentColor, fontSize: 17),
+                    color: Theme.of(context).textTheme.headline4!.color, fontSize: 17),
               ),
               leading: Icon(
                 Icons.perm_media_outlined,
-                color: Theme.of(context).accentColor,
+                color: Theme.of(context).textTheme.headline4!.color,
                 size: 18,
               ),
               maintainState: false,
               initiallyExpanded: true,
-              collapsedIconColor: Theme.of(context).accentColor,
+              collapsedIconColor: Theme.of(context).textTheme.headline4!.color,
               children: [
                 StaggeredGridView.countBuilder(
                   shrinkWrap: true,
@@ -99,7 +99,7 @@ class GridViewForImages extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.fit_screen_outlined,
-                      color: Theme.of(context).accentColor,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(

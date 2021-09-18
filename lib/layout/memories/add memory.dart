@@ -62,7 +62,7 @@ class AddMemory extends StatelessWidget {
                             controller: cubit.titleController,
                             maxLines: 4,
                             minLines: 1,
-                            hintText: 'Your title...',
+                            hintText: 'Title',
                             validator: (value) {
                               if (value.toString().isEmpty)
                                 return 'Memory title can\'t be empty';
@@ -91,7 +91,7 @@ class AddMemory extends StatelessWidget {
                           maxLines: null,
                           minLines: 4,
                           keyboardType: TextInputType.multiline,
-                          hintText: 'Your Memory details......',
+                          hintText: 'Memory details',
                           fillColor: Theme.of(context).primaryColor,
                           // hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
                         ),
@@ -132,16 +132,15 @@ class AddMemory extends StatelessWidget {
                 onPressed: () => cubit.pickMultiImageFromGallery(context),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(100),
-                    side: BorderSide(color: Colors.white, width: 4)),
-                child: SvgPicture.asset('assets/icons/take_image.svg',height: 27,width: 27,),
-                color: Theme.of(context).accentColor,
-                height: 94,
-                minWidth: 94,
+                    side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor, width: 6)),
+                child: SvgPicture.asset('assets/icons/take_image.svg',height: 28,width: 28,),
+                color: Theme.of(context).colorScheme.secondary,
+                height: 96,
+                minWidth: 96,
                 elevation: 0,
               ),
             ) : SizedBox(),
             floatingActionButtonLocation:   cubit.memoryID != null ? FloatingActionButtonLocation.endDocked : FloatingActionButtonLocation.endFloat,
-
           );
         },
       ),

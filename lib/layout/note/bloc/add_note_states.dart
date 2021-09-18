@@ -22,6 +22,18 @@ class GetCachedImagesPathsFromDatabaseState extends AddNoteStates {}
 
 class NoteFavoriteState extends AddNoteStates {}
 
+// ---------------------------------------------------------
+
+class StartRecordingState extends AddNoteStates {}
+class StopRecordingState extends AddNoteStates {}
+class PauseRecordingState extends AddNoteStates {}
+class ResumeRecordingState extends AddNoteStates {}
+class StartTimerState extends AddNoteStates {}
+class AmpTimerState extends AddNoteStates {}
+class DeleteRecordState extends AddNoteStates {}
+class GetRecordPath extends AddNoteStates {}
+class CheckSelectedPlayerItem extends AddNoteStates {}
+
 // record states
 
 class OpenAudioSessionState extends AddNoteStates {}

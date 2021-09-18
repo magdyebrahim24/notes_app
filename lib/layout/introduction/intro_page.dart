@@ -107,7 +107,7 @@ class IntroPage extends StatelessWidget {
                       ),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
-                      color: theme.accentColor,
+                      color: theme.colorScheme.secondary,
                     ),
                   ],
                 ),
@@ -129,7 +129,7 @@ class IntroPage extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(10.0)),
               color: currentPage == i
-                  ? Theme.of(context).accentColor
+                  ? Theme.of(context).colorScheme.secondary
                   : Color(0xffCCCCCC),
             ),
           ),

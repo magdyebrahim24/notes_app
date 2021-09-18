@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
 import 'package:notes_app/layout/introduction/intro_page.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Splash extends StatefulWidget {
   const Splash({Key? key}) : super(key: key);

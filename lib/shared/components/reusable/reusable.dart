@@ -49,7 +49,7 @@ class DefaultFormField extends StatelessWidget {
       style: style,
       maxLines: maxLines,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      cursorColor: Theme.of(context).accentColor,
+      cursorColor: Theme.of(context).colorScheme.secondary,
       minLines: minLines,
       decoration: InputDecoration(
         enabledBorder: InputBorder.none,

@@ -27,7 +27,7 @@ class AddTask extends StatelessWidget {
               leading: IconButton(onPressed: ()=>Navigator.pop(context),icon: Icon(Icons.arrow_back_ios),iconSize: 20,),
               actions: [
                 IconButton(
-                    onPressed: ()=>cubit.saveTaskBTNFun(context) ,
+                    onPressed: ()=> cubit.saveTaskBTNFun(context) ,
                     icon: Icon(Icons.done)),
               ],
             ),
@@ -92,8 +92,7 @@ class AddTask extends StatelessWidget {
                                   ),
                                   Expanded(
                                     child: TextFormField(
-                                        controller: cubit.subTasksList[index]
-                                            ['body'],
+                                        controller: cubit.subTasksList[index]['body'],
                                         style: cubit.subTasksList[index]['isDone']  ?
                                         Theme.of(context).textTheme.bodyText1!.copyWith(decoration: TextDecoration.lineThrough) : Theme.of(context).textTheme.bodyText1,
                                         decoration: InputDecoration(
@@ -141,7 +140,7 @@ class AddTask extends StatelessWidget {
                                         controller: cubit.newTasksList[index]
                                             ['body'],
                                         style: cubit.newTasksList[index]['isDone'] ?
-                                        Theme.of(context).textTheme.bodyText1!.copyWith(decoration: TextDecoration.lineThrough):Theme.of(context).textTheme.bodyText1,
+                                        Theme.of(context).textTheme.bodyText1!.copyWith(decoration: TextDecoration.lineThrough) : Theme.of(context).textTheme.bodyText1,
                                         decoration: InputDecoration(
                                           focusedBorder: InputBorder.none,
                                           enabledBorder: InputBorder.none,
@@ -172,7 +171,7 @@ class AddTask extends StatelessWidget {
                       SizedBox(height: 10,),
                       MaterialButton(
                         onPressed: () {
-                          // if (formKey.currentState!.validate())
+                          if (cubit.formKey.currentState!.validate())
                             cubit.addNewSubTask();
                         },
                         padding: EdgeInsets.zero,
@@ -182,11 +181,11 @@ class AddTask extends StatelessWidget {
                         highlightColor: Colors.transparent,
                         child: Row(
                           children: [
-                            Icon(Icons.add,size: 28,color: Theme.of(context).textTheme.headline5!.color,),
+                            Icon(Icons.add,size: 28,color: Theme.of(context).textTheme.headline6!.color,),
                             SizedBox(width: 15,),
                             Text(
                               'Add SubTask',
-                              style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 21),
+                              style: Theme.of(context).textTheme.headline6,
                             ),
                           ],
                         ),

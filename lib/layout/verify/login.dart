@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
+import 'package:notes_app/shared/components/shake_animation.dart';
 import 'package:notes_app/shared/constants.dart';
 import 'bloc/cubit.dart';
 
@@ -10,6 +11,9 @@ class Login extends StatelessWidget {
   final id;
   final table;
   Login({this.id, this.table, this.isUpdate});
+
+  final loginShakeKey = GlobalKey<ShakeWidgetState>();
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -37,44 +41,36 @@ class Login extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: size.height * .07,
+                          height: size.height * .05,
                         ),
                         IconButton(
                             onPressed: () {
-                              cubit.z();
+                              cubit.z(context);
                             },
                             icon: Icon(Icons.remove)),
-                        Container(
-                          child: Image.asset('assets/images/password.png'),
-                        ),
+                        Image.asset('assets/images/password.png'),
                         SizedBox(
                           height: 30,
                         ),
-                        Text(
+                        cubit.inCorrectPassword ?  Padding(
+                          padding: EdgeInsets.symmetric(vertical: 7.5),
+                          child: Text(
+                            'Password is in correct, try again',
+                            textAlign: TextAlign.center,
+                            style: them.headline4!.copyWith(
+                                fontSize: 18,fontWeight: FontWeight.w400),
+                          ),
+                        ) : Text(
                           'Enter Password',
                           style: them.headline4!.copyWith(
-                              fontSize: 32, fontWeight: FontWeight.normal),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (int i = 1; i < 5; i++)
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  width: 15,
-                                  height: 15,
-                                  decoration: BoxDecoration(
-                                    color: cubit.passwordDigitsList.length >= i
-                                        ? accentColor
-                                        : Colors.transparent,
-                                    border: Border.all(color: Colors.grey),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                            ],
-                          ),
+                              fontSize: 31,fontWeight: FontWeight.w400),
+                        ) ,
+                        ShakeWidget(
+                          key: loginShakeKey,
+                          shakeCount: 3,
+                          shakeOffset: 10,
+                          shakeDuration: Duration(milliseconds: 500),
+                          child: shakePassword(cubit.passwordDigitsList.length)
                         ),
                         Center(
                           child: GridView.builder(
@@ -98,22 +94,26 @@ class Login extends StatelessWidget {
                                           context: context,
                                           id: id,
                                           table: table,
-                                          isUpdate: isUpdate);
+                                          isUpdate: isUpdate,
+                                      inCorrectPassFun: (){
+                                        loginShakeKey.currentState!.shake();
+                                      }
+                                      );
                                     },
                                     body: Text('${index + 1}',
                                         style: them.headline4!.copyWith(
                                             fontSize: 20,
-                                            fontWeight: FontWeight.normal)),
-                                    color: them.headline2!.color,
+                                            fontWeight: FontWeight.w500)),
+                                    color: Theme.of(context).cardTheme.color,
                                   );
                                 } else if (index == 11) {
                                   return  SizedBox();
                                 } else if (index == 9) {
                                   return IconForSecret(
                                     body: Icon(
-                                      Icons.backspace_outlined,
+                                      Icons.backspace_rounded,
                                       size: 20,
-                                      color: them.headline4!.color,
+                                      color: Colors.black,
                                     ),
                                     color: accentColor,
                                     onPressed: () {
@@ -123,17 +123,22 @@ class Login extends StatelessWidget {
                                 } else {
                                   return IconForSecret(
                                     onPressed: () {
-                                      cubit.createPassAndAddToSecrete(
-                                          context: context,
+                                      cubit.loginAndAddToSecret(
                                           index: -1,
+                                          context: context,
                                           id: id,
-                                          table: table);
+                                          table: table,
+                                          isUpdate: isUpdate,
+                                          inCorrectPassFun: (){
+                                            loginShakeKey.currentState!.shake();
+                                          }
+                                      );
                                     },
                                     body: Text('0',
                                         style: them.headline4!.copyWith(
                                             fontSize: 20,
-                                            fontWeight: FontWeight.normal)),
-                                    color: them.headline2!.color,
+                                            fontWeight: FontWeight.w500)),
+                                    color: Theme.of(context).cardTheme.color,
                                   );
                                 }
                               }),
@@ -147,4 +152,28 @@ class Login extends StatelessWidget {
       ),
     );
   }
+
+}
+Padding shakePassword(passwordDigitsList) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 20),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (int i = 1; i < 5; i++)
+          Container(
+            margin: EdgeInsets.all(10),
+            width: 15,
+            height: 15,
+            decoration: BoxDecoration(
+              color: passwordDigitsList >= i
+                  ? accentColor
+                  : Colors.transparent,
+              border: Border.all(color: Color(0xff7D7D7D)),
+              shape: BoxShape.circle,
+            ),
+          ),
+      ],
+    ),
+  );
 }

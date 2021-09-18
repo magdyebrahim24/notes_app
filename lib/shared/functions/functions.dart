@@ -16,7 +16,7 @@ List<Map<String, dynamic>> makeModifiableResults(
       growable: true);
 }
 
-// fun to assign images adn subTasks to notes and memories and tasks
+// fun to assign images and subTasks to notes and memories and tasks
 List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
     List subData, String subDataKey, String subDataId) {
   List<Map<String, dynamic>> dataModified = makeModifiableResults(data);

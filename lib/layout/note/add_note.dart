@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
+import 'package:notes_app/shared/audio/player.dart';
+import 'package:notes_app/shared/audio/recorder.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/components/speedDialFAB.dart';
-import 'package:notes_app/shared/constants.dart';
+import 'package:just_audio/just_audio.dart' as ap;
 
 class AddNote extends StatelessWidget {
   final data;
@@ -59,11 +61,10 @@ class AddNote extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  AudioRecorder(
+                  ),
                   DefaultFormField(
-                    style: TextStyle(
-                        color: Theme.of(context).textTheme.headline4!.color,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 30),
                     controller: cubit.titleController,
                     focusNode: cubit.titleFocus,
                     onTap: () => cubit.onFocusTitleChange(),
@@ -72,28 +73,20 @@ class AddNote extends StatelessWidget {
                     minLines: 1,
                     fillColor: Theme.of(context).primaryColor,
                     hintText: 'Title...',
-                    hintStyle: TextStyle(
-                        color: Theme.of(context).textTheme.headline4!.color,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
+                    hintStyle:  Theme.of(context).textTheme.headline4!.copyWith(fontSize: 30)
                   ),
                   DefaultFormField(
                     focusNode: cubit.bodyFocus,
                     controller: cubit.noteTextController,
                     onTap: () => cubit.onFocusBodyChange(),
                     onChanged: (val) => cubit.onTextChange(),
-                    style: TextStyle(
-                      color: Color(0xff666666),
-                      fontWeight: FontWeight.w300,
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(context).textTheme.subtitle2,
                     maxLines: null,
                     minLines: null,
                     keyboardType: TextInputType.multiline,
                     hintText: 'Your text...',
                     fillColor: Theme.of(context).primaryColor,
-                    hintStyle: TextStyle(
-                        color: Theme.of(context).hintColor, fontSize: 20),
+                    hintStyle: Theme.of(context).textTheme.subtitle2,
                   ),
                   GridViewForImages(
                     cubit.cachedImagesList,
@@ -106,23 +99,16 @@ class AddNote extends StatelessWidget {
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: cubit.recordsList.length,
-                    itemBuilder: (context, index) => Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () => cubit.getPlaybackFn(
-                              cubit.recordsList[index]['link'], index),
-                          child: Text(
-                              cubit.mPlayer!.isPlaying && index == cubit.item
-                                  ? 'Stop'
-                                  : 'Play'),
-                        ),
-                        IconButton(
-                            onPressed: () => cubit.deleteSavedRecord(
-                                recordID: cubit.recordsList[index]['id'],
-                                index: index),
-                            icon: Icon(Icons.clear_rounded))
-                      ],
-                    ),
+                    itemBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 25),
+                      child: AudioPlayer(
+                        index: index,
+                        source: ap.AudioSource.uri(Uri.parse(cubit.recordsList[index]['link'].toString())) ,
+                        onDelete: () {
+                          cubit.deleteRecord(index: index,recordID:cubit.recordsList[index]['id'] );
+                        },
+                      ),
+                    )
                   ),
 
                 ],

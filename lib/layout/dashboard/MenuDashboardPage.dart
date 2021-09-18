@@ -227,7 +227,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
             child: Material(
               shape: cubit.isDrawerCollapsed
                   ? null
-                  : Border(top: BorderSide(width: 16,color: Theme.of(context).accentColor.withOpacity(.8))),
+                  : Border(top: BorderSide(width: 16,color: Theme.of(context).colorScheme.secondary.withOpacity(.8))),
               child: Stack(
                 children: [
                   Home(),

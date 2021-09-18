@@ -10,7 +10,7 @@ class BottomIconBar extends StatelessWidget {
       this.addImageFun,
       this.addToFavoriteFun,
       this.addToSecretFun,
-      required this.isFavorite});
+      this.isFavorite = false});
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -23,34 +23,49 @@ class BottomIconBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            SizedBox(width: 12,),
+            SizedBox(
+              width: 12,
+            ),
             Expanded(
               child: IconButton(
                 onPressed: addToSecretFun,
-                icon: SvgPicture.asset('assets/icons/share.svg'),
+                icon: SvgPicture.asset('assets/icons/share.svg',
+                    color: Theme.of(context).textTheme.headline6!.color),
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
               ),
             ),
             Expanded(
               child: IconButton(
                 onPressed: addToSecretFun,
-                icon: SvgPicture.asset(
-                  'assets/icons/unlock.svg',
-                ),
+                icon: SvgPicture.asset('assets/icons/unlock.svg',
+                    color: Theme.of(context).textTheme.headline6!.color),
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
               ),
             ),
             Expanded(
               child: IconButton(
                 onPressed: addToFavoriteFun,
-                icon: SvgPicture.asset('assets/icons/star.svg'),
+                icon: isFavorite
+                    ? SvgPicture.asset(
+                        'assets/icons/fill_star.svg',
+                        color: Theme.of(context).textTheme.headline6!.color,
+                        height: 19,
+                        width: 19,
+                      )
+                    : SvgPicture.asset(
+                        'assets/icons/star.svg',
+                        color: Theme.of(context).textTheme.headline6!.color,
+                      ),
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
-                hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
               ),
             ),
             Expanded(
@@ -58,11 +73,14 @@ class BottomIconBar extends StatelessWidget {
                 onPressed: deleteFun,
                 icon: SvgPicture.asset('assets/icons/trash.svg'),
                 splashColor: Colors.transparent,
-                focusColor: Colors.transparent,highlightColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
               ),
             ),
-            SizedBox(width: 125,),
+            SizedBox(
+              width: 125,
+            ),
 
             // Expanded(flex: 2,child: SizedBox(),)
           ],
@@ -72,14 +90,15 @@ class BottomIconBar extends StatelessWidget {
   }
 }
 
-
-
-
 class AddTaskBottomIconBar extends StatelessWidget {
-  final deleteFun, addImageFun, addToFavoriteFun, addToSecretFun;
+  final deleteFun, addToFavoriteFun, addToSecretFun;
   final bool isFavorite;
 
-  const AddTaskBottomIconBar({this.deleteFun, this.addImageFun, this.addToFavoriteFun, this.addToSecretFun, this.isFavorite = false});
+  const AddTaskBottomIconBar(
+      {this.deleteFun,
+      this.addToFavoriteFun,
+      this.addToSecretFun,
+      this.isFavorite = false});
 
   @override
   Widget build(BuildContext context) {
@@ -98,30 +117,43 @@ class AddTaskBottomIconBar extends StatelessWidget {
               Expanded(
                 child: IconButton(
                   onPressed: addToSecretFun,
-                  icon: SvgPicture.asset('assets/icons/share.svg'),
+                  icon: SvgPicture.asset('assets/icons/share.svg',
+                      color: Theme.of(context).textTheme.headline6!.color),
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
               ),
               Expanded(
                 child: IconButton(
                   onPressed: addToSecretFun,
-                  icon: SvgPicture.asset(
-                    'assets/icons/unlock.svg',
-                  ),
+                  icon: SvgPicture.asset('assets/icons/unlock.svg',
+                      color: Theme.of(context).textTheme.headline6!.color),
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
               ),
               Expanded(
                 child: IconButton(
                   onPressed: addToFavoriteFun,
-                  icon: SvgPicture.asset('assets/icons/star.svg'),
+                  icon: isFavorite
+                      ? SvgPicture.asset(
+                          'assets/icons/fill_star.svg',
+                          color: Theme.of(context).textTheme.headline6!.color,
+                          height: 19,
+                          width: 19,
+                        )
+                      : SvgPicture.asset(
+                          'assets/icons/star.svg',
+                          color: Theme.of(context).textTheme.headline6!.color,
+                        ),
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                 ),
               ),
               Expanded(
@@ -129,7 +161,8 @@ class AddTaskBottomIconBar extends StatelessWidget {
                   onPressed: deleteFun,
                   icon: SvgPicture.asset('assets/icons/trash.svg'),
                   splashColor: Colors.transparent,
-                  focusColor: Colors.transparent,highlightColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
                   hoverColor: Colors.transparent,
                 ),
               ),

@@ -107,7 +107,7 @@ class _ExpandableFabState extends State<ExpandableFab>
             borderRadius: BorderRadius.circular(100),
             side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor, width: 6)),
         child: Icon(!_open ? Icons.add : Icons.close , size: 36,),
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).colorScheme.secondary,
         height: 96,
         minWidth: 96,
         elevation: 0,
@@ -175,7 +175,7 @@ class ActionButton extends StatelessWidget {
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       minWidth: 64,
       height: 64,
-      color: Theme.of(context).accentColor,
+      color: Theme.of(context).colorScheme.secondary,
       shape: CircleBorder(),
       onPressed: onPressed,child: SvgPicture.asset(iconPath,width: 24,height: 24,),);
   }

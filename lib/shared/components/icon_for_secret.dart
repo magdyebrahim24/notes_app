@@ -11,6 +11,7 @@ class IconForSecret extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(13),
       child: MaterialButton(
+        disabledColor: Theme.of(context).cardTheme.color,
         minWidth: 48,
         height: 48,
         child: body,

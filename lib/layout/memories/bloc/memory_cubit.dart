@@ -82,9 +82,8 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       context,
       firstDate: DateTime.parse('1900-09-22'),
       lastDate: DateTime.now(),
-    ).then((value) {
-      if(value!=null) showDateErrorText = false ;
-    });
+    );
+    if(memoryDate!=null) showDateErrorText = false ;
     emit(TimePickerState());
   }
 
