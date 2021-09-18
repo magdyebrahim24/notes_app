@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:just_audio/just_audio.dart' as ap;
@@ -116,7 +114,7 @@ class AudioPlayerState extends State<AudioPlayer> {
       width: width,
       child: Slider(
         activeColor: Theme.of(context).primaryColor,
-        inactiveColor: Theme.of(context).accentColor,
+        inactiveColor: Theme.of(context).colorScheme.secondary,
         onChanged: (v) {
           if (duration != null ) {
             final position = v * duration.inMilliseconds;
