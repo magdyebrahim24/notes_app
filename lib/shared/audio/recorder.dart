@@ -27,26 +27,30 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
       },builder: (context, state) {
         var cubit = AddNoteCubit.get(context);
-     return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+     return
+       // Column(
+       //  mainAxisAlignment: MainAxisAlignment.center,
+       //  children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              _buildRecordStopControl(cubit.isRecording,cubit.isPaused,()=>cubit.stop(context),cubit.start),
-              const SizedBox(width: 20),
-              _buildPauseResumeControl(cubit.isRecording,cubit.isPaused, cubit.resume, cubit.pause),
+              // _buildRecordStopControl(cubit.isRecording,cubit.isPaused,()=>cubit.stop(context),cubit.start),
+              // const SizedBox(width: 20),
+              _buildPauseResumeControl(cubit.isRecording,cubit.isPaused, cubit.resume, cubit.pauseRecorder),
               const SizedBox(width: 20),
               _buildText(cubit.isRecording,cubit.isPaused,cubit.recordDuration),
+              SizedBox(
+                width: 125,
+              ),
             ],
-          ),
-          if (cubit.amplitude != null) ...[
-            const SizedBox(height: 40),
-            Text('Current: ${cubit.amplitude?.current ?? 0.0}'),
-            Text('Max: ${cubit.amplitude?.max ?? 0.0}'),
-          ],
-        ],
-      );
+          );
+          // if (cubit.amplitude != null) ...[
+          //   const SizedBox(height: 40),
+          //   Text('Current: ${cubit.amplitude?.current ?? 0.0}'),
+          //   Text('Max: ${cubit.amplitude?.max ?? 0.0}'),
+          // ],
+        // ],
+      // );
       },
     );}
 

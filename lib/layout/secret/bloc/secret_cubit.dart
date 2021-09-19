@@ -2,7 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/secret_states.dart';
+import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/layout/verify/login.dart';
+import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/functions/functions.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -17,7 +19,10 @@ class SecretCubit extends Cubit<SecretStates> {
   List memories = [];
   int navBarIndex = 0;
 
-  onBuild() async {
+  TabController? tabBarController;
+
+  onBuild(x) async {
+    tabBarController = TabController(length: 3, vsync: x);
     var db = await openDatabase('database.db');
     database = db;
     getDataAndRebuild();
@@ -46,9 +51,10 @@ class SecretCubit extends Cubit<SecretStates> {
     // print(notesDataList);
     // get all notes images data
     List cachedNotesImagesList = await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_secret=? ' ,[1]);
+    List recordsList = await database.rawQuery('SELECT voices.id,voices.link,voices.note_id FROM voices INNER JOIN notes ON notes.id=voices.note_id AND notes.is_secret=? ' ,[1]);
    // print(notesDataList);
     notes = assignSubListToData(
-        notesDataList, cachedNotesImagesList, 'images', 'note_id');
+        notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
     emit(SecretGetDataState());
     return true ;
   }
@@ -77,6 +83,58 @@ class SecretCubit extends Cubit<SecretStates> {
     memories = assignSubListToData(
         memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
     emit(SecretGetDataState());
+  }
+  void addToFavorite(context,
+      {isFavorite, noteId, tableName, isFavoriteItem, index}) {
+    database.rawUpdate(
+        'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
+      List<Map<String, dynamic>> temp = isFavoriteItem;
+      Map<String, dynamic> item = temp[index];
+      item['is_favorite'] = !isFavorite == true ? 1 : 0;
+      isFavoriteItem[index] = item;
+
+      print('$val $isFavorite is done');
+      emit(AddToFavoriteState());
+      Navigator.pop(context);
+    }).catchError((error) {
+      print(error);
+    });
+  }
+  void deleteNote(context,
+      {required int id, tableName, index, listOfData}) async {
+    print(id);
+    await database
+        .rawDelete('DELETE FROM $tableName WHERE id = ?', [id]).then((value) {
+      listOfData.removeAt(index);
+      Navigator.pop(context);
+      emit(DeleteItemState());
+    }).catchError((error) {
+      print(error);
+    });
+  }
+  void addToSecret(context, id, tableName, listOfData, index) {
+    String? pass = CacheHelper.getString(key: 'secret_password');
+    Navigator.pop(context);
+    if (pass == null) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => CreatePass(
+                id: id,
+                table: tableName,
+              )));
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => Login(
+                id: id,
+                table: tableName,
+              )));
+    }
+    // listOfData.removeAt(index);
+    emit(AddToSecretItemState());
   }
 
   void upDatePassword(context) {

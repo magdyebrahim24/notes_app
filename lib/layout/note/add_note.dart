@@ -7,23 +7,28 @@ import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/records_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
-import 'package:notes_app/shared/components/speedDialFAB.dart';
+import 'package:notes_app/shared/components/speedDial_FAB/speedDialFAB.dart';
 
-class AddNote extends StatelessWidget {
+class AddNote extends StatefulWidget {
   final data;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   AddNote({this.data});
+
+  @override
+  State<AddNote> createState() => _AddNoteState();
+}
+
+class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin{
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          AddNoteCubit()..onBuildAddNoteScreen(data),
+          AddNoteCubit()..onBuildAddNoteScreen(widget.data,this),
       child: BlocConsumer<AddNoteCubit, AddNoteStates>(
         listener: (context, AddNoteStates state) {},
         builder: (context, state) {
-          // AppCubit appCubit = AppCubit.get(context);
           AddNoteCubit cubit = AddNoteCubit.get(context);
           return Scaffold(
             key: _scaffoldKey,
@@ -38,12 +43,6 @@ class AddNote extends StatelessWidget {
                 },
               ),
               actions: [
-                // ElevatedButton(
-                //   onPressed: () => cubit.newRecord(context),
-                //   //color: Colors.white,
-                //   //disabledColor: Colors.grey,
-                //   child: Text(cubit.mRecorder!.isRecording ? 'Stop' : 'Record'),
-                // ),
                 cubit.titleController.text.isNotEmpty ||
                         cubit.noteTextController.text.isNotEmpty ||
                         cubit.pickedGalleryImagesList.isNotEmpty
@@ -59,9 +58,8 @@ class AddNote extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
-                children: [
-                  AudioRecorder(
-                  ),
+                children: [                AudioRecorder(
+                ),
                   Padding(
                     padding: EdgeInsets.fromLTRB(33, 0, 33, 0),
                     child: DefaultFormField(
@@ -93,13 +91,13 @@ class AddNote extends StatelessWidget {
                       hintStyle: Theme.of(context).textTheme.subtitle2,
                     ),
                   ),
-                  GridViewForImages(
+                 cubit.cachedImagesList.isNotEmpty? GridViewForImages(
                     cubit.cachedImagesList,
                     deleteFun: (id, index) {
                       cubit.deleteSavedImage(imageID: id, index: index);
                     },
                     expansionTileHeader: 'Images',
-                  ),
+                  ):SizedBox(),
                   cubit.recordsList.isNotEmpty ?
                   RecordsList(recordsList: cubit.recordsList,
                       deleteRecordFun: (index,recordId)=>cubit.deleteRecord(index: index,recordID:recordId)) :
@@ -111,6 +109,7 @@ class AddNote extends StatelessWidget {
             ),
             bottomNavigationBar: cubit.noteId != null
                 ?                       BottomIconBar(
+                          isRecording: cubit.isRecording,
                           isFavorite: cubit.isFavorite,
                           deleteFun: () => cubit.deleteNote(context),
                           addImageFun: () => cubit.pickMultiImageFromGallery(context),
@@ -127,7 +126,9 @@ class AddNote extends StatelessWidget {
                   iconPath: 'assets/icons/take_image.svg',
                 ),
                 ActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    cubit.isRecording ? cubit.stopRecorder(context):cubit.startRecorder();
+                  },
                   iconPath: 'assets/icons/mic.svg',
                 ),
               ],
@@ -139,5 +140,4 @@ class AddNote extends StatelessWidget {
       ),
     );
   }
-
 }

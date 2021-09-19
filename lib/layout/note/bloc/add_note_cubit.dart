@@ -47,7 +47,18 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
 
   String? recordsDirectoryPath;
 
-  onBuildAddNoteScreen(data) async {
+  AnimationController? pulsatingAnimationController;
+  Animation? pulsatingAnimation;
+
+  Future pulsatingAnimationFun(x)async{
+    pulsatingAnimationController = AnimationController(vsync: x, duration: Duration(seconds: 1));
+    pulsatingAnimation = Tween(begin: 0.0, end: 15.0).animate(
+      CurvedAnimation(parent: pulsatingAnimationController!, curve: Curves.easeOut),
+    );
+  }
+
+  onBuildAddNoteScreen(data,x) async {
+   await pulsatingAnimationFun(x);
     var db = await openDatabase('database.db');
     database = db;
     if (data != null) {
@@ -73,6 +84,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     durationChangedSubscription = audioPlayer.durationStream.listen((duration) {
       emit(DurationChangedSubscription());
     });
+
 
     emit(OnBuildAddNoteState());
   }
@@ -203,7 +215,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
 // ---------------------------------------------------------------------------------------------
 // record  functions
 
-  Future<void> start() async {
+  Future<void> startRecorder() async {
     try {
       if (await audioRecorder.hasPermission()) {
         await getNewRecordPath(); // to get new path for next recording
@@ -211,8 +223,8 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
         bool _isRecording = await audioRecorder.isRecording();
         isRecording = _isRecording;
         recordDuration = 0;
+        pulsatingAnimationController!.repeat(reverse: true);
         emit(StartRecordingState());
-
         startTimer();
       }
     } catch (e) {
@@ -220,18 +232,17 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     }
   }
 
-  Future<void> stop(context) async {
+  Future<void> stopRecorder(context) async {
     timer?.cancel();
     ampTimer?.cancel();
     final path = await audioRecorder.stop();
-
     isRecording = false;
     await saveRecordAfterStop(context, path);
-    getRecordsFromDatabase(noteId);
+    pulsatingAnimationController!.reset();
     emit(StopRecordingState());
   }
 
-  Future<void> pause() async {
+  Future<void> pauseRecorder() async {
     timer?.cancel();
     ampTimer?.cancel();
     await audioRecorder.pause();
@@ -352,164 +363,20 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     });
   }
 
-  // final theSource = AudioSource.microphone;
-
-  // recorder code
-
-  // Codec _codec = Codec.aacMP4;
-
-  // FlutterSoundPlayer? mPlayer = FlutterSoundPlayer();
-  // FlutterSoundRecorder? mRecorder = FlutterSoundRecorder();
-  // bool _mPlayerIsInited = false;
-  // bool _mRecorderIsInited = false;
-
-  // void initState() {
-  // mPlayer!.openAudioSession().then((value) {
-  //   _mPlayerIsInited = true;
-  //   emit(OpenAudioSessionState());
-  // });
-
-  // openTheRecorder().then((value) {
-  //   _mRecorderIsInited = true;
-  //   emit(OpenTheRecorderState());
-  // });
-  // }
-//
-//   Future<void> openTheRecorder() async {
-//     if (!kIsWeb) {
-//       var status = await Permission.microphone.request();
-//       if (status != PermissionStatus.granted) {
-//         throw RecordingPermissionException('Microphone permission not granted');
-//       }
-//     }
-//     await mRecorder!.openAudioSession();
-//     if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
-//       _codec = Codec.opusWebM;
-//       mPath = 'tau_file.webm';
-//       if (!await mRecorder!.isEncoderSupported(_codec) && kIsWeb) {
-//         _mRecorderIsInited = true;
-//         return;
-//       }
-//     }
-//     _mRecorderIsInited = true;
-//   }
-//
-//   // ----------------------  Here is the code for recording and playback -------
-//
-//   void record() async {
-//     print(mPath.toString());
-//     mRecorder!
-//         .startRecorder(
-//       toFile: mPath,
-//       codec: _codec,
-//       audioSource: theSource,
-//     )
-//         .then((value) {
-//       emit(RecordAudioState());
-//     });
-//   }
-//
-//   void stopRecorder(context) async {
-//     print('stop');
-//     await mRecorder!.stopRecorder().then((url) async {
-//       // var url = value;
-//       if (noteId == null)
-//         insertNewNote(context,
-//             title: titleController.text, body: noteTextController.text);
-//
-//       await database.transaction((txn) async {
-//         txn.rawInsert(
-//             'INSERT INTO voices (link ,note_id) VALUES ("$url",$noteId)');
-//       }).then((value) {
-//         print(url.toString() + ' added success');
-//       });
-//       print(url.toString());
-//       getRecordsFromDatabase(noteId);
-//     });
-//   }
-//
-//   List recordsList = [];
-//   void getRecordsFromDatabase(id) {
-//     recordsList = [];
-//     database
-//         .rawQuery('SELECT * FROM voices WHERE note_id = ?', [id]).then((value) {
-//       value.forEach((element) {
-//         recordsList = value;
-//         print(element);
-//       });
-//       emit(StopRecorderState());
-//     });
-//   }
-//
-//   void play(path) async {
-//     print(path);
-//
-//     mPlayer!
-//         .startPlayer(
-//             fromURI: path,
-//             //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-//             whenFinished: () {
-//               emit(PlayAudioState());
-//             })
-//         .then((value) {
-//       emit(AfterPlayAudioState());
-//     });
-//   }
-//
-//   void stopPlayer() {
-//     mPlayer!.stopPlayer().then((value) {
-//       emit(StopPlayAudio());
-//     });
-//   }
-//
-// // ----------------------------- UI --------------------------------------------
-//   getRecorderFn(context) {
-//     if (!_mRecorderIsInited || !mPlayer!.isStopped) {
-//       return null;
-//     }
-//     return mRecorder!.isStopped ? record() : stopRecorder(context);
-//   }
-//
-//   int? item;
-//   getPlaybackFn(path, index) {
-//     item = index;
-//     emit(GetIndexState());
-//     if (!_mPlayerIsInited) {
-//       return null;
-//     }
-//
-//     return mPlayer!.isStopped ? play(path) : stopPlayer();
-//   }
-//
-//   void deleteSavedRecord({required int recordID, required int index}) async {
-//     await database.rawDelete(
-//         'DELETE FROM voices WHERE id = ?', [recordID]).then((value) async {
-//       File('${recordsList[index]['link']}').delete(recursive: true);
-//       await recordsList.removeAt(index);
-//       // getRecordsFromDatabase(noteId);
-//       emit(AddNoteDeleteOneRecordState());
-//     }).catchError((error) {
-//       print(error);
-//     });
-//   }
-//
-
   @override
   Future<void> close() {
     titleController.dispose();
     noteTextController.dispose();
     titleFocus.dispose();
     bodyFocus.dispose();
-
     timer?.cancel();
     ampTimer?.cancel();
     audioRecorder.dispose();
-
     playerStateChangedSubscription.cancel();
     positionChangedSubscription.cancel();
     durationChangedSubscription.cancel();
     audioPlayer.dispose();
-
+    pulsatingAnimationController!.dispose();
     return super.close();
   }
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_app/shared/audio/recorder.dart';
 
 class BottomIconBar extends StatelessWidget {
-  final deleteFun, addImageFun, addToFavoriteFun, addToSecretFun;
+  final deleteFun, addImageFun, addToFavoriteFun, addToSecretFun,isRecording;
 
   final bool isFavorite;
   const BottomIconBar(
       {this.deleteFun,
+        this.isRecording,
       this.addImageFun,
       this.addToFavoriteFun,
       this.addToSecretFun,
@@ -20,7 +22,7 @@ class BottomIconBar extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         height: 70,
-        child: Row(
+        child: !isRecording ?Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
@@ -84,7 +86,7 @@ class BottomIconBar extends StatelessWidget {
 
             // Expanded(flex: 2,child: SizedBox(),)
           ],
-        ),
+        ):AudioRecorder(),
       ),
     );
   }
