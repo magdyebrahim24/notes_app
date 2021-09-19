@@ -24,6 +24,7 @@ import 'package:notes_app/shared/constants.dart';
 //   ),
 // );
 ThemeData lightTheme = ThemeData(
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(elevation: 0,backgroundColor: Colors.transparent,),
   indicatorColor : accentColor,
   textSelectionTheme: TextSelectionThemeData(cursorColor: accentColor),
   dividerColor: Color(0xff707070),

@@ -18,14 +18,14 @@ class AddNote extends StatefulWidget {
   State<AddNote> createState() => _AddNoteState();
 }
 
-class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin{
+class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          AddNoteCubit()..onBuildAddNoteScreen(widget.data,this),
+          AddNoteCubit()..onBuildAddNoteScreen(widget.data, this),
       child: BlocConsumer<AddNoteCubit, AddNoteStates>(
         listener: (context, AddNoteStates state) {},
         builder: (context, state) {
@@ -52,90 +52,122 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin{
                     : SizedBox(),
               ],
             ),
-            body: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [                AudioRecorder(
+            body: Stack(
+              children: [
+                SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(33, 0, 33, 0),
+                        child: DefaultFormField(
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontSize: 30),
+                            controller: cubit.titleController,
+                            focusNode: cubit.titleFocus,
+                            onTap: () => cubit.onFocusTitleChange(),
+                            onChanged: (val) => cubit.onTextChange(),
+                            maxLines: 3,
+                            minLines: 1,
+                            fillColor: Theme.of(context).primaryColor,
+                            hintText: 'Title...',
+                            hintStyle: Theme.of(context)
+                                .textTheme
+                                .headline4!
+                                .copyWith(fontSize: 30)),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(33, 0, 33, 0),
+                        child: DefaultFormField(
+                          focusNode: cubit.bodyFocus,
+                          controller: cubit.noteTextController,
+                          onTap: () => cubit.onFocusBodyChange(),
+                          onChanged: (val) => cubit.onTextChange(),
+                          style: Theme.of(context).textTheme.subtitle2,
+                          maxLines: null,
+                          minLines: null,
+                          keyboardType: TextInputType.multiline,
+                          hintText: 'Your text...',
+                          fillColor: Theme.of(context).primaryColor,
+                          hintStyle: Theme.of(context).textTheme.subtitle2,
+                        ),
+                      ),
+                      cubit.cachedImagesList.isNotEmpty
+                          ? GridViewForImages(
+                              cubit.cachedImagesList,
+                              deleteFun: (id, index) {
+                                cubit.deleteSavedImage(
+                                    imageID: id, index: index);
+                              },
+                              expansionTileHeader: 'Images',
+                            )
+                          : SizedBox(),
+                      cubit.recordsList.isNotEmpty
+                          ? RecordsList(
+                              recordsList: cubit.recordsList,
+                              deleteRecordFun: (index, recordId) =>
+                                  cubit.deleteRecord(
+                                      index: index, recordID: recordId))
+                          : SizedBox(),
+                    ],
+                  ),
                 ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(33, 0, 33, 0),
-                    child: DefaultFormField(
-                      style: Theme.of(context).textTheme.headline4!.copyWith(fontSize: 30),
-                      controller: cubit.titleController,
-                      focusNode: cubit.titleFocus,
-                      onTap: () => cubit.onFocusTitleChange(),
-                      onChanged: (val) => cubit.onTextChange(),
-                      maxLines: 3,
-                      minLines: 1,
-                      fillColor: Theme.of(context).primaryColor,
-                      hintText: 'Title...',
-                      hintStyle:  Theme.of(context).textTheme.headline4!.copyWith(fontSize: 30)
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(33, 0, 33, 0),
-                    child: DefaultFormField(
-                      focusNode: cubit.bodyFocus,
-                      controller: cubit.noteTextController,
-                      onTap: () => cubit.onFocusBodyChange(),
-                      onChanged: (val) => cubit.onTextChange(),
-                      style: Theme.of(context).textTheme.subtitle2,
-                      maxLines: null,
-                      minLines: null,
-                      keyboardType: TextInputType.multiline,
-                      hintText: 'Your text...',
-                      fillColor: Theme.of(context).primaryColor,
-                      hintStyle: Theme.of(context).textTheme.subtitle2,
-                    ),
-                  ),
-                 cubit.cachedImagesList.isNotEmpty? GridViewForImages(
-                    cubit.cachedImagesList,
-                    deleteFun: (id, index) {
-                      cubit.deleteSavedImage(imageID: id, index: index);
-                    },
-                    expansionTileHeader: 'Images',
-                  ):SizedBox(),
-                  cubit.recordsList.isNotEmpty ?
-                  RecordsList(recordsList: cubit.recordsList,
-                      deleteRecordFun: (index,recordId)=>cubit.deleteRecord(index: index,recordID:recordId)) :
-                  SizedBox(),
-
-
-                ],
-              ),
-            ),
-            bottomNavigationBar: cubit.noteId != null
-                ?                       BottomIconBar(
+                cubit.noteId != null &&
+                        MediaQuery.of(context).viewInsets.bottom == 0
+                    ? Positioned(
+                        bottom: 0,
+                        child: BottomIconBar(
                           isRecording: cubit.isRecording,
                           isFavorite: cubit.isFavorite,
                           deleteFun: () => cubit.deleteNote(context),
-                          addImageFun: () => cubit.pickMultiImageFromGallery(context),
+                          addImageFun: () =>
+                              cubit.pickMultiImageFromGallery(context),
                           addToFavoriteFun: cubit.favFun,
                           addToSecretFun: () => cubit.addNoteToSecret(context),
-
-
-                )
-                : SizedBox(),
-            floatingActionButton: MediaQuery.of(context).viewInsets.bottom == 0 ? ExpandableFab(
-              children: [
-                ActionButton(
-                  onPressed: ()=> cubit.pickMultiImageFromGallery(context),
-                  iconPath: 'assets/icons/take_image.svg',
-                ),
-                ActionButton(
-                  onPressed: () {
-                    cubit.isRecording ? cubit.stopRecorder(context):cubit.startRecorder();
-                  },
-                  iconPath: 'assets/icons/mic.svg',
-                ),
+                        ),
+                      )
+                    : SizedBox(),
               ],
-            ) : SizedBox(),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+            ),
+            // bottomNavigationBar: cubit.noteId != null
+            //     ?                       BottomIconBar(
+            //               isRecording: cubit.isRecording,
+            //               isFavorite: cubit.isFavorite,
+            //               deleteFun: () => cubit.deleteNote(context),
+            //               addImageFun: () => cubit.pickMultiImageFromGallery(context),
+            //               addToFavoriteFun: cubit.favFun,
+            //               addToSecretFun: () => cubit.addNoteToSecret(context),
+            //
+            //
+            //     )
+            //     : SizedBox(),
+            floatingActionButton: MediaQuery.of(context).viewInsets.bottom == 0
+                ? ExpandableFab(
+                    children: [
+                      ActionButton(
+                        onPressed: () =>
+                            cubit.pickMultiImageFromGallery(context),
+                        iconPath: 'assets/icons/take_image.svg',
+                      ),
+                      ActionButton(
+                        onPressed: () {
+                          cubit.isRecording
+                              ? cubit.stopRecorder(context)
+                              : cubit.startRecorder();
+                        },
+                        iconPath: 'assets/icons/mic.svg',
+                      ),
+                    ],
+                  )
+                : SizedBox(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.endDocked,
           );
-
         },
       ),
     );

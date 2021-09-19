@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 
@@ -54,59 +55,60 @@ class _AudioRecorderState extends State<AudioRecorder> {
       },
     );}
 
-  Widget _buildRecordStopControl(isRecording,isPaused,stopFun,startFun) {
-    late Icon icon;
-    late Color color;
-
-    if (isRecording || isPaused) {
-      icon = Icon(Icons.stop, color: Colors.red, size: 30);
-      color = Colors.red.withOpacity(0.1);
-    } else {
-      final theme = Theme.of(context);
-      icon = Icon(Icons.mic, color: theme.primaryColor, size: 30);
-      color = Colors.redAccent;
-    }
-
-    return ClipOval(
-      child: Material(
-        color: color,
-        child: InkWell(
-          child: SizedBox(width: 56, height: 56, child: icon),
-          onTap: () {
-            isRecording ? stopFun() :startFun();
-          },
-        ),
-      ),
-    );
-  }
+  // Widget _buildRecordStopControl(isRecording,isPaused,stopFun,startFun) {
+  //   late Icon icon;
+  //   late Color color;
+  //
+  //   if (isRecording || isPaused) {
+  //     icon = Icon(Icons.stop, color: Colors.red, size: 30);
+  //     color = Colors.red.withOpacity(0.1);
+  //   } else {
+  //     final theme = Theme.of(context);
+  //     icon = Icon(Icons.mic, color: theme.primaryColor, size: 30);
+  //     color = Colors.redAccent;
+  //   }
+  //
+  //   return ClipOval(
+  //     child: Material(
+  //       color: color,
+  //       child: InkWell(
+  //         child: SizedBox(width: 56, height: 56, child: icon),
+  //         onTap: () {
+  //           isRecording ? stopFun() :startFun();
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildPauseResumeControl(isRecording,isPaused,resumeFun,pauseFun) {
     if (!isRecording && !isPaused) {
       return const SizedBox.shrink();
     }
 
-    late Icon icon;
-    late Color color;
+    late Widget icon;
 
     if (!isPaused) {
-      icon = Icon(Icons.pause, color: Colors.red, size: 30);
-      color = Colors.red.withOpacity(0.1);
+      icon = Icon(
+        Icons.pause_circle_outline,
+        color: Theme.of(context).textTheme.headline6!.color,
+        size: 43.5,
+      );
     } else {
-      final theme = Theme.of(context);
-      icon = Icon(Icons.play_arrow, color: Colors.red, size: 30);
-      color = theme.primaryColor.withOpacity(0.1);
+      icon = SvgPicture.asset(
+        'assets/icons/play.svg',
+        color: Theme.of(context).textTheme.headline6!.color,
+        // width: 100,
+        // height: 100,
+        fit: BoxFit.fitWidth,
+      );
     }
 
-    return ClipOval(
-      child: Material(
-        color: color,
-        child: InkWell(
-          child: SizedBox(width: 56, height: 56, child: icon),
-          onTap: () {
-            isPaused ? resumeFun() : pauseFun();
-          },
-        ),
-      ),
+    return InkWell(
+      child: SizedBox(width: 40, height: 40, child: icon),
+      onTap: () {
+        isPaused ? resumeFun() : pauseFun();
+      },
     );
   }
 
@@ -124,7 +126,7 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
     return Text(
       '$minutes : $seconds',
-      style: TextStyle(color: Colors.red),
+      style: TextStyle(color: Theme.of(context).textTheme.headline6!.color,fontSize: 20),
     );
   }
 
