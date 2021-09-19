@@ -35,51 +35,23 @@ class AddMemory extends StatelessWidget {
             ),
             body: Form(
               key: cubit.formKey,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(37, 17, 37, 10),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Title',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20,),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 37),
+                      child: Text('Title',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),),
+                    ),
 
-                      Container(
-                          margin: EdgeInsets.only(bottom: 15,top: 15),
-                          padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
-                          decoration: BoxDecoration(color: Theme.of(context).cardTheme.color,borderRadius: BorderRadius.circular(10)),
-                          child: DefaultFormField(
-                            onTap: () {
-                              cubit.onFocusTitleChange();
-                            },
-                            style: TextStyle(
-                              color: Theme.of(context).textTheme.headline4!.color,
-                              fontSize: 16,
-                            ),
-                            onChanged: (value) {
-                              cubit.onTextChange();
-                            },
-                            focusNode: cubit.titleFocus,
-                            controller: cubit.titleController,
-                            maxLines: 4,
-                            minLines: 1,
-                            hintText: 'Title',
-                            validator: (value) {
-                              if (value.toString().isEmpty)
-                                return 'Memory title can\'t be empty';
-                            },
-                          ),
-                      ),
-
-
-                      Container(
-                        margin: EdgeInsets.only(bottom: 25,right: 45),
-                        padding: EdgeInsets.fromLTRB(15, 7, 15, 5),
+                    Container(
+                        margin: EdgeInsets.only(bottom: 15,top: 15,left: 37,right: 37),
+                        padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
                         decoration: BoxDecoration(color: Theme.of(context).cardTheme.color,borderRadius: BorderRadius.circular(10)),
                         child: DefaultFormField(
-                          focusNode: cubit.bodyFocus,
-                          controller: cubit.memoryTextController,
                           onTap: () {
-                            cubit.onFocusBodyChange();
+                            cubit.onFocusTitleChange();
                           },
                           style: TextStyle(
                             color: Theme.of(context).textTheme.headline4!.color,
@@ -88,30 +60,60 @@ class AddMemory extends StatelessWidget {
                           onChanged: (value) {
                             cubit.onTextChange();
                           },
-                          maxLines: null,
-                          minLines: 4,
-                          keyboardType: TextInputType.multiline,
-                          hintText: 'Memory details',
-                          fillColor: Theme.of(context).primaryColor,
-                          // hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
+                          focusNode: cubit.titleFocus,
+                          controller: cubit.titleController,
+                          maxLines: 4,
+                          minLines: 1,
+                          hintText: 'Title',
+                          validator: (value) {
+                            if (value.toString().isEmpty)
+                              return 'Memory title can\'t be empty';
+                          },
                         ),
-                      ),
+                    ),
 
 
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * .45,
-                        child: dateTimeWidget(context,errorText: cubit.showDateErrorText ? 'memory Date Required' : null ,label: 'Date',textSize: 14.0,height: 62.0 , fun: ()=> cubit.datePicker(context) ,text: cubit.memoryDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg'),
-                      ),
-
-                      GridViewForImages(cubit.cachedImagesList,
-                        deleteFun:(id,index){
-                          cubit.deleteImage(imageID: id, index: index);
+                    Container(
+                      margin: EdgeInsetsDirectional.only(bottom: 25,start: 37,end: MediaQuery.of(context).size.width * .22,),
+                      padding: EdgeInsets.fromLTRB(15, 7, 15, 5),
+                      decoration: BoxDecoration(color: Theme.of(context).cardTheme.color,borderRadius: BorderRadius.circular(10)),
+                      child: DefaultFormField(
+                        focusNode: cubit.bodyFocus,
+                        controller: cubit.memoryTextController,
+                        onTap: () {
+                          cubit.onFocusBodyChange();
                         },
-                        expansionTileHeader: 'Memory Images',
-
+                        style: TextStyle(
+                          color: Theme.of(context).textTheme.headline4!.color,
+                          fontSize: 16,
+                        ),
+                        onChanged: (value) {
+                          cubit.onTextChange();
+                        },
+                        maxLines: null,
+                        minLines: 4,
+                        keyboardType: TextInputType.multiline,
+                        hintText: 'Memory details',
+                        fillColor: Theme.of(context).primaryColor,
+                        // hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
                       ),
-                    ],
-                  ),
+                    ),
+
+
+                    Container(
+                      margin: EdgeInsetsDirectional.only(start: 37,bottom: 20),
+                      width: MediaQuery.of(context).size.width * .45,
+                      child: dateTimeWidget(context,errorText: cubit.showDateErrorText ? 'memory Date Required' : null ,label: 'Date',textSize: 14.0,height: 62.0 , fun: ()=> cubit.datePicker(context) ,text: cubit.memoryDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg'),
+                    ),
+
+                    cubit.cachedImagesList.isNotEmpty ?    GridViewForImages(cubit.cachedImagesList,
+                      deleteFun:(id,index){
+                        cubit.deleteImage(imageID: id, index: index);
+                      },
+                      expansionTileHeader: 'Memory Images',
+
+                    ) : SizedBox(),
+                  ],
                 ),
               ),
             ),

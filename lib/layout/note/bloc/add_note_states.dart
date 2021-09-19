@@ -3,6 +3,9 @@ abstract class AddNoteStates {}
 class AddNoteInitialState extends AddNoteStates {}
 
 class OnBuildAddNoteState extends AddNoteStates {}
+class PlayerStateChangedSubscription extends AddNoteStates {}
+class PositionChangedSubscription extends AddNoteStates {}
+class DurationChangedSubscription extends AddNoteStates {}
 
 class FocusBodyChangeState extends AddNoteStates {}
 

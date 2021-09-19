@@ -55,29 +55,27 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
       cachedImagesList = data['images'];
-      recordsList =data['voices'];
+      recordsList = data['voices'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
-    // getRecordsFromDatabase(noteId);
     recordsDirectoryPath = await createRecordsDirectory();
 
     playerStateChangedSubscription =
         audioPlayer.playerStateStream.listen((state) async {
       if (state.processingState == ap.ProcessingState.completed) {
         await stopPlayerFun();
-        emit(OnBuildAddNoteState());
+        emit(PlayerStateChangedSubscription());
       }
     });
     positionChangedSubscription = audioPlayer.positionStream.listen((position) {
-      emit(OnBuildAddNoteState());
+      emit(PositionChangedSubscription());
     });
     durationChangedSubscription = audioPlayer.durationStream.listen((duration) {
-      emit(OnBuildAddNoteState());
+      emit(DurationChangedSubscription());
     });
 
     emit(OnBuildAddNoteState());
   }
-
 
   onTextChange() {
     emit(OnNoteTextChangeState());
@@ -289,10 +287,10 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
 
   Future<void> deleteRecord({required int recordID, required int index}) async {
     await database.rawDelete('DELETE FROM voices WHERE id = ?', [recordID]);
-    await  File('${recordsList[index]['link']}').delete(recursive: true);
+    await File('${recordsList[index]['link']}').delete(recursive: true);
     await recordsList.removeAt(index);
     getRecordsFromDatabase(noteId);
-      // emit(AddNoteDeleteOneRecordState());
+    // emit(AddNoteDeleteOneRecordState());
 
     emit(DeleteRecordState());
   }
@@ -314,11 +312,13 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
   }
 
   Future<void> getNewRecordPath() async {
-    await database.rawQuery('SELECT id FROM voices ORDER BY id DESC LIMIT 1').then((value) {
-      lastRecordId = value.length != 0 ? int.parse(jsonEncode(value[0]['id']) ) : 0;
+    await database
+        .rawQuery('SELECT id FROM voices ORDER BY id DESC LIMIT 1')
+        .then((value) {
+      lastRecordId =
+          value.length != 0 ? int.parse(jsonEncode(value[0]['id'])) : 0;
       newRecordPath = '$recordsDirectoryPath/record$lastRecordId.m4a';
     });
-
   }
 
   Future<void> saveRecordAfterStop(context, path) async {

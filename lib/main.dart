@@ -127,7 +127,7 @@ class _AudioState extends State<Audio> {
           child: showPlayer
               ? Padding(
             padding: EdgeInsets.symmetric(horizontal: 25),
-            child: AudioPlayer(
+            child: CustomAudioPlayer(
               source: audioSource!,
               onDelete: () {
                 setState(() => showPlayer = false);

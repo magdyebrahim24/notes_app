@@ -112,7 +112,9 @@ ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.light(
     background: Color(0xff5BC7D0),// for drawer color
       secondary: accentColor,
-      brightness: Brightness.light,
+    onBackground: Color(0xffF3F3F3), // for audio bg color
+
+    brightness: Brightness.light,
 
   ),
 );
@@ -128,6 +130,7 @@ ThemeData lightTheme = ThemeData(
 
 
 ThemeData darkTheme = ThemeData(
+  timePickerTheme: TimePickerThemeData(inputDecorationTheme: InputDecorationTheme(fillColor:accentColor ),),
   indicatorColor : accentColor,
   textSelectionTheme: TextSelectionThemeData(cursorColor: accentColor),
   dividerColor: Color(0xff707070),
@@ -213,7 +216,9 @@ ThemeData darkTheme = ThemeData(
   ),
   colorScheme: ColorScheme.dark(
     background: Color(0xffA4D7DB), // for drawer background color
+      onBackground: Color(0xff222121), // for audio bg color
     secondary: accentColor,
-    brightness: Brightness.dark
+    brightness: Brightness.dark,
   ),
+    sliderTheme: SliderThemeData()
 );

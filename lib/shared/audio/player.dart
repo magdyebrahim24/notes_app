@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart' as ap;
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 
-class AudioPlayer extends StatefulWidget {
+class CustomAudioPlayer extends StatefulWidget {
   /// Path from where to play recorded audio
   final ap.AudioSource source;
 
@@ -12,52 +13,64 @@ class AudioPlayer extends StatefulWidget {
   /// Setting this to null hides the delete button
   final VoidCallback onDelete;
 
-  final index ;
-  const AudioPlayer({
+  final index;
+  const CustomAudioPlayer({
     required this.source,
-    required this.onDelete, this.index,
+    required this.onDelete,
+    this.index,
   });
 
   @override
-  AudioPlayerState createState() => AudioPlayerState();
+  CustomAudioPlayerState createState() => CustomAudioPlayerState();
 }
 
-class AudioPlayerState extends State<AudioPlayer> {
-  static const double _controlSize = 56;
-  static const double _deleteBtnSize = 24;
-
-  @override
-  void initState() {
-
-    // _init();
-
-    super.initState();
-  }
-
+class CustomAudioPlayerState extends State<CustomAudioPlayer> {
   int? openedRecord;
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddNoteCubit,AddNoteStates>(
+    return BlocConsumer<AddNoteCubit, AddNoteStates>(
       listener: (context, state) {},
       builder: (context, state) {
         var cubit = AddNoteCubit.get(context);
         return LayoutBuilder(
           builder: (context, constraints) {
-            return Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                _buildControl(cubit.audioPlayer,cubit.pausePlayer, ()=> cubit.playPlayer(widget.source),widget.index,cubit.recordIndex,()=>cubit.checkSelectedPlayerItem(widget.index)),
-                _buildSlider(constraints.maxWidth,cubit.audioPlayer,widget.index,cubit.recordIndex,),
-                IconButton(
-                  icon: Icon(Icons.delete,
-                      color: const Color(0xFF73748D), size: _deleteBtnSize),
-                  onPressed: () {
-                    cubit.audioPlayer.stop().then((value) => widget.onDelete());
-                  },
-                ),
-              ],
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Theme.of(context).colorScheme.onBackground),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  _buildControl(
+                      cubit.audioPlayer,
+                      cubit.pausePlayer,
+                      () => cubit.playPlayer(widget.source),
+                      widget.index,
+                      cubit.recordIndex,
+                      () => cubit.checkSelectedPlayerItem(widget.index)),
+                  _buildSlider(
+                    constraints.maxWidth,
+                    cubit.audioPlayer,
+                    widget.index,
+                    cubit.recordIndex,
+                  ),
+                  InkWell(
+                      onTap: () {
+                        cubit.audioPlayer
+                            .stop()
+                            .then((value) => widget.onDelete());
+                      },
+                      child: SvgPicture.asset(
+                        'assets/icons/trash.svg',
+                        width: 23,
+                        height: 23,
+                        fit: BoxFit.scaleDown,
+                      )),
+                ],
+              ),
             );
           },
         );
@@ -65,40 +78,40 @@ class AudioPlayerState extends State<AudioPlayer> {
     );
   }
 
-  Widget _buildControl(audioPlayer,pauseFun,playFun,index,recordIndex,fun) {
-    Icon icon;
-    Color color;
+  Widget _buildControl(
+      audioPlayer, pauseFun, playFun, index, recordIndex, fun) {
+    Widget icon;
 
     if (audioPlayer.playerState.playing && index == recordIndex) {
-      icon = Icon(Icons.pause, color: Colors.red, size: 30);
-      color = Colors.red.withOpacity(0.1);
+      icon = Icon(
+        Icons.pause_circle_outline,
+        color: Color(0xffA5A5A5).withOpacity(.7),
+        size: 27,
+      );
     } else {
-      final theme = Theme.of(context);
-      icon = Icon(Icons.play_arrow, color: theme.primaryColor, size: 30);
-      color = Colors.redAccent;
+      icon = SvgPicture.asset(
+        'assets/icons/play.svg',
+        color: Color(0xffA5A5A5),
+        width: 24,
+        height: 24,
+        fit: BoxFit.scaleDown,
+      );
     }
 
-    return ClipOval(
-      child: Material(
-        color: color,
-        child: InkWell(
-          child:
-              SizedBox(width: _controlSize, height: _controlSize, child: icon),
-          onTap: () {
-            fun();
-            if (audioPlayer.playerState.playing) {
-              pauseFun();
-            } else {
-
-              playFun();
-            }
-          },
-        ),
-      ),
+    return InkWell(
+      child: SizedBox(width: 30, height: 30, child: icon),
+      onTap: () {
+        fun();
+        if (audioPlayer.playerState.playing) {
+          pauseFun();
+        } else {
+          playFun();
+        }
+      },
     );
   }
 
-  Widget _buildSlider(double widgetWidth, audioPlayer,index,recordIndex) {
+  Widget _buildSlider(double widgetWidth, audioPlayer, index, recordIndex) {
     final position = audioPlayer.position;
     final duration = audioPlayer.duration;
     bool canSetValue = false;
@@ -106,17 +119,15 @@ class AudioPlayerState extends State<AudioPlayer> {
       canSetValue = position.inMilliseconds > 0;
       canSetValue &= position.inMilliseconds < duration.inMilliseconds;
     }
-
-    double width = widgetWidth - _controlSize - _deleteBtnSize;
-    width -= _deleteBtnSize;
+    double width = widgetWidth - 90;
 
     return SizedBox(
       width: width,
       child: Slider(
-        activeColor: Theme.of(context).primaryColor,
-        inactiveColor: Theme.of(context).colorScheme.secondary,
+        activeColor: Theme.of(context).colorScheme.secondary,
+        inactiveColor: Color(0xffBDBDBD),
         onChanged: (v) {
-          if (duration != null ) {
+          if (duration != null) {
             final position = v * duration.inMilliseconds;
             audioPlayer.seek(Duration(milliseconds: position.round()));
           }

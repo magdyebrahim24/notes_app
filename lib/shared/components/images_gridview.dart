@@ -14,8 +14,15 @@ class GridViewForImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return imagesList.isNotEmpty
-        ? Theme(
+    return  Padding(padding: EdgeInsets.only(top: 15,bottom: 20),
+    child: Material(
+    color: Theme.of(context).cardTheme.color,
+    borderRadius: BorderRadius.circular(25),
+    clipBehavior: Clip.antiAliasWithSaveLayer,
+    child: Container(
+    padding: EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+    decoration: BoxDecoration(border: BorderDirectional(start: BorderSide(color: Theme.of(context).colorScheme.secondary,width: 10),),),
+    child: Theme(
             data: Theme.of(context).copyWith(
               dividerColor: Colors.transparent,
               hoverColor: Colors.transparent,
@@ -38,13 +45,13 @@ class GridViewForImages extends StatelessWidget {
               ),
               maintainState: false,
               initiallyExpanded: true,
-              collapsedIconColor: Theme.of(context).textTheme.headline4!.color,
+              iconColor: Theme.of(context).textTheme.headline4!.color,
               children: [
                 StaggeredGridView.countBuilder(
                   shrinkWrap: true,
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: EdgeInsets.symmetric(horizontal: 5,vertical: 10),
                   physics: NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
+                  crossAxisCount: 3,
                   itemCount: imagesList.length,
                   itemBuilder: (BuildContext context, int index) =>
                       GestureDetector(
@@ -54,22 +61,27 @@ class GridViewForImages extends StatelessWidget {
                     },
                     child: Hero(
                       tag: imagesList[index]['link'].toString(),
-                      child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15.0),
-                          child: Image.file(
-                            File(imagesList[index]['link']),
-                            fit: BoxFit.fitWidth,
-                          )),
+                      child: Material(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        // borderRadius: BorderRadius.circular(15.0),
+                        shape: RoundedRectangleBorder(borderRadius:BorderRadius.circular(15.0),
+                        side: BorderSide(width: 2,color:  Theme.of(context).colorScheme.onBackground)),
+                        child: Image.file(
+                          File(imagesList[index]['link']),
+                          fit: BoxFit.fitWidth,
+                          isAntiAlias: true,
+                        ),
+                      ),
                     ),
                   ),
                   staggeredTileBuilder: (int index) => new StaggeredTile.fit(1),
-                  mainAxisSpacing: 7,
-                  crossAxisSpacing: 7.0,
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8.0,
                 ),
               ],
             ),
-          )
-        : SizedBox();
+          ))
+    ));
   }
 
   Future<void> showImageSelection(context, val, index, data) async {
@@ -156,5 +168,7 @@ class GridViewForImages extends StatelessWidget {
           ),
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)));
+
+
   }
 }

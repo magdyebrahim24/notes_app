@@ -21,9 +21,9 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
     List subData, String subDataKey, String subDataId,{List? voices,String? voiceKey,String? voiceId,}) {
   List<Map<String, dynamic>> dataModified = makeModifiableResults(data);
   List<Map<String, dynamic>> sortedSubData = [];
-  List<Map<String, dynamic>> sortedVoicesData = [];
+  List<Map<String, dynamic>> sortedVoicesData = [];    // ----
   Map<String, dynamic> oneDataItem = {};
-  Map<String, dynamic> oneVoicesItem = {};
+  Map<String, dynamic> oneVoicesItem = {};  //-----
   List<Map<String, dynamic>> allDataWithSubData = [];
 
   for (int i = 0; i < dataModified.length; i++) {
@@ -37,7 +37,10 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
     }
     if (sortedSubData.isNotEmpty)
       oneDataItem.update(subDataKey, (dynamic val) => sortedSubData);
-    if(voices!=null){
+
+
+
+    if(voices != null){
       sortedVoicesData = [];
       oneDataItem.putIfAbsent(voiceKey!, () => []);
       for (int y = 0; y < voices.length; y++) {
@@ -48,6 +51,7 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
       if (sortedVoicesData.isNotEmpty)
         oneDataItem.update(voiceKey, (dynamic val) => sortedVoicesData);
     }
+
     allDataWithSubData.add(oneDataItem);
   }
 
