@@ -141,10 +141,12 @@ class AppCubit extends Cubit<AppStates> {
     // get notes images data
     List cachedNotesImagesList =
         await database!.rawQuery('SELECT * FROM notes_images');
+   List recordsList=
+        await database!.rawQuery('SELECT * FROM voices');
 
     allNotesDataList = assignSubListToData(
-        notesDataList, cachedNotesImagesList, 'images', 'note_id');
-
+        notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
+    // print(allNotesDataList);
     emit(GetNotesData());
   }
 
@@ -158,6 +160,7 @@ class AppCubit extends Cubit<AppStates> {
 
     allTasksDataList = assignSubListToData(
         tasksDataList, subTasksList, 'subTasks', 'tasks_id');
+    print(allTasksDataList);
     emit(GetTasksData());
   }
 

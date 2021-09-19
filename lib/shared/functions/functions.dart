@@ -18,10 +18,12 @@ List<Map<String, dynamic>> makeModifiableResults(
 
 // fun to assign images and subTasks to notes and memories and tasks
 List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
-    List subData, String subDataKey, String subDataId) {
+    List subData, String subDataKey, String subDataId,{List? voices,String? voiceKey,String? voiceId,}) {
   List<Map<String, dynamic>> dataModified = makeModifiableResults(data);
   List<Map<String, dynamic>> sortedSubData = [];
+  List<Map<String, dynamic>> sortedVoicesData = [];
   Map<String, dynamic> oneDataItem = {};
+  Map<String, dynamic> oneVoicesItem = {};
   List<Map<String, dynamic>> allDataWithSubData = [];
 
   for (int i = 0; i < dataModified.length; i++) {
@@ -35,8 +37,20 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
     }
     if (sortedSubData.isNotEmpty)
       oneDataItem.update(subDataKey, (dynamic val) => sortedSubData);
+    if(voices!=null){
+      sortedVoicesData = [];
+      oneDataItem.putIfAbsent(voiceKey!, () => []);
+      for (int y = 0; y < voices.length; y++) {
+        if (dataModified[i]['id'] == voices[y][voiceId]) {
+          sortedVoicesData.add(voices[y]);
+        }
+      }
+      if (sortedVoicesData.isNotEmpty)
+        oneDataItem.update(voiceKey, (dynamic val) => sortedVoicesData);
+    }
     allDataWithSubData.add(oneDataItem);
   }
+
 
   return allDataWithSubData;
 }

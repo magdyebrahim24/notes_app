@@ -95,21 +95,49 @@ class AddNote extends StatelessWidget {
                     },
                     expansionTileHeader: 'Images',
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: cubit.recordsList.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25),
-                      child: AudioPlayer(
-                        index: index,
-                        source: ap.AudioSource.uri(Uri.parse(cubit.recordsList[index]['link'].toString())) ,
-                        onDelete: () {
-                          cubit.deleteRecord(index: index,recordID:cubit.recordsList[index]['id'] );
-                        },
+                data['voices'].isNotEmpty? Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                    ),
+                    child: ExpansionTile(
+                    childrenPadding: EdgeInsets.zero,
+                    tilePadding: EdgeInsets.zero,
+                    title: Text(
+                     'Recodes',
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.headline4!.color, fontSize: 17),
+                    ),
+                    leading: Icon(
+                      Icons.graphic_eq,
+                      color: Theme.of(context).textTheme.headline4!.color,
+                      size: 18,
+                    ),
+                    maintainState: false,
+                    initiallyExpanded: true,
+                    collapsedIconColor: Theme.of(context).textTheme.headline4!.color,
+                    children: [
+                      ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: cubit.recordsList.length,
+                          itemBuilder: (context, index) => Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 25),
+                            child: AudioPlayer(
+                              index: index,
+                              source: ap.AudioSource.uri(Uri.parse(cubit.recordsList[index]['link'].toString())) ,
+                              onDelete: () {
+                                cubit.deleteRecord(index: index,recordID:cubit.recordsList[index]['id'] );
+                              },
+                            ),
+                          )
                       ),
-                    )
-                  ),
+                    ],
+                  )):SizedBox(),
+
 
                 ],
               ),

@@ -55,6 +55,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
       titleController.text = data['title'].toString();
       noteTextController.text = data['body'].toString();
       cachedImagesList = data['images'];
+      recordsList =data['voices'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     // getRecordsFromDatabase(noteId);
