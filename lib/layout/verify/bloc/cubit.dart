@@ -8,6 +8,7 @@ import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:sqflite/sqflite.dart';
+
 class LoginCubit extends Cubit<VerifyStates> {
   LoginCubit() : super(VerifyInitialState());
 
@@ -24,7 +25,6 @@ class LoginCubit extends Cubit<VerifyStates> {
     database = db;
     checkPass();
   }
-
 
   String passwordText = '';
   String? storedPassword;
@@ -155,7 +155,6 @@ class LoginCubit extends Cubit<VerifyStates> {
 
   @override
   Future<void> close() {
-    print('Closed -------------------------------------------------------------');
     return super.close();
   }
 }

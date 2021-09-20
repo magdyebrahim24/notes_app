@@ -47,7 +47,6 @@ class MemoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var memoryDate = DateFormat.yMMMd().parse(data['memoryDate']);
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,

@@ -103,10 +103,11 @@ class NoteCard extends StatelessWidget {
                           )
                         : SizedBox(),
 
-                   data['voices'].isNotEmpty? Padding(
+                   data['voices'].isNotEmpty ? Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: SvgPicture.asset('assets/icons/voice.svg'),
-                    ):SizedBox(),
+                    ): SizedBox(),
+
                     Text(
                       '${data['createdDate']}',
                       maxLines: 1,

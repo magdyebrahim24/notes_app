@@ -68,15 +68,6 @@ class TaskCard extends StatelessWidget {
           clipBehavior: Clip.antiAliasWithSaveLayer,
           semanticContainer: true,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          // shape: RoundedRectangleBorder(
-          //   borderRadius: BorderRadius.only(
-          //       bottomLeft: Radius.circular(index.isOdd ? 20 : 0),
-          //       topLeft: Radius.circular(index.isOdd ? 30 : 0),
-          //       bottomRight: Radius.circular(index.isOdd ? 0 : 30),
-          //       topRight: Radius.circular(index.isOdd ? 0 : 30),
-          //
-          //   ),
-          // ),
           child: InkWell(
             onTap: onTapFun,
             child: Padding(
@@ -150,38 +141,6 @@ class TaskCard extends StatelessWidget {
                   ],
                 ),
               ),
-                  // Directionality(
-                  //   textDirection: TextDirection.ltr,
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       Expanded(
-                  //         flex: 4,
-                  //         child: Text(
-                  //           '${data['createdDate']}',
-                  //           maxLines: 1,
-                  //           style: Theme.of(context).textTheme.subtitle1,
-                  //         ),
-                  //       ),
-                  //       SizedBox(
-                  //         width: 10,
-                  //       ),
-                  //       Expanded(
-                  //         flex: 3,
-                  //         child: Align(
-                  //           alignment: Alignment.centerRight,
-                  //           child: Text(
-                  //             '${data[isFavorite?'type':'createdTime']}',
-                  //             maxLines: 1,
-                  //             softWrap: true,
-                  //             overflow: TextOverflow.clip,
-                  //             style: Theme.of(context).textTheme.subtitle1,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ],
-                  //   ),
-                  // )
                 ],
               ),
             ),

@@ -78,13 +78,16 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     emit(OnMemoryTextChangedState());
   }
   void datePicker(context) async {
-    memoryDate = await TimeAndDate.getDatePicker(
+      await TimeAndDate.getDatePicker(
       context,
       firstDate: DateTime.parse('1900-09-22'),
       lastDate: DateTime.now(),
-    );
-    if(memoryDate!=null) showDateErrorText = false ;
-    emit(TimePickerState());
+    ).then((value) {
+      if(value != null) {memoryDate = value ;
+      showDateErrorText = false ;
+      emit(TimePickerState());}
+    });
+
   }
 
   pickMultiImageFromGallery(context) =>

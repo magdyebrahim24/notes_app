@@ -126,6 +126,7 @@ class AddMemory extends StatelessWidget {
                         cubit.pickMultiImageFromGallery(context),
                     addToFavoriteFun: () => cubit.addToFavorite(),
                     addToSecretFun: ()=> cubit.addNoteToSecret(context),
+              isRecording: false,
                   )
                 : SizedBox(),
             floatingActionButton: MediaQuery.of(context).viewInsets.bottom == 0 ? Padding(

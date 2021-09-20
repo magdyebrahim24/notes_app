@@ -119,7 +119,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                 data: data,
                               ),
                             )).then((value) {
-                          cubit.getNotesDataWithItsImages();
+                          cubit.getAllNotesData();
                         });
                       },
                       isLoading: cubit.isLoading,

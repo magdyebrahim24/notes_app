@@ -44,11 +44,6 @@ ThemeData lightTheme = ThemeData(
   ),
   primaryColorLight: Colors.black,
   popupMenuTheme: PopupMenuThemeData(
-    color: lightColor,
-    textStyle: TextStyle(
-      fontWeight: FontWeight.w700,
-      color: purpleColor,
-    ),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
   ),
   primaryColor: Colors.white,
@@ -60,17 +55,6 @@ ThemeData lightTheme = ThemeData(
     // brightness: Brightness.light,
     centerTitle: true,
     iconTheme: IconThemeData(color: Colors.black,),
-    // backwardsCompatibility: false,
-    // systemOverlayStyle: SystemUiOverlayStyle(
-    //   statusBarColor: accentColor,
-    //   statusBarIconBrightness: Brightness.light,
-    //   statusBarBrightness: Brightness.light,
-    //
-    // ),
-    // iconTheme: IconThemeData(
-    //   color: Colors.black,
-    // ),
-    // textTheme: TextTheme(),
     backgroundColor: Colors.white,
     elevation: 0.0,
   ),
@@ -85,12 +69,10 @@ ThemeData lightTheme = ThemeData(
       borderSide: BorderSide(width: 1, color: Colors.transparent),
       borderRadius: BorderRadius.circular(14),
     ),
-    focusColor: lightgreyColor,
     border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(color: Colors.transparent.withOpacity(.4))),
     hintStyle: TextStyle(color: Color(0xff666666), fontSize: 16,fontWeight: FontWeight.w300),
-    suffixStyle: TextStyle(color: lightgreyColor),
     fillColor: Color(0xffE6E6E6),
       errorStyle: TextStyle(fontSize: 13,color: Color(0xffFD4C4C))
   ),
@@ -114,7 +96,6 @@ ThemeData lightTheme = ThemeData(
     background: Color(0xff5BC7D0),// for drawer color
       secondary: accentColor,
     onBackground: Color(0xffF3F3F3), // for audio bg color
-
     brightness: Brightness.light,
 
   ),
@@ -131,7 +112,9 @@ ThemeData lightTheme = ThemeData(
 
 
 ThemeData darkTheme = ThemeData(
-  timePickerTheme: TimePickerThemeData(inputDecorationTheme: InputDecorationTheme(fillColor:accentColor ),),
+  timePickerTheme: TimePickerThemeData(inputDecorationTheme: InputDecorationTheme(fillColor:accentColor,focusColor: accentColor ),
+  entryModeIconColor: accentColor,
+  ),
   indicatorColor : accentColor,
   textSelectionTheme: TextSelectionThemeData(cursorColor: accentColor),
   dividerColor: Color(0xff707070),
@@ -154,11 +137,6 @@ ThemeData darkTheme = ThemeData(
   ),
   primaryColorLight: Colors.white, // for icons color
   popupMenuTheme: PopupMenuThemeData(
-    color: Color(0xff2e2e3e),
-    textStyle: TextStyle(
-      fontWeight: FontWeight.w700,
-      color: yellowColor,
-    ),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
   ),
   primaryColor: Color(0xff181818),
@@ -167,17 +145,6 @@ ThemeData darkTheme = ThemeData(
     titleTextStyle: TextStyle(color: Color(0xffB5B5B5), fontWeight: FontWeight.w500,fontSize: 22),
     centerTitle: true,
     iconTheme: IconThemeData(color: Colors.white,),
-    // backwardsCompatibility: false,
-    // systemOverlayStyle: SystemUiOverlayStyle(
-    //   statusBarColor: accentColor,
-    //   statusBarIconBrightness: Brightness.light,
-    //   statusBarBrightness: Brightness.light,
-    //
-    // ),
-    // iconTheme: IconThemeData(
-    //   color: Colors.black,
-    // ),
-    // textTheme: TextTheme(),
     backgroundColor: Color(0xff181818),
     elevation: 0.0,
   ),
@@ -193,12 +160,10 @@ ThemeData darkTheme = ThemeData(
       borderSide: BorderSide(width: 1, color: Colors.grey.withOpacity(.4)),
       borderRadius: BorderRadius.circular(10),
     ),
-    focusColor: greyColor,
     border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
         borderSide: BorderSide(color: Colors.white60)),
       hintStyle: TextStyle(color: Color(0xff7D7D7D), fontSize: 16,fontWeight: FontWeight.w300),
-      suffixStyle: TextStyle(color: greyColor),
     fillColor: Colors.grey.withOpacity(.1),
       errorStyle: TextStyle(fontSize: 13,color: Color(0xffFD4C4C))
 
@@ -221,5 +186,4 @@ ThemeData darkTheme = ThemeData(
     secondary: accentColor,
     brightness: Brightness.dark,
   ),
-    sliderTheme: SliderThemeData()
 );

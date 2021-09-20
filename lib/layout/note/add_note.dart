@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
-import 'package:notes_app/shared/audio/recorder.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/records_list.dart';
@@ -53,9 +52,10 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
               ],
             ),
             body: Stack(
+              fit: StackFit.expand,
               children: [
                 SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  padding: EdgeInsets.only(bottom: 50),
                   physics: BouncingScrollPhysics(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,8 +117,9 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                     ],
                   ),
                 ),
-                cubit.noteId != null &&
-                        MediaQuery.of(context).viewInsets.bottom == 0
+                (cubit.noteId != null &&
+                            MediaQuery.of(context).viewInsets.bottom == 0) ||
+                        cubit.isRecording
                     ? Positioned(
                         bottom: 0,
                         child: BottomIconBar(
@@ -134,18 +135,6 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                     : SizedBox(),
               ],
             ),
-            // bottomNavigationBar: cubit.noteId != null
-            //     ?                       BottomIconBar(
-            //               isRecording: cubit.isRecording,
-            //               isFavorite: cubit.isFavorite,
-            //               deleteFun: () => cubit.deleteNote(context),
-            //               addImageFun: () => cubit.pickMultiImageFromGallery(context),
-            //               addToFavoriteFun: cubit.favFun,
-            //               addToSecretFun: () => cubit.addNoteToSecret(context),
-            //
-            //
-            //     )
-            //     : SizedBox(),
             floatingActionButton: MediaQuery.of(context).viewInsets.bottom == 0
                 ? ExpandableFab(
                     children: [

@@ -46,7 +46,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                                 MaterialPageRoute(
                                     builder: (context) => MenuDashboardPage()));
                           },
-                          icon: Icon(Icons.arrow_back),
+                          icon: Icon(Icons.arrow_back_ios,size: 20,),
                         ),
                         actions: [
                           _offsetPopup(
@@ -168,14 +168,15 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
         fun();
       },
       // offset: Offset(-10,45),
-
       itemBuilder: (context) => [
             PopupMenuItem(
               // padding: EdgeInsets.symmetric(horizontal: 50),
               value: 1,
               child: Text(
                 "Update Password",
+                style: TextStyle(color: Theme.of(context).textTheme.headline1!.color),
               ),
+
             ),
           ],
       icon: Icon(

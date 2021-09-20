@@ -23,7 +23,6 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
   List<Map<String, dynamic>> sortedSubData = [];
   List<Map<String, dynamic>> sortedVoicesData = [];    // ----
   Map<String, dynamic> oneDataItem = {};
-  Map<String, dynamic> oneVoicesItem = {};  //-----
   List<Map<String, dynamic>> allDataWithSubData = [];
 
   for (int i = 0; i < dataModified.length; i++) {

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
 import 'package:notes_app/shared/functions/functions.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,16 +26,57 @@ class SearchCubit extends Cubit<SearchStates> {
   Future search(text) async {
     searchResult = [];
     if (text != '' && text != null && text != ' ') {
-      List allNotesData = await getNotesDataWithItsImages(text);
-      List allTasksData = await getAllTasksDataWithItSubTasks(text);
-      List allMemoriesData = await getAllMemoriesDataWithItsImages(text);
-
+      List allNotesData = await getAllNotesData(text);
+      List allTasksData = await getAllTasksData(text);
+      List allMemoriesData = await getAllMemoriesData(text);
+      searchResult.addAll(allMemoriesData);
       searchResult.addAll(allNotesData);
       searchResult.addAll(allTasksData);
-      searchResult.addAll(allMemoriesData);
+      searchResult.sort((a, b) => DateFormat.yMMMd().parse(a["createdDate"])
+          .compareTo(DateFormat.yMMMd().parse(b["createdDate"])));
     }
     emit(SearchResultState());
   }
+
+  Future getAllNotesData(text) async {
+    // get  notes data
+    List<Map<String, dynamic>> notesDataList = await database.query("notes",
+        where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
+    // get notes images data
+    List cachedNotesImagesList =
+    await database.rawQuery('SELECT * FROM notes_images');
+    List recordsList=
+    await database.rawQuery('SELECT * FROM voices');
+
+    return assignSubListToData(notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
+  }
+
+  Future getAllTasksData(text) async {
+    // get all task data
+    List<Map<String, dynamic>> tasksDataList = await database.query("tasks",
+        where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
+
+    // get all task sub tasks data
+    List subTasksList = await database.rawQuery('SELECT * FROM subTasks');
+
+    return  assignSubListToData(tasksDataList, subTasksList, 'subTasks', 'tasks_id');
+  }
+
+  Future getAllMemoriesData(text) async {
+    // get all user memories
+    List<Map<String, dynamic>> memoriesDataList = await database.query("memories",
+        where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
+    // get memories images
+    List cachedMemoriesImagesList =
+    await database.rawQuery('SELECT * FROM memories_images');
+
+    return  assignSubListToData(memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
+
+  }
+
+
+
+
 
   getNotesDataWithItsImages(text) async {
     var notesResults = await database.query("notes",

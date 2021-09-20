@@ -23,8 +23,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   TextEditingController titleController = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  bool showTaskDateValidateText = false ;
-  bool showTaskTimeValidateText = false ;
+  bool showTaskDateValidateText = false;
+  bool showTaskTimeValidateText = false;
 
   onBuild(data) async {
     var db = await openDatabase('database.db');
@@ -33,16 +33,13 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     if (data != null) {
       taskID = data['id'];
       titleController.text = data['title'];
-      if (data['taskDate'].toString() != 'null')
-        taskDate = data['taskDate'];
-      if (data['taskTime'].toString() != 'null')
-        taskTime = data['taskTime'];
+      if (data['taskDate'].toString() != 'null') taskDate = data['taskDate'];
+      if (data['taskTime'].toString() != 'null') taskTime = data['taskTime'];
       subTasksList = modifySubTasksList(data['subTasks']);
       isFavorite = data['is_favorite'] == 1 ? true : false;
     }
     emit(AppTaskBuildState());
   }
-
 
   void changeCheckbox(index) {
     subTasksList[index]['isDone'] = !subTasksList[index]['isDone'];
@@ -55,7 +52,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   void addNewSubTask() {
-    if(titleFocus.hasFocus) titleFocus.unfocus();
+    if (titleFocus.hasFocus) titleFocus.unfocus();
     newTasksList.add({'isDone': false, 'body': TextEditingController()});
     emit(AddNewSubTaskState());
   }
@@ -78,24 +75,32 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     emit(RemoveSubTaskState());
   }
 
-  void deleteTask(context)=> deleteOneItem(context, database, id: taskID, tableName: 'tasks', cachedImagesList: [], recordsList: []);
+  void deleteTask(context) => deleteOneItem(context, database,
+      id: taskID, tableName: 'tasks', cachedImagesList: [], recordsList: []);
 
-  void datePicker(context) async{
-    if(titleFocus.hasFocus) titleFocus.unfocus();
-    taskDate = await TimeAndDate.getDatePicker(context, firstDate: DateTime.now(), lastDate:DateTime.now().add(Duration(days: 1000)));
-      if(taskDate != null)
-        showTaskDateValidateText = false ;
-
-    emit(TaskDateTimePickerState());
+  void datePicker(context) async {
+    if (titleFocus.hasFocus) titleFocus.unfocus();
+    await TimeAndDate.getDatePicker(context,
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(Duration(days: 1000)))
+        .then((value) {
+      if (value != null) {
+        taskDate = value;
+        showTaskDateValidateText = false;
+        emit(TaskDateTimePickerState());
+      }
+    });
   }
 
   void timePicker(context) async {
-    if(titleFocus.hasFocus) titleFocus.unfocus();
-    taskTime = await TimeAndDate.getTimePicker(context);
-      if(taskTime != null)
-        showTaskTimeValidateText = false ;
-
-    emit(TaskDateTimePickerState());
+    if (titleFocus.hasFocus) titleFocus.unfocus();
+    await TimeAndDate.getTimePicker(context).then((value) {
+      if (value != null) {
+        taskTime = value;
+        showTaskTimeValidateText = false;
+        emit(TaskDateTimePickerState());
+      }
+    });
   }
 
   Future insertNewTask(
@@ -159,7 +164,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       required int id}) async {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
-   await database.rawUpdate(
+    await database.rawUpdate(
         'UPDATE tasks SET title = ? , createdTime = ? ,createdDate = ? ,taskDate = ? ,taskTime = ? WHERE id = ?',
         [
           '$title',
@@ -175,8 +180,11 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   void saveTaskBTNFun(context) {
-    if(formKey.currentState!.validate() && taskTime != null && taskDate != null) {
-      showTaskTimeValidateText = false ; showTaskDateValidateText = false ;
+    if (formKey.currentState!.validate() &&
+        taskTime != null &&
+        taskDate != null) {
+      showTaskTimeValidateText = false;
+      showTaskDateValidateText = false;
       if (taskID == null) {
         insertNewTask(
           context,
@@ -194,11 +202,9 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
         if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
         updateSubTasks();
       }
-    }else{
-      if(taskDate == null)
-        showTaskDateValidateText = true ;
-      if(taskTime == null)
-        showTaskTimeValidateText = true ;
+    } else {
+      if (taskDate == null) showTaskDateValidateText = true;
+      if (taskTime == null) showTaskTimeValidateText = true;
     }
     titleFocus.unfocus();
     emit(SaveState());
@@ -247,5 +253,4 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     titleController.dispose();
     return super.close();
   }
-
 }

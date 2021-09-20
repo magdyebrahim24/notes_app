@@ -127,14 +127,14 @@ class AppCubit extends Cubit<AppStates> {
   void getDataAndRebuild() async {
     isLoading = true;
     emit(AppLoaderState());
-    await getNotesDataWithItsImages();
+    await getAllNotesData();
     await getAllTasksDataWithItSubTasks();
     await  getAllMemoriesDataWithItsImages();
     isLoading = false;
     emit(AppLoaderState());
   }
 
-  Future getNotesDataWithItsImages() async {
+  Future getAllNotesData() async {
     // get  notes data
     List<Map<String, dynamic>> notesDataList = await database!
         .rawQuery('SELECT * FROM notes WHERE is_secret = ?', [0]);
@@ -182,7 +182,7 @@ class AppCubit extends Cubit<AppStates> {
       Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddNote()))
           .then((value) {
-        getNotesDataWithItsImages();
+        getAllNotesData();
       });
     } else if (tabBarController!.index == 1) {
       Navigator.push(
