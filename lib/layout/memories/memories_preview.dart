@@ -10,8 +10,9 @@ class MemoriesPreview extends StatelessWidget {
   final isLoading;
   final onTapFun;
   final List data;
+  final onLongPress;
 
-  MemoriesPreview({required this.data, this.onTapFun, this.isLoading});
+  MemoriesPreview({required this.data, this.onTapFun, this.isLoading, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,7 @@ class MemoriesPreview extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
           itemBuilder: (context, index) {
             return MemoryCard(
+              onLongPress: ()=>onLongPress(data[index],index),
                 noTapFun: () => onTapFun(data[index]), data: data[index],index: index,);
           },
         );
@@ -41,8 +43,9 @@ class MemoryCard extends StatelessWidget {
   final data;
   final isFavorite;
   final index ;
+  final onLongPress;
 
-  MemoryCard({this.noTapFun, this.data, this.isFavorite = false, this.index});
+  MemoryCard({this.noTapFun, this.data, this.isFavorite = false, this.index, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +106,7 @@ class MemoryCard extends StatelessWidget {
             padding:  EdgeInsetsDirectional.only(start: 20, top: index != 0 ? 12 : 61),
             child: InkWell(
               onTap: noTapFun,
+              onLongPress: onLongPress,
               focusColor: Colors.transparent,
               splashColor: Colors.transparent,
               hoverColor: Colors.transparent,

@@ -9,8 +9,9 @@ class TasksPreview extends StatelessWidget {
   final isLoading;
   final onTapFun;
   final List body;
+  final onLongPress;
 
-  TasksPreview({required this.body, this.onTapFun, this.isLoading});
+  TasksPreview({required this.body, this.onTapFun, this.isLoading, this.onLongPress});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class TasksPreview extends StatelessWidget {
               onTapFun: () => onTapFun(body[index]),
               data: body[index],
               index: index,
+              onLongPress: ()=>onLongPress(body[index], index),
             );
           },
           staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
@@ -45,9 +47,10 @@ class TaskCard extends StatelessWidget {
   final onTapFun;
   final data;
   final index;
+  final onLongPress;
   // final isFavorite;
 
-  const TaskCard({this.onTapFun, this.data, this.index});
+  const TaskCard({this.onTapFun, this.data, this.index, this.onLongPress});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -69,6 +72,7 @@ class TaskCard extends StatelessWidget {
           semanticContainer: true,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: InkWell(
+            onLongPress: onLongPress,
             onTap: onTapFun,
             child: Padding(
               padding: EdgeInsets.fromLTRB(15, 15, 15, 25),

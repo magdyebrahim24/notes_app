@@ -126,6 +126,32 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                     ),
                     TasksPreview(
                         body: cubit.allTasksDataList,
+                        onLongPress: (data, index) {
+                          showOptionBar(context,
+                              favFun: () => cubit.addToFavorite(context,
+                                  isFavorite: cubit.allTasksDataList[index]
+                                  ['is_favorite'] ==
+                                      0
+                                      ? false
+                                      : true,
+                                  noteId: data['id'],
+                                  tableName: 'tasks',
+                                  isFavoriteItem: cubit.allTasksDataList,
+                                  index: index),
+                              deleteFun: () => cubit.deleteNote(context,
+                                  id: data['id'],
+                                  tableName: 'tasks',
+                                  index: index,
+                                  listOfData: cubit.allTasksDataList),
+                              secretFun: () => cubit.addToSecret(
+                                  context,
+                                  data['id'],
+                                  'tasks',
+                                  cubit.allTasksDataList,
+                                  index),
+                              isFavorite: cubit.allTasksDataList[index]
+                              ['is_favorite']);
+                        },
                         onTapFun: (data) {
                           Navigator.push(
                               context,
@@ -141,6 +167,32 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         isLoading: cubit.isLoading),
                     MemoriesPreview(
                         data: cubit.allMemoriesDataList,
+                        onLongPress: (data, index) {
+                          showOptionBar(context,
+                              favFun: () => cubit.addToFavorite(context,
+                                  isFavorite: cubit.allMemoriesDataList[index]
+                                  ['is_favorite'] ==
+                                      0
+                                      ? false
+                                      : true,
+                                  noteId: data['id'],
+                                  tableName: 'memories',
+                                  isFavoriteItem: cubit.allMemoriesDataList,
+                                  index: index),
+                              deleteFun: () => cubit.deleteNote(context,
+                                  id: data['id'],
+                                  tableName: 'memories',
+                                  index: index,
+                                  listOfData: cubit.allMemoriesDataList),
+                              secretFun: () => cubit.addToSecret(
+                                  context,
+                                  data['id'],
+                                  'memories',
+                                  cubit.allMemoriesDataList,
+                                  index),
+                              isFavorite: cubit.allMemoriesDataList[index]
+                              ['is_favorite']);
+                        },
                         isLoading: cubit.isLoading,
                         onTapFun: (data) {
                           Navigator.push(
