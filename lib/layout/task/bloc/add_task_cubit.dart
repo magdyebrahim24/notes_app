@@ -251,7 +251,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   void addTaskToSecret(context) => addToSecret(context, taskID, 'tasks');
 
 
- Future<bool> OnCloseSave(context) async{
+ Future<bool> onCloseSave(context) async{
    if (formKey.currentState!.validate() &&
        taskTime != null &&
        taskDate != null) {

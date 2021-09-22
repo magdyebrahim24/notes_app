@@ -22,7 +22,7 @@ class AddTask extends StatelessWidget {
         builder: (context, state) {
           AddTaskCubit cubit = AddTaskCubit.get(context);
           return WillPopScope(
-            onWillPop: ()=> cubit.OnCloseSave(context),
+            onWillPop: ()=> cubit.onCloseSave(context),
             child: Scaffold(
               key: _scaffoldKey,
               appBar: AppBar(
