@@ -111,7 +111,7 @@ class GridViewForImages extends StatelessWidget {
                     },
                     child: Icon(
                       Icons.fit_screen_outlined,
-                      color: Theme.of(context).colorScheme.secondary,
+                      color: Theme.of(context).textTheme.headline6!.color,
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(
@@ -132,6 +132,7 @@ class GridViewForImages extends StatelessWidget {
                     },
                     child: SvgPicture.asset(
                       'assets/icons/share.svg',
+                      color: Theme.of(context).textTheme.headline6!.color,
                     ),
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     shape: RoundedRectangleBorder(

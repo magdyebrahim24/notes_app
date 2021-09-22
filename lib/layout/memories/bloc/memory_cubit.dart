@@ -24,29 +24,9 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   late Database database;
   bool showDateErrorText = false ;
   final formKey = GlobalKey<FormState>();
+  int? isSecret ;
 
-  void saveButton(context) {
-    if (formKey.currentState!.validate() && memoryDate != null) {
-      showDateErrorText = false ;
-      if (memoryID == null) {
-        insertNewMemory(
-          context,
-          memoryDate: memoryDate.toString(),
-          title: titleController.text,
-          body: memoryTextController.text,
-        );
-      } else {
-        updateMemory(context,
-            id: memoryID!,
-            body: memoryTextController.text,
-            memoryDate: memoryDate.toString(),
-            title: titleController.text);
-      }
-    }else{
-      showDateErrorText = true ;
-    }
-    emit(ShowDateErrorText());
-  }
+
 
   void onBuild(data) async {
     var db = await openDatabase('database.db');
@@ -58,6 +38,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       if (data['memoryDate'] != 'null') memoryDate = data['memoryDate'];
       cachedImagesList = data['images'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
+      isSecret = data['is_secret'];
     }
     emit(OnBuildState());
   }
@@ -90,16 +71,20 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
 
   }
 
-  pickMultiImageFromGallery(context) =>
+  pickMultiImageFromGallery(context) {
       pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
-        if (memoryID == null)
-          await insertNewMemory(context,
-              title: titleController.text,
-              body: memoryTextController.text,
-              memoryDate: memoryDate ?? '');
-        savePickedImages();
+        if (memoryID != null){
+          savePickedImages();
+        }else{
+          emit(ShowUnSavedPickedImagesState());
+        }
       });
+}
+void deleteUnSaveImage(index){
+  pickedGalleryImagesList.removeAt(index);
+  emit(DeleteUnSaveImageState());
 
+}
   void savePickedImages() => savePickedImagesToPhoneCacheAndDataBase(
               database,
               pickedGalleryImagesList,
@@ -143,6 +128,8 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     });
     titleFocus.unfocus();
     bodyFocus.unfocus();
+   if(pickedGalleryImagesList.isNotEmpty) savePickedImages();
+
     emit(InsertDatabaseState());
     return memoryID;
   }
@@ -193,12 +180,66 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     });
   }
 
-  addToFavorite() async {
-    isFavorite = await favoriteFun(database, 'memories', isFavorite, memoryID);
+  addToFavorite(context) async {
+    isFavorite = await favoriteFun(context,database, 'memories', isFavorite, memoryID,isSecret);
     emit(FavoriteState());
   }
 
   void addNoteToSecret(context) => addToSecret(context, memoryID, 'memories');
+
+  void saveButton(context) {
+    if (formKey.currentState!.validate() && memoryDate != null) {
+      showDateErrorText = false ;
+      if (memoryID == null) {
+        insertNewMemory(
+          context,
+          memoryDate: memoryDate.toString(),
+          title: titleController.text,
+          body: memoryTextController.text,
+        );
+      } else {
+        updateMemory(context,
+            id: memoryID!,
+            body: memoryTextController.text,
+            memoryDate: memoryDate.toString(),
+            title: titleController.text);
+      }
+      showToast('Saved');
+    }else{
+      showDateErrorText = true ;
+    }
+    emit(ShowDateErrorText());
+  }
+
+  Future<bool> onCloseSave(context) async{
+
+    if (formKey.currentState!.validate() && memoryDate != null) {
+      showDateErrorText = false ;
+      if (memoryID == null) {
+        insertNewMemory(
+          context,
+          memoryDate: memoryDate.toString(),
+          title: titleController.text,
+          body: memoryTextController.text,
+        );
+      } else {
+        updateMemory(context,
+            id: memoryID!,
+            body: memoryTextController.text,
+            memoryDate: memoryDate.toString(),
+            title: titleController.text);
+      }
+    }else{
+      showDateErrorText = true ;
+      if(memoryID != null && titleController.text.isEmpty && memoryTextController.text.isEmpty && cachedImagesList.isEmpty){
+        // delete
+      }else{
+        // show alert
+      }
+      return false ;
+    }
+    return true ;
+  }
 
   @override
   Future<void> close() async {

@@ -44,9 +44,10 @@ class SearchCubit extends Cubit<SearchStates> {
         where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
     // get notes images data
     List cachedNotesImagesList =
-    await database.rawQuery('SELECT * FROM notes_images');
-    List recordsList=
-    await database.rawQuery('SELECT * FROM voices');
+    await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_secret=? ' ,[0]);
+
+    List recordsList = await database.rawQuery('SELECT voices.id,voices.link,voices.note_id FROM voices INNER JOIN notes ON notes.id=voices.note_id AND notes.is_secret=? ' ,[0]);
+
 
     return assignSubListToData(notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
   }
@@ -57,7 +58,7 @@ class SearchCubit extends Cubit<SearchStates> {
         where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
 
     // get all task sub tasks data
-    List subTasksList = await database.rawQuery('SELECT * FROM subTasks');
+    List subTasksList = await database.rawQuery('SELECT subTasks.id,subTasks.body,subTasks.isDone,subTasks.tasks_id FROM subTasks INNER JOIN tasks ON tasks.id=subTasks.tasks_id AND tasks.is_secret=?',[0]);
 
     return  assignSubListToData(tasksDataList, subTasksList, 'subTasks', 'tasks_id');
   }
@@ -68,7 +69,8 @@ class SearchCubit extends Cubit<SearchStates> {
         where: "is_secret = ? And title LIKE ?", whereArgs: [0, '%$text%']);
     // get memories images
     List cachedMemoriesImagesList =
-    await database.rawQuery('SELECT * FROM memories_images');
+    await database.rawQuery('SELECT memories_images.id,memories_images.link,memories_images.memory_id FROM memories_images INNER JOIN memories ON memories.id=memories_images.memory_id AND memories.is_secret=? ' ,[0]);
+
 
     return  assignSubListToData(memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
 

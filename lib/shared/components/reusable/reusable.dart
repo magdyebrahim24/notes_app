@@ -68,8 +68,10 @@ Widget circleProcessInductor(){
 }
 
 Widget shadedImage(imgPath){
-  return Image.asset(imgPath,
-      fit: BoxFit.scaleDown,
-      color: Color.fromRGBO(255, 255, 255, 0.5),
-      colorBlendMode: BlendMode.modulate);
+  return Center(
+    child: Image.asset(imgPath,
+        fit: BoxFit.scaleDown,
+        color: Color.fromRGBO(255, 255, 255, 0.5),
+        colorBlendMode: BlendMode.modulate),
+  );
 }

@@ -11,8 +11,9 @@ class MemoriesPreview extends StatelessWidget {
   final onTapFun;
   final List data;
   final onLongPress;
+  final selectedItemIndex;
 
-  MemoriesPreview({required this.data, this.onTapFun, this.isLoading, this.onLongPress});
+  MemoriesPreview({required this.data, this.onTapFun, this.isLoading, this.onLongPress, this.selectedItemIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +24,10 @@ class MemoriesPreview extends StatelessWidget {
         return ListView.builder(
           shrinkWrap: true,
           itemCount: data.length,
-          // physics: NeverScrollableScrollPhysics(),
           padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
           itemBuilder: (context, index) {
             return MemoryCard(
+              color: index != selectedItemIndex ? Theme.of(context).cardTheme.color!.withOpacity(.85) : Theme.of(context).hintColor.withOpacity(.4),
               onLongPress: ()=>onLongPress(data[index],index),
                 noTapFun: () => onTapFun(data[index]), data: data[index],index: index,);
           },
@@ -44,8 +45,9 @@ class MemoryCard extends StatelessWidget {
   final isFavorite;
   final index ;
   final onLongPress;
+  final color;
 
-  MemoryCard({this.noTapFun, this.data, this.isFavorite = false, this.index, this.onLongPress});
+  MemoryCard({this.noTapFun, this.data, this.isFavorite = false, this.index, this.onLongPress, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -102,23 +104,20 @@ class MemoryCard extends StatelessWidget {
           ],
         ),
         Expanded(
-          child: Padding(
-            padding:  EdgeInsetsDirectional.only(start: 20, top: index != 0 ? 12 : 61),
+          child: Card(
+            margin: EdgeInsetsDirectional.only(start: 20, top: index != 0 ? 12 : 61),
+            semanticContainer: true,
+            clipBehavior: Clip.antiAliasWithSaveLayer,borderOnForeground: false,elevation: 0,
+            color: color,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadiusDirectional.only(
+                topEnd: Radius.circular(32),
+                bottomStart: Radius.circular(32),
+                bottomEnd: Radius.circular(32)),),
             child: InkWell(
               onTap: noTapFun,
               onLongPress: onLongPress,
-              focusColor: Colors.transparent,
-              splashColor: Colors.transparent,
-              hoverColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              child: Container(
+              child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20,vertical: 25),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadiusDirectional.only(
-                        topEnd: Radius.circular(32),
-                        bottomStart: Radius.circular(32),
-                        bottomEnd: Radius.circular(32)),
-                    color: Theme.of(context).cardTheme.color),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -175,100 +174,5 @@ class MemoryCard extends StatelessWidget {
         ),
       ],
     );
-    // return Card(
-    //   margin: EdgeInsets.all(5),
-    //   elevation: 8,
-    //   clipBehavior: Clip.antiAliasWithSaveLayer,
-    //   semanticContainer: true,
-    //   // shadowColor: Colors.grey,
-    //   shape: RoundedRectangleBorder(
-    //     borderRadius: BorderRadius.circular(15.0),
-    //   ),
-    //   child: InkWell(
-    //     onTap: noTapFun,
-    //     child: Column(
-    //       children: [
-    //         data['images'].isNotEmpty
-    //             ? Image.file(
-    //           File(data['images'][0]['link'].toString()),
-    //           fit: BoxFit.fitWidth,
-    //           isAntiAlias: true,
-    //           excludeFromSemantics: true,
-    //           gaplessPlayback: true,
-    //         )
-    //             : SizedBox(),
-    //         Padding(
-    //           padding:
-    //           EdgeInsets.symmetric(vertical: 20, horizontal: 12),
-    //           child: Column(
-    //             crossAxisAlignment: CrossAxisAlignment.start,
-    //             children: [
-    //               data['title'].toString().isNotEmpty
-    //                   ? Text(
-    //                 data['title'] ?? 'Title',
-    //                 maxLines: 2,
-    //                 softWrap: true,
-    //                 overflow: TextOverflow.ellipsis,
-    //                 style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 22),
-    //               )
-    //                   : SizedBox(),
-    //               data['title'].toString().isNotEmpty
-    //                   ? Container(
-    //                 color: Colors.white24,
-    //                 height: .5,
-    //                 margin: EdgeInsets.symmetric(vertical: 10),
-    //               )
-    //                   : SizedBox(),
-    //               data['body'].toString().isNotEmpty
-    //                   ? Padding(
-    //                 padding: const EdgeInsets.only(bottom: 17),
-    //                 child: Text(
-    //                   '${data['body']}',
-    //                   style:
-    //                   Theme.of(context).textTheme.bodyText2,
-    //                   maxLines: 10,
-    //                   softWrap: true,
-    //                   overflow: TextOverflow.ellipsis,
-    //                 ),
-    //               )
-    //                   : SizedBox(),
-    //               Directionality(
-    //                 textDirection: TextDirection.ltr,
-    //                 child: Row(
-    //                   mainAxisAlignment:
-    //                   MainAxisAlignment.spaceBetween,
-    //                   children: [
-    //                     Expanded(
-    //                       child: Text(
-    //                         '${data['createdDate']}',
-    //                         maxLines: 1,
-    //                         style: Theme.of(context).textTheme.subtitle1,
-    //                       ),
-    //                     ),
-    //                     SizedBox(
-    //                       width: 7,
-    //                     ),
-    //                     Expanded(
-    //                       child: Align(
-    //                         alignment: Alignment.centerRight,
-    //                         child: Text(
-    //                           '${data[isFavorite ?'type':'createdTime']}',
-    //                           maxLines: 1,
-    //                           softWrap: true,
-    //                           overflow: TextOverflow.clip,
-    //                           style: Theme.of(context).textTheme.subtitle1,
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
-import 'package:notes_app/layout/task/add_task.dart';
 
 class NoteSearchCard extends StatelessWidget {
   final data;
@@ -112,25 +111,27 @@ class NoteSearchCard extends StatelessWidget {
 
 class TaskSearchCard extends StatelessWidget {
 final data ;
+final bool isUsedAgain ;
+final onTap ;
 
-  const TaskSearchCard({Key? key, this.data}) : super(key: key);
+  const TaskSearchCard({Key? key, this.data,this.isUsedAgain = false,required this.onTap}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+      margin: EdgeInsets.symmetric(vertical: isUsedAgain ? 0 : 8, horizontal: isUsedAgain ? 0 : 20),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       semanticContainer: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14.0),
       ),
       child: InkWell(
-        onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask(data: data,),)),
+        onTap: onTap ,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20, vertical: 13),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              !isUsedAgain ?    Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Task',style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
@@ -144,11 +145,11 @@ final data ;
                   )
                       : SizedBox(),
                 ],
-              ),
-              Divider(endIndent: MediaQuery.of(context).size.width * .4,),
+              ) : SizedBox(),
+             !isUsedAgain ? Divider(endIndent: MediaQuery.of(context).size.width * .4,): SizedBox(),
 
               Padding(
-                padding: EdgeInsetsDirectional.only(start: 15),
+                padding: EdgeInsetsDirectional.only(start: !isUsedAgain ? 15 : 0,top: isUsedAgain ? 10 : 0),
                 child: Text(
                     data['title'] ?? 'Title',
                     maxLines: 1,
@@ -159,7 +160,7 @@ final data ;
               ),
               SizedBox(height: 10,),
               ListView.builder(
-                padding: EdgeInsetsDirectional.only(start: 15),
+                padding: EdgeInsetsDirectional.only(start: !isUsedAgain ? 15 : 0,bottom: 15),
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: data['subTasks'].length,
@@ -200,6 +201,16 @@ final data ;
                   );
                 },
               ),
+           isUsedAgain ?   Align(alignment: Alignment.centerRight,
+                child: Text(
+                  'Task',
+                  maxLines: 1,
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption!
+                      .copyWith(fontSize: 13,fontWeight: FontWeight.w500),
+                ),
+              ) : SizedBox(),
             ],
           ),
         ),

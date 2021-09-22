@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_cubit.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
 import 'package:notes_app/layout/search_screen/search_cards.dart';
+import 'package:notes_app/layout/task/add_task.dart';
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -78,6 +79,7 @@ class SearchScreen extends StatelessWidget {
                               )
                             : cubit.searchResult[index]['type'] == 'task'
                                 ? TaskSearchCard(
+                          onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => AddTask(data: cubit.searchResult[index],),)),
                                     data: cubit.searchResult[index],
                                   )
                                 : MemorySearchCard(

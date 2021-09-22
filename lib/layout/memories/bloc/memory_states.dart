@@ -16,6 +16,8 @@ class InsertDatabaseState extends AppMemoryStates {}
 
 class UpdateTitleAndBodyState extends AppMemoryStates {}
 
+class ShowUnSavedPickedImagesState extends AppMemoryStates {}
+class DeleteUnSaveImageState extends AppMemoryStates {}
 class GetCachedImagesPathsFromDatabaseState extends AppMemoryStates {}
 
 class DeleteOneImageState extends AppMemoryStates {}

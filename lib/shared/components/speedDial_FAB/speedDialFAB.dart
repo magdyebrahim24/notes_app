@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -26,44 +25,41 @@ class ExpandableFab extends StatefulWidget {
 
 class _ExpandableFabState extends State<ExpandableFab>
     with TickerProviderStateMixin {
-
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SpeedDialFABCubit()..onBuild(this, widget.initialOpen),
-      child: BlocConsumer<SpeedDialFABCubit,SpeedDialFABStates>(
+      create: (context) =>
+          SpeedDialFABCubit()..onBuild(this, widget.initialOpen),
+      child: BlocConsumer<SpeedDialFABCubit, SpeedDialFABStates>(
         builder: (context, state) {
           SpeedDialFABCubit cubit = SpeedDialFABCubit.get(context);
-          return  SizedBox.expand(
+          return SizedBox.expand(
             child: Stack(
               alignment: Alignment.bottomRight,
               clipBehavior: Clip.none,
               children: [
                 ..._buildExpandingActionButtons(cubit.fabExpandAnimation),
-                _buildTapFab(cubit.fABToggle,cubit.isFABOpen),
+                _buildTapFab(cubit.fABToggle, cubit.isFABOpen),
               ],
             ),
           );
-        },listener: (context, state) {
-
         },
+        listener: (context, state) {},
       ),
     );
   }
 
-
   List<Widget> _buildExpandingActionButtons(expandAnimation) {
     final children = <Widget>[];
     final count = widget.children.length;
-    final step = 90.0 ;
+    final step = 90.0;
     for (var i = 0, angleInDegrees = 90.0;
-    i < count;
-    i++, angleInDegrees == step) {
+        i < count;
+        i++, angleInDegrees == step) {
       children.add(
         _ExpandingActionButton(
           directionInDegrees: angleInDegrees,
-          maxDistance: 70 +  (i * 80),
+          maxDistance: 70 + (i * 80),
           progress: expandAnimation,
           child: widget.children[i],
         ),
@@ -72,15 +68,13 @@ class _ExpandableFabState extends State<ExpandableFab>
     return children;
   }
 
-
-  Widget _buildTapFab(toggle,open) {
-    return BlocConsumer<AddNoteCubit,AddNoteStates>(
-      listener: (context, state) {
-      },
+  Widget _buildTapFab(toggle, open) {
+    return BlocConsumer<AddNoteCubit, AddNoteStates>(
+      listener: (context, state) {},
       builder: (context, state) {
-        AddNoteCubit cubit =AddNoteCubit.get(context);
-      return  Padding(
-          padding: const EdgeInsets.only(right: 15,bottom: 24),
+        AddNoteCubit cubit = AddNoteCubit.get(context);
+        return Padding(
+          padding: const EdgeInsets.only(right: 10),
           child: AnimatedBuilder(
             animation: cubit.pulsatingAnimation!,
             builder: (context, _) {
@@ -90,17 +84,29 @@ class _ExpandableFabState extends State<ExpandableFab>
                   boxShadow: [
                     for (int i = 1; i <= 2; i++)
                       BoxShadow(
-                        color: accentColor.withOpacity(cubit.pulsatingAnimationController!.value / 4),
-                        spreadRadius: cubit.pulsatingAnimation!.value ,
+                        color: accentColor.withOpacity(
+                            cubit.pulsatingAnimationController!.value / 4),
+                        spreadRadius: cubit.pulsatingAnimation!.value,
                       )
                   ],
                 ),
-                child:  MaterialButton(
-                  onPressed: !cubit.isRecording? toggle:()=>cubit.stopRecorder(context),
+                child: MaterialButton(
+                  onPressed: !cubit.isRecording
+                      ? toggle
+                      : () => cubit.stopRecorder(context),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
-                      side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor, width: 6)),
-                  child: Icon(!open&&cubit.isRecording?Icons.stop :!open? Icons.add : Icons.close , size: 36,),
+                      side: BorderSide(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                          width: 6)),
+                  child: Icon(
+                    !open && cubit.isRecording
+                        ? Icons.stop
+                        : !open
+                            ? Icons.add
+                            : Icons.close,
+                    size: 36,
+                  ),
                   color: Theme.of(context).colorScheme.secondary,
                   height: 96,
                   minWidth: 96,
@@ -140,8 +146,8 @@ class _ExpandingActionButton extends StatelessWidget {
           progress.value * maxDistance,
         );
         return Positioned(
-          right: 33.0 + offset.dx,
-          bottom: 60.0 + offset.dy,
+          right: 25.0 + offset.dx,
+          bottom: 50.0 + offset.dy,
           child: Transform.rotate(
             angle: (1.0 - progress.value) * math.pi / 2,
             child: child!,
@@ -169,10 +175,10 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<SpeedDialFABCubit,SpeedDialFABStates>(
-      listener: (context,state){},
+    return BlocConsumer<SpeedDialFABCubit, SpeedDialFABStates>(
+      listener: (context, state) {},
       builder: (context, state) {
-        SpeedDialFABCubit cubit =SpeedDialFABCubit.get(context);
+        SpeedDialFABCubit cubit = SpeedDialFABCubit.get(context);
         return MaterialButton(
           padding: EdgeInsets.all(15),
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -180,7 +186,16 @@ class ActionButton extends StatelessWidget {
           height: 64,
           color: Theme.of(context).colorScheme.secondary,
           shape: CircleBorder(),
-          onPressed: (){onPressed!();cubit.fABToggle();},child: SvgPicture.asset(iconPath,width: 24,height: 24,),);
+          onPressed: () {
+            onPressed!();
+            cubit.fABToggle();
+          },
+          child: SvgPicture.asset(
+            iconPath,
+            width: 24,
+            height: 24,
+          ),
+        );
       },
     );
   }

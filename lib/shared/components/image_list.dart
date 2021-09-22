@@ -43,7 +43,7 @@ class ImageList extends StatelessWidget {
                       )),
                   IconButton(
                       onPressed: () {print(imageList);
-                        cubit.deleteSavedImage(imageID: imageList[index]['id'].toInt(),index:index);
+                        cubit.deleteSavedImage(imageID: imageList[index]['id'].toInt(),selectedItemIndex:index);
                         },
                       icon: Icon(
                         Icons.delete_outline_rounded,

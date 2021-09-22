@@ -23,3 +23,4 @@ class AddToFavoriteState extends AppStates {}
 class DeleteItemState extends AppStates {}
 
 class AddToSecretItemState extends AppStates {}
+class ToggleFABState extends AppStates {}

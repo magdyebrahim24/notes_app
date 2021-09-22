@@ -59,6 +59,9 @@ class LoginCubit extends Cubit<VerifyStates> {
               await  database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',
                     [1, id]);
+              await  database.rawUpdate(
+                  'UPDATE $table SET is_favorite = ? WHERE id = ?',
+                  [0, id]);
               } else {
               await  database.rawUpdate(
                     'UPDATE $table SET is_secret = ? WHERE id = ?',

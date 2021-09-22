@@ -9,11 +9,12 @@ class NotePreview extends StatelessWidget {
   final navFun;
   final isLoading;
   final onLongPress;
+  final selectedItemIndex;
   NotePreview(
       {required this.data,
       this.navFun,
       this.isLoading = false,
-      this.onLongPress});
+      this.onLongPress, this.selectedItemIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,7 @@ class NotePreview extends StatelessWidget {
             padding: EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
               return NoteCard(
+                color: index != selectedItemIndex ?Theme.of(context).cardTheme.color: Theme.of(context).hintColor.withOpacity(.4),
                   onLongTapFun: () => onLongPress(data[index], index),
                   data: data[index],
                   onTapFun: () => navFun(data[index]));
@@ -42,13 +44,16 @@ class NoteCard extends StatelessWidget {
   final onLongTapFun;
   final data;
   final isFavorite;
+  final color;
 
   const NoteCard(
-      {this.onTapFun, this.data, this.isFavorite = false, this.onLongTapFun});
+      {this.onTapFun, this.data, this.isFavorite = false, this.onLongTapFun, this.color});
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: color,
+      elevation: 0,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 7),
       clipBehavior: Clip.antiAliasWithSaveLayer,
       semanticContainer: true,
@@ -139,19 +144,20 @@ class NoteCard extends StatelessWidget {
       ),
     );
   }
-  Widget image(imgPath){
-    return Container(
-      width: 65,
-      height: 54,
-      margin: EdgeInsets.only(bottom: 10,left: 5,right: 5),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: FileImage(
-              File(imgPath.toString()),
-            ),
-          )),
-    );
-  }
+
+}
+Widget image(imgPath){
+  return Container(
+    width: 65,
+    height: 54,
+    margin: EdgeInsets.only(bottom: 10,left: 5,right: 5),
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: FileImage(
+            File(imgPath.toString()),
+          ),
+        )),
+  );
 }

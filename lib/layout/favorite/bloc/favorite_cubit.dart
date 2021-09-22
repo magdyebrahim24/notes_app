@@ -10,7 +10,7 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
   static FavoriteCubit get(context) => BlocProvider.of(context);
 
   late Database database;
-  bool isFavorite = true;
+  // bool isFavorite = true;
   bool isLoading = true;
   List notes = [];
   List tasks = [];
@@ -57,10 +57,12 @@ class FavoriteCubit extends Cubit<FavoriteStates> {
         'SELECT * FROM notes WHERE is_favorite = ? AND is_secret = ?', [1, 0]);
     // get all notes images data
     List cachedNotesImagesList =
-    await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_favorite=? AND notes.is_secret=? ' ,[1,0]);
-    // 'SELECT basket.id, basket.name, basket.imageUrl FROM basket INNER JOIN items ON basket.id = items.basketId'
+    await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_favorite=? AND notes.is_secret=?' ,[1,0]);
+
+    List recordsList = await database.rawQuery('SELECT voices.id,voices.link,voices.note_id FROM voices INNER JOIN notes ON notes.id=voices.note_id AND notes.is_favorite=? AND notes.is_secret=?' ,[1,0]);
+
     notes = assignSubListToData(
-        notesDataList, cachedNotesImagesList, 'images', 'note_id');
+        notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
     print(cachedNotesImagesList);
     emit(FavoriteGetDataState());
   }

@@ -20,213 +20,243 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
-  var scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   build(BuildContext context) {
     return BlocConsumer<AppCubit, AppStates>(
       builder: (context, state) {
         var cubit = AppCubit.get(context);
         return Scaffold(
-          key: scaffoldKey,
-          body: DefaultTabController(
-            length: 3,
-            child: NestedScrollView(
-              headerSliverBuilder:
-                  (BuildContext context, bool innerBoxIsScrolled) {
-                return [
-                  SliverAppBar(
-                    elevation: 0.0,
-                    title: Text('Notes',style: Theme.of(context).textTheme.headline5,),
-                    centerTitle: true,
-                    leading: IconButton(
-                        onPressed: () => cubit.isDrawerCollapsed ?  cubit.openDrawer() : null,
-                        icon: SvgPicture.asset(
-                          'assets/icons/drawer.svg',color: Theme.of(context).primaryColorLight,
-                        )) ,
-                    actions: [
-                      IconButton(
-                          onPressed: () {
+            body: DefaultTabController(
+              length: 3,
+              child: NestedScrollView(
+                headerSliverBuilder:
+                    (BuildContext context, bool innerBoxIsScrolled) {
+                  return [
+                    SliverAppBar(
+                      elevation: 0.0,
+                      title: Text(
+                        'Notes',
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                      centerTitle: true,
+                      leading: IconButton(
+                          onPressed: () => cubit.isDrawerCollapsed
+                              ? cubit.openDrawer()
+                              : null,
+                          icon: SvgPicture.asset(
+                            'assets/icons/drawer.svg',
+                            color: Theme.of(context).primaryColorLight,
+                          )),
+                      actions: [
+                        IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SearchScreen()));
+                            },
+                            icon: SvgPicture.asset(
+                              'assets/icons/search.svg',
+                              color: Theme.of(context).primaryColorLight,
+                            )),
+                        SizedBox(
+                          width: 10,
+                        )
+                      ],
+                      pinned: true,
+                      snap: true,
+                      floating: true,
+                      expandedHeight: 120,
+                      bottom: TabBar(
+                        controller: cubit.tabBarController,
+                        tabs: [
+                          Tab(
+                            text: 'Notes',
+                          ),
+                          Tab(text: 'Tasks'),
+                          Tab(
+                            text: 'Memories',
+                          ),
+                        ],
+                        isScrollable: true,
+                        indicatorPadding: EdgeInsets.symmetric(
+                          horizontal: 17,
+                        ),
+
+                        labelPadding: EdgeInsets.symmetric(horizontal: 25),
+                        indicatorWeight: 3,
+                        indicatorSize: TabBarIndicatorSize.label,
+                      ),
+                    ),
+                  ];
+                },
+                body: TabBarView(
+                    controller: cubit.tabBarController,
+                    physics: BouncingScrollPhysics(),
+                    children: [
+                      NotePreview(
+                        selectedItemIndex: cubit.selectedItemIndex,
+                        data: cubit.allNotesDataList,
+                        onLongPress: (data, index) {
+                          cubit.toggleFAB(index);
+                          showOptionBar(context,
+                              favFun: () => cubit.addToFavorite(context,
+                                  isFavorite: cubit.allNotesDataList[index]
+                                              ['is_favorite'] ==
+                                          0
+                                      ? false
+                                      : true,
+                                  itemId: data['id'],
+                                  tableName: 'notes',
+                                  itemsList: cubit.allNotesDataList,
+                                  index: index,
+
+                              ),
+                              deleteFun: () => cubit.deleteFun(context,
+                                  recordsList: cubit.allNotesDataList[index]['records'],
+                                  id: data['id'],
+                                  tableName: 'Notes',
+                                  index: index,
+                                  listOfData: cubit.allNotesDataList),
+                              secretFun: () => cubit.addToSecret(
+                                  context,
+                                  data['id'],
+                                  'notes',
+                                  cubit.allNotesDataList,
+                                  index),
+                              isFavorite: cubit.allNotesDataList[index]
+                                  ['is_favorite'],
+                              onCloseFun:  cubit.toggleFAB);
+                        },
+                        navFun: (data) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddNote(
+                                  data: data,
+                                ),
+                              )).then((value) {
+                            cubit.getAllNotesData();
+                          });
+                        },
+                        isLoading: cubit.isLoading,
+                      ),
+                      TasksPreview(
+                          selectedItemIndex: cubit.selectedItemIndex,
+                          body: cubit.allTasksDataList,
+                          onLongPress: (data, index) {
+                            cubit.toggleFAB(index);
+                            showOptionBar(context,
+                                onCloseFun: cubit.toggleFAB,
+                                favFun: () => cubit.addToFavorite(context,
+                                    isFavorite: cubit.allTasksDataList[index]
+                                                ['is_favorite'] ==
+                                            0
+                                        ? false
+                                        : true,
+                                    itemId: data['id'],
+                                    tableName: 'tasks',
+                                    itemsList: cubit.allTasksDataList,
+                                    index: index),
+                                deleteFun: () => cubit.deleteFun(context,
+                                    id: data['id'],
+                                    tableName: 'tasks',
+                                    index: index,
+                                    listOfData: cubit.allTasksDataList),
+                                secretFun: () => cubit.addToSecret(
+                                    context,
+                                    data['id'],
+                                    'tasks',
+                                    cubit.allTasksDataList,
+                                    index),
+                                isFavorite: cubit.allTasksDataList[index]
+                                    ['is_favorite']);
+                          },
+                          onTapFun: (data) {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SearchScreen()));
+                                  builder: (context) => AddTask(
+                                    data: data,
+                                  ),
+                                )).then((value) {
+                              cubit.getAllTasksDataWithItSubTasks();
+                            });
                           },
-                          icon: SvgPicture.asset(
-                            'assets/icons/search.svg',
-                            color: Theme.of(context).primaryColorLight,
-                          )),
-                      SizedBox(
-                        width: 10,
-                      )
-                    ],
-                    pinned: true,
-                    snap: false,
-                    floating: true,
-                    expandedHeight: 120,
-                    bottom: TabBar(
-                      controller: cubit.tabBarController,
-                      tabs: [
-                        Tab(text: 'Notes',),
-                        Tab(text: 'Tasks'),
-                        Tab(text: 'Memories',),
-                      ],
-                      isScrollable: true,
-                      indicatorPadding: EdgeInsets.symmetric(horizontal: 17,),
-                      labelPadding: EdgeInsets.symmetric(horizontal: 25),
-                      indicatorWeight: 3,
-                      indicatorSize: TabBarIndicatorSize.label,
-                    ),
-                  ),
-                ];
-              },
-              body: TabBarView(
-                  controller: cubit.tabBarController,
-                  physics: BouncingScrollPhysics(),
-                  children: [
-                    NotePreview(
-                      data: cubit.allNotesDataList,
-                      onLongPress: (data, index) {
-                        showOptionBar(context,
-                            favFun: () => cubit.addToFavorite(context,
-                                isFavorite: cubit.allNotesDataList[index]
-                                            ['is_favorite'] ==
-                                        0
-                                    ? false
-                                    : true,
-                                noteId: data['id'],
-                                tableName: 'notes',
-                                isFavoriteItem: cubit.allNotesDataList,
-                                index: index),
-                            deleteFun: () => cubit.deleteNote(context,
-                                id: data['id'],
-                                tableName: 'Notes',
-                                index: index,
-                                listOfData: cubit.allNotesDataList),
-                            secretFun: () => cubit.addToSecret(
+                          // () => cubit.getAllTasksDataWithItSubTasks(),
+                          isLoading: cubit.isLoading),
+                      MemoriesPreview(
+                          selectedItemIndex: cubit.selectedItemIndex,
+                          data: cubit.allMemoriesDataList,
+                          onLongPress: (data, index) {
+                            cubit.toggleFAB(index);
+                            showOptionBar(context,
+                                onCloseFun: cubit.toggleFAB,
+                                favFun: () => cubit.addToFavorite(context,
+                                    isFavorite: cubit.allMemoriesDataList[index]
+                                                ['is_favorite'] ==
+                                            0
+                                        ? false
+                                        : true,
+                                    itemId: data['id'],
+                                    tableName: 'memories',
+                                    itemsList: cubit.allMemoriesDataList,
+                                    index: index),
+                                deleteFun: () => cubit.deleteFun(context,
+                                    id: data['id'],
+                                    tableName: 'memories',
+                                    index: index,
+                                    listOfData: cubit.allMemoriesDataList),
+                                secretFun: () => cubit.addToSecret(
+                                    context,
+                                    data['id'],
+                                    'memories',
+                                    cubit.allMemoriesDataList,
+                                    index),
+                                isFavorite: cubit.allMemoriesDataList[index]
+                                    ['is_favorite']);
+                          },
+                          isLoading: cubit.isLoading,
+                          onTapFun: (data) {
+                            Navigator.push(
                                 context,
-                                data['id'],
-                                'notes',
-                                cubit.allNotesDataList,
-                                index),
-                            isFavorite: cubit.allNotesDataList[index]
-                                ['is_favorite']);
-                      },
-                      navFun: (data) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddNote(
-                                data: data,
-                              ),
-                            )).then((value) {
-                          cubit.getAllNotesData();
-                        });
-                      },
-                      isLoading: cubit.isLoading,
-                    ),
-                    TasksPreview(
-                        body: cubit.allTasksDataList,
-                        onLongPress: (data, index) {
-                          showOptionBar(context,
-                              favFun: () => cubit.addToFavorite(context,
-                                  isFavorite: cubit.allTasksDataList[index]
-                                  ['is_favorite'] ==
-                                      0
-                                      ? false
-                                      : true,
-                                  noteId: data['id'],
-                                  tableName: 'tasks',
-                                  isFavoriteItem: cubit.allTasksDataList,
-                                  index: index),
-                              deleteFun: () => cubit.deleteNote(context,
-                                  id: data['id'],
-                                  tableName: 'tasks',
-                                  index: index,
-                                  listOfData: cubit.allTasksDataList),
-                              secretFun: () => cubit.addToSecret(
-                                  context,
-                                  data['id'],
-                                  'tasks',
-                                  cubit.allTasksDataList,
-                                  index),
-                              isFavorite: cubit.allTasksDataList[index]
-                              ['is_favorite']);
-                        },
-                        onTapFun: (data) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddTask(
-                                  data: data,
-                                ),
-                              )).then((value) {
-                            cubit.getAllTasksDataWithItSubTasks();
-                          });
-                        },
-                        // () => cubit.getAllTasksDataWithItSubTasks(),
-                        isLoading: cubit.isLoading),
-                    MemoriesPreview(
-                        data: cubit.allMemoriesDataList,
-                        onLongPress: (data, index) {
-                          showOptionBar(context,
-                              favFun: () => cubit.addToFavorite(context,
-                                  isFavorite: cubit.allMemoriesDataList[index]
-                                  ['is_favorite'] ==
-                                      0
-                                      ? false
-                                      : true,
-                                  noteId: data['id'],
-                                  tableName: 'memories',
-                                  isFavoriteItem: cubit.allMemoriesDataList,
-                                  index: index),
-                              deleteFun: () => cubit.deleteNote(context,
-                                  id: data['id'],
-                                  tableName: 'memories',
-                                  index: index,
-                                  listOfData: cubit.allMemoriesDataList),
-                              secretFun: () => cubit.addToSecret(
-                                  context,
-                                  data['id'],
-                                  'memories',
-                                  cubit.allMemoriesDataList,
-                                  index),
-                              isFavorite: cubit.allMemoriesDataList[index]
-                              ['is_favorite']);
-                        },
-                        isLoading: cubit.isLoading,
-                        onTapFun: (data) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddMemory(
-                                  data: data,
-                                ),
-                              )).then((value) {
-                            cubit.getAllMemoriesDataWithItsImages();
-                          });
-                        }),
-                  ]),
-            ),
-          ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: MaterialButton(
-              onPressed: () => cubit.addFABBtnRoutes(context),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
-                side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor,width: 5,),
+                                MaterialPageRoute(
+                                  builder: (context) => AddMemory(
+                                    data: data,
+                                  ),
+                                )).then((value) {
+                              cubit.getAllMemoriesDataWithItsImages();
+                            });
+                          }),
+                    ]),
               ),
-              child: Icon(Icons.add,size: 45,color: Colors.black,) ,
-              color: Theme.of(context).colorScheme.secondary,
-              height: 90,
-              elevation: 0,
-              minWidth: 90,
             ),
-          )
+            floatingActionButton: cubit.showFAB ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: MaterialButton(
+                onPressed: () => Future.delayed(Duration(milliseconds: 0),()=>cubit.addFABBtnRoutes(context)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                  side: BorderSide(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    width: 5,
+                  ),
+                ),
+                child: Icon(
+                  Icons.add,
+                  size: 45,
+                  color: Colors.black,
+                ),
+                color: Theme.of(context).colorScheme.secondary,
+                height: 90,
+                elevation: 0,
+                minWidth: 90,
+              ),
+            ) : SizedBox(),
         );
       },
       listener: (context, state) {},
     );
   }
-}
 
+}

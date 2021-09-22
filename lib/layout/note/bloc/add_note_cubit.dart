@@ -26,6 +26,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
   List cachedImagesList = [];
   int? noteId;
   bool isFavorite = false;
+  int? isSecret = 0;
   late Database database;
   List recordsList = [];
 
@@ -50,15 +51,17 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
   AnimationController? pulsatingAnimationController;
   Animation? pulsatingAnimation;
 
-  Future pulsatingAnimationFun(x)async{
-    pulsatingAnimationController = AnimationController(vsync: x, duration: Duration(seconds: 1));
+  Future pulsatingAnimationFun(x) async {
+    pulsatingAnimationController =
+        AnimationController(vsync: x, duration: Duration(seconds: 1));
     pulsatingAnimation = Tween(begin: 0.0, end: 15.0).animate(
-      CurvedAnimation(parent: pulsatingAnimationController!, curve: Curves.easeOut),
+      CurvedAnimation(
+          parent: pulsatingAnimationController!, curve: Curves.easeOut),
     );
   }
 
-  onBuildAddNoteScreen(data,x) async {
-   await pulsatingAnimationFun(x);
+  onBuildAddNoteScreen(data, x) async {
+    await pulsatingAnimationFun(x);
     var db = await openDatabase('database.db');
     database = db;
     if (data != null) {
@@ -68,6 +71,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
       cachedImagesList = data['images'];
       recordsList = data['voices'];
       isFavorite = data['is_favorite'] == 1 ? true : false;
+      isSecret = data['is_secret'];
     }
     recordsDirectoryPath = await createRecordsDirectory();
 
@@ -84,7 +88,6 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     durationChangedSubscription = audioPlayer.durationStream.listen((duration) {
       emit(DurationChangedSubscription());
     });
-
 
     emit(OnBuildAddNoteState());
   }
@@ -163,14 +166,14 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
         id: noteId,
         tableName: 'notes',
         cachedImagesList: cachedImagesList,
-        recordsList: []);
+        recordsList: recordsList);
   }
 
-  void updateNote(context,
+  Future updateNote(context,
       {required String title, required String body, required int id}) async {
     String createdDate = TimeAndDate.getDate();
     String createdTime = TimeAndDate.getTime(context);
-    database.rawUpdate(
+   await database.rawUpdate(
         'UPDATE notes SET title = ? , body = ? , createdTime = ? ,createdDate = ? WHERE id = ?',
         ['$title', '$body', '$createdTime', '$createdDate', id]).then((value) {
       titleFocus.unfocus();
@@ -191,8 +194,9 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     });
   }
 
-  favFun() async {
-    isFavorite = await favoriteFun(database, 'notes', isFavorite, noteId);
+  void favFun(context) async {
+    isFavorite = await favoriteFun(
+        context, database, 'notes', isFavorite, noteId, isSecret);
     emit(NoteFavoriteState());
   }
 
@@ -211,7 +215,36 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
           body: noteTextController.text,
           title: titleController.text);
     }
+    showToast('Saved');
   }
+
+  Future<bool> onClosePageSave(context) async {
+
+    if (noteId == null &&
+        (titleController.text.isNotEmpty ||
+            noteTextController.text.isNotEmpty)) {
+     await insertNewNote(
+        context,
+        title: titleController.text,
+        body: noteTextController.text,
+      );
+      return true ;
+    } else if (noteId != null &&
+        (titleController.text.isNotEmpty ||
+            noteTextController.text.isNotEmpty)) {
+      await updateNote(context,
+          id: noteId!,
+          body: noteTextController.text,
+          title: titleController.text);
+      return true ;
+    }else{
+      if(noteId != null && noteTextController.text.isEmpty && noteTextController.text.isEmpty && cachedImagesList.isEmpty && recordsList.isEmpty  ){
+        await database.rawDelete('DELETE FROM notes WHERE id = ?', [noteId]);
+      }
+      return true ;
+    }
+  }
+
 // ---------------------------------------------------------------------------------------------
 // record  functions
 
@@ -301,8 +334,6 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     await File('${recordsList[index]['link']}').delete(recursive: true);
     await recordsList.removeAt(index);
     getRecordsFromDatabase(noteId);
-    // emit(AddNoteDeleteOneRecordState());
-
     emit(DeleteRecordState());
   }
 
@@ -348,23 +379,12 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
   void getRecordsFromDatabase(id) {
     database
         .rawQuery('SELECT * FROM voices WHERE note_id = ?', [id]).then((value) {
-      print(
-          'Records DB -------------------------------- -----------------------');
-      value.forEach((element) {
-        print(element);
-      });
-      print(
-          'List List -------------------------------- -----------------------');
-
-      recordsList.forEach((element) {
-        print(element);
-      });
       emit(StopRecorderState());
     });
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
     titleController.dispose();
     noteTextController.dispose();
     titleFocus.dispose();
@@ -377,6 +397,10 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
     durationChangedSubscription.cancel();
     audioPlayer.dispose();
     pulsatingAnimationController!.dispose();
+    print('close cubit');
+
     return super.close();
   }
+
+
 }

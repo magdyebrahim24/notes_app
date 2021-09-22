@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -15,6 +16,13 @@ import 'package:notes_app/shared/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart' as ap;
 
+// favorite illustrate image
+// secret illustrate images
+// pause icon
+// lock fill icon
+// discus home page made
+// discus recording shape
+// discus images show shape
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,7 +63,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-
       create: (context) => SettingCubit()..onBuild(),
       child: BlocConsumer<SettingCubit, SettingStates>(
         listener: (context, state) {},
@@ -68,12 +75,14 @@ class _MyAppState extends State<MyApp> {
             darkTheme: darkTheme,
             themeMode: cubit.darkMode ? ThemeMode.dark : ThemeMode.light,
             home: MenuDashboardPage(),
-            builder: (context, child) {
-              return MediaQuery(
-                child: child!,
-                data: MediaQuery.of(context),
-              );
-            },
+            navigatorObservers: [BotToastNavigatorObserver()],
+            builder: BotToastInit(),
+            // builder: (context, child) {
+            //   return MediaQuery(
+            //     child: child!,
+            //     data: MediaQuery.of(context),
+            //   );
+            // },
             locale: _locale,
             supportedLocales: [
               Locale('en', ''),
@@ -101,9 +110,6 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-
-
-
 class Audio extends StatefulWidget {
   @override
   _AudioState createState() => _AudioState();
@@ -126,19 +132,17 @@ class _AudioState extends State<Audio> {
         body: Center(
           child: showPlayer
               ? Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25),
-            child: CustomAudioPlayer(
-              source: audioSource!,
-              onDelete: () {
-                setState(() => showPlayer = false);
-              },
-            ),
-          )
-              : AudioRecorder(
-          ),
+                  padding: EdgeInsets.symmetric(horizontal: 25),
+                  child: CustomAudioPlayer(
+                    source: audioSource!,
+                    onDelete: () {
+                      setState(() => showPlayer = false);
+                    },
+                  ),
+                )
+              : AudioRecorder(),
         ),
       ),
     );
   }
 }
-

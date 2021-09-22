@@ -19,6 +19,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   List subTasksStoredDBList = [];
   late Database database;
   bool isFavorite = false;
+  int? isSecret = 0 ;
   FocusNode titleFocus = new FocusNode();
   TextEditingController titleController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -37,6 +38,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       if (data['taskTime'].toString() != 'null') taskTime = data['taskTime'];
       subTasksList = modifySubTasksList(data['subTasks']);
       isFavorite = data['is_favorite'] == 1 ? true : false;
+      isSecret = data['is_secret'] ;
     }
     emit(AppTaskBuildState());
   }
@@ -202,6 +204,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
         if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
         updateSubTasks();
       }
+      showToast('Saved');
     } else {
       if (taskDate == null) showTaskDateValidateText = true;
       if (taskTime == null) showTaskTimeValidateText = true;
@@ -240,13 +243,44 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     return temp;
   }
 
-  addToFavorite() async {
-    isFavorite = await favoriteFun(database, 'tasks', isFavorite, taskID);
+  addToFavorite(context) async {
+    isFavorite = await favoriteFun(context,database, 'tasks', isFavorite, taskID,isSecret);
     emit(TaskFavoriteState());
   }
 
   void addTaskToSecret(context) => addToSecret(context, taskID, 'tasks');
 
+
+ Future<bool> OnCloseSave(context) async{
+   if (formKey.currentState!.validate() &&
+       taskTime != null &&
+       taskDate != null) {
+     showTaskTimeValidateText = false;
+     showTaskDateValidateText = false;
+     if (taskID == null) {
+       insertNewTask(
+         context,
+         title: titleController.text,
+         taskDate: taskDate.toString(),
+         taskTime: taskTime.toString(),
+       );
+       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+     } else {
+       updateTask(context,
+           id: taskID!,
+           taskDate: taskDate.toString(),
+           taskTime: taskTime.toString(),
+           title: titleController.text);
+       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+       updateSubTasks();
+     }
+     showToast('Saved');
+   } else {
+     if (taskDate == null) showTaskDateValidateText = true;
+     if (taskTime == null) showTaskTimeValidateText = true;
+   }
+  return true;
+  }
   @override
   Future<void> close() {
     titleFocus.dispose();

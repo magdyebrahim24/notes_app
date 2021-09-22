@@ -1,63 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-showOptionBar(
-  context,{secretFun,favFun,deleteFun,isFavorite = 0}
-) {
+showOptionBar(context,
+    {secretFun, favFun, deleteFun, isFavorite = 0, onCloseFun}) {
   return showModalBottomSheet<void>(
       context: context,
-      elevation: 7,
       barrierColor: Colors.transparent,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          height: 65,
-          color: Theme.of(context).primaryColor,
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
+          margin: EdgeInsets.symmetric(horizontal: 25),
+          padding: EdgeInsets.fromLTRB(7, 7, 7, 0),
+          clipBehavior: Clip.antiAliasWithSaveLayer,
+          decoration: BoxDecoration(
+              color: Theme.of(context).scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+
+          ),
+          child: Container(
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+
+              // border:  Border(
+              //   bottom: BorderSide(),
+              //   top: BorderSide(
+              //       color: Theme.of(context).scaffoldBackgroundColor,
+              //       width: 10),
+              //   right: BorderSide(
+              //       color: Theme.of(context).scaffoldBackgroundColor,
+              //       width: 10),
+              //   left: BorderSide(
+              //       color: Theme.of(context).scaffoldBackgroundColor,
+              //       width: 10),),
+              color: Theme.of(context).cardTheme.color,
+             ),
+            padding: EdgeInsets.symmetric(horizontal: 15),
+            height: 67,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                bottomIcon(
-                    fun: secretFun, icon: Icons.lock_open_outlined, text: 'Secret'),
-                bottomIcon(fun: favFun, icon: isFavorite == 1 ?  Icons.star : Icons.star_border, text: 'Favorite'),
-                bottomIcon(
-                    fun: () {isFavorite=0;}, icon: Icons.ios_share_outlined, text: 'Share'),
-                bottomIcon(
-                    fun: deleteFun,
-                    icon: Icons.delete_outline_rounded,
-                    text: 'Delete'),
+              children: [
+                Expanded(
+                  child: IconButton(
+                    onPressed: () {
+                      print('share');
+                    },
+                    icon: SvgPicture.asset('assets/icons/share.svg',
+                        width: 23,
+                        height: 23,
+                        color: Theme.of(context).textTheme.headline6!.color),
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: secretFun,
+                    icon: SvgPicture.asset('assets/icons/unlock.svg',
+                        color: Theme.of(context).textTheme.headline6!.color),
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: favFun,
+                    icon: isFavorite == 1
+                        ? SvgPicture.asset(
+                            'assets/icons/fill_star.svg',
+                            color: Theme.of(context).textTheme.headline6!.color,
+                            height: 19,
+                            width: 19,
+                          )
+                        : SvgPicture.asset(
+                            'assets/icons/star.svg',
+                            color: Theme.of(context).textTheme.headline6!.color,
+                          ),
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  ),
+                ),
+                Expanded(
+                  child: IconButton(
+                    onPressed: deleteFun,
+                    icon: SvgPicture.asset('assets/icons/trash.svg'),
+                    splashColor: Colors.transparent,
+                    focusColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                  ),
+                ),
               ],
             ),
           ),
         );
-      });
+      }).whenComplete(() {
+    onCloseFun(null);
+  });
 }
-
-Widget bottomIcon({text, icon, fun}) {
-  return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 13),
-    child: InkWell(
-      onTap: fun,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 21,
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          Text(
-            text,
-            style: TextStyle(fontSize: 10, color: Colors.white),
-          )
-        ],
-      ),
-    ),
-  );
-}
-

@@ -10,8 +10,9 @@ class TasksPreview extends StatelessWidget {
   final onTapFun;
   final List body;
   final onLongPress;
+  final selectedItemIndex;
 
-  TasksPreview({required this.body, this.onTapFun, this.isLoading, this.onLongPress});
+  TasksPreview({required this.body, this.onTapFun, this.isLoading, this.onLongPress, this.selectedItemIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +26,7 @@ class TasksPreview extends StatelessWidget {
           shrinkWrap: true,
           itemBuilder: (BuildContext context, int index) {
             return TaskCard(
+              color: index != selectedItemIndex ?Theme.of(context).cardTheme.color: Theme.of(context).hintColor.withOpacity(.4),
               onTapFun: () => onTapFun(body[index]),
               data: body[index],
               index: index,
@@ -48,9 +50,10 @@ class TaskCard extends StatelessWidget {
   final data;
   final index;
   final onLongPress;
+  final color;
   // final isFavorite;
 
-  const TaskCard({this.onTapFun, this.data, this.index, this.onLongPress});
+  const TaskCard({this.onTapFun, this.data, this.index, this.onLongPress, this.color});
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -68,6 +71,8 @@ class TaskCard extends StatelessWidget {
           ),
         ),
         Card(
+          elevation: 0,
+          color: color,
           clipBehavior: Clip.antiAliasWithSaveLayer,
           semanticContainer: true,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

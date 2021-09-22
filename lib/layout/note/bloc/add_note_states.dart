@@ -24,6 +24,7 @@ class DeleteOneImageState extends AddNoteStates {}
 class GetCachedImagesPathsFromDatabaseState extends AddNoteStates {}
 
 class NoteFavoriteState extends AddNoteStates {}
+class OnCloseSave extends AddNoteStates {}
 
 // ---------------------------------------------------------
 

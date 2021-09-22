@@ -19,7 +19,6 @@ class AppCubit extends Cubit<AppStates> {
   static AppCubit get(context) => BlocProvider.of(context);
 
   TabController? tabBarController;
-  AnimationController? fABController;
   bool isDrawerCollapsed = true;
   final Duration? drawerDuration = const Duration(milliseconds: 200);
   AnimationController? drawerController;
@@ -35,6 +34,8 @@ class AppCubit extends Cubit<AppStates> {
   bool isLoading = true;
   int tabBarSelectedIndex = 0;
 
+  bool showFAB = true ;
+
   // init state function
   void onBuildPage(x){
     createDatabase();
@@ -46,14 +47,11 @@ class AppCubit extends Cubit<AppStates> {
     drawerSlideAnimation =
         Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0))
             .animate(drawerController!);
-    tabBarController = TabController(length: 3, vsync: x);
-    fABController =
-        AnimationController(vsync: x, duration: Duration(milliseconds: 200));
+    tabBarController = TabController(length: 3, vsync: x,);
+    // tabBarController!.animation = AnimationController(vsync: vsync);
     tabBarController!.addListener(() {
       if (tabBarSelectedIndex != tabBarController!.index) {
         tabBarSelectedIndex = tabBarController!.index;
-        print('done');
-        fABController!.forward(from: 0.0);
         emit(TapChangeState());
       }
     });
@@ -177,14 +175,22 @@ class AppCubit extends Cubit<AppStates> {
     emit(GetTasksData());
   }
 
-  void addFABBtnRoutes(context) {
-    if (tabBarController!.index == 0) {
+  void addFABBtnRoutes(context) async{
+
+
+    tabBarController!.addListener(() {
+      if (tabBarSelectedIndex != tabBarController!.index) {
+        tabBarSelectedIndex = tabBarController!.index;
+        emit(TapChangeState());
+      }
+    });
+    if (tabBarSelectedIndex == 0) {
       Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddNote()))
           .then((value) {
         getAllNotesData();
       });
-    } else if (tabBarController!.index == 1) {
+    } else if (tabBarSelectedIndex == 1) {
       Navigator.push(
               context, MaterialPageRoute(builder: (context) => AddTask()))
           .then((value) {
@@ -200,34 +206,24 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   void addToFavorite(context,
-      {isFavorite, noteId, tableName, isFavoriteItem, index}) {
-    database!.rawUpdate(
-        'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
-      List<Map<String, dynamic>> temp = isFavoriteItem;
-      Map<String, dynamic> item = temp[index];
+      {isFavorite, itemId, tableName, itemsList, index}) async{
+    List<Map<String, dynamic>> temp = itemsList;
+    Map<String, dynamic> item = temp[index];
+    await favoriteFun(context,database, tableName, isFavorite, itemId,item['is_secret']);
       item['is_favorite'] = !isFavorite == true ? 1 : 0;
-      isFavoriteItem[index] = item;
-
-      print('$val $isFavorite is done');
+      itemsList[index] = item;
       emit(AddToFavoriteState());
       Navigator.pop(context);
-    }).catchError((error) {
-      print(error);
-    });
   }
 
-  void deleteNote(context,
-      {required int id, tableName, index, listOfData}) async {
-    print(id);
-    await database!
-        .rawDelete('DELETE FROM $tableName WHERE id = ?', [id]).then((value) {
-      listOfData.removeAt(index);
-      Navigator.pop(context);
-      emit(DeleteItemState());
-    }).catchError((error) {
-      print(error);
-    });
+  void deleteFun(context, {required int id, tableName, index, listOfData ,recordsList}) async{
+  await  deleteOneItem(context, database,
+        id: id,
+        tableName: tableName,
+        cachedImagesList: listOfData,
+        recordsList: recordsList ?? [] );
+  listOfData.removeAt(index);
+  emit(DeleteItemState());
   }
 
   void addToSecret(context, id, tableName, listOfData, index) {
@@ -253,11 +249,21 @@ class AppCubit extends Cubit<AppStates> {
     // listOfData.removeAt(index);
     emit(AddToSecretItemState());
   }
+  int? selectedItemIndex;
+  void toggleFAB(index){
+    if(showFAB){
+      showFAB = false;
+    }else{
+      showFAB = true;
+    }
+    selectedItemIndex =index;
+    emit(ToggleFABState());
+  }
+
 
   @override
   Future<void> close() {
     tabBarController!.dispose();
-    fABController!.dispose();
     drawerController!.dispose();
     return super.close();
   }

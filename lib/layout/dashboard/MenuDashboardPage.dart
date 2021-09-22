@@ -126,19 +126,23 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                           'assets/icons/note.svg',
                           height: 23,
                           width: 23,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.scaleDown,
                           color: Theme.of(context).textTheme.headline3!.color,
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 10,
                         ),
-                        Text(
-                            tabBarIndex == 0
-                                ? 'All Notes'
-                                : tabBarIndex == 1
-                                    ? 'All Tasks'
-                                    : 'All Memories',
-                            style: Theme.of(context).textTheme.headline3),
+                        Expanded(
+                          child: Text(
+                              tabBarIndex == 0
+                                  ? 'Notes'
+                                  : tabBarIndex == 1
+                                      ? 'Tasks'
+                                      : 'Memories',
+                              overflow: TextOverflow.visible,
+                              softWrap: true,
+                              style: Theme.of(context).textTheme.headline3),
+                        ),
                       ],
                     ),
                   ),
@@ -201,6 +205,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
         contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
         focusColor: Theme.of(context).textTheme.headline3!.color,
         dense: true,
+        horizontalTitleGap: 10,
         selectedTileColor: Theme.of(context).textTheme.headline3!.color,
         hoverColor: Theme.of(context).textTheme.headline3!.color,
       ),

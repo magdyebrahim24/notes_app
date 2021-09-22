@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/cache_helper.dart';
+import 'package:notes_app/shared/constants.dart';
 import 'package:path_provider/path_provider.dart';
-
 
 // fun to convert RawQuery type to List<Map<String, dynamic>>
 List<Map<String, dynamic>> makeModifiableResults(
@@ -17,11 +18,18 @@ List<Map<String, dynamic>> makeModifiableResults(
 }
 
 // fun to assign images and subTasks to notes and memories and tasks
-List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
-    List subData, String subDataKey, String subDataId,{List? voices,String? voiceKey,String? voiceId,}) {
+List<Map<String, dynamic>> assignSubListToData(
+  List<Map<String, dynamic>> data,
+  List subData,
+  String subDataKey,
+  String subDataId, {
+  List? voices,
+  String? voiceKey,
+  String? voiceId,
+}) {
   List<Map<String, dynamic>> dataModified = makeModifiableResults(data);
   List<Map<String, dynamic>> sortedSubData = [];
-  List<Map<String, dynamic>> sortedVoicesData = [];    // ----
+  List<Map<String, dynamic>> sortedVoicesData = []; // ----
   Map<String, dynamic> oneDataItem = {};
   List<Map<String, dynamic>> allDataWithSubData = [];
 
@@ -37,9 +45,7 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
     if (sortedSubData.isNotEmpty)
       oneDataItem.update(subDataKey, (dynamic val) => sortedSubData);
 
-
-
-    if(voices != null){
+    if (voices != null) {
       sortedVoicesData = [];
       oneDataItem.putIfAbsent(voiceKey!, () => []);
       for (int y = 0; y < voices.length; y++) {
@@ -53,7 +59,6 @@ List<Map<String, dynamic>> assignSubListToData(List<Map<String, dynamic>> data,
 
     allDataWithSubData.add(oneDataItem);
   }
-
 
   return allDataWithSubData;
 }
@@ -137,34 +142,107 @@ Future deleteOneItem(context, database,
   }).catchError((error) {
     print(error);
   });
+  showToast('Deleted Successfully');
 }
 
-Future<bool> favoriteFun(database, tableName, isFavorite, id) async {
-  await database.rawUpdate(
-      'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-      [!isFavorite ? 1 : 0, DateTime.now().toString(), id]).catchError((error) {
-    print(error);
-  });
-  isFavorite = !isFavorite;
-  return isFavorite;
+Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
+    {insideSecretHome = false}) async {
+  if (isSecret == 1) {
+    if (insideSecretHome) {
+      // await database.rawUpdate(
+      //     'UPDATE $tableName SET is_secret = ? WHERE id = ?', [0, id]);
+      await database.rawUpdate(
+          'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+          [!isFavorite ? 1 : 0, DateTime.now().toString(), id]);
+      isFavorite = !isFavorite;
+    }
+    else {
+      // show dialog
+      await warmAddSecretToFav(context, () async {
+        await database.rawUpdate(
+            'UPDATE $tableName SET is_secret = ? WHERE id = ?', [0, id]);
+        await database.rawUpdate(
+            'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+            [!isFavorite ? 1 : 0, DateTime.now().toString(), id]);
+        isFavorite = !isFavorite;
+        Navigator.pop(context);
+        Navigator.pop(context);
+        showToast(isFavorite ? 'Add to Favorite' : 'Removed from Favorite');
+      });
+    }
+    return isFavorite;
+  } else {
+    await database.rawUpdate(
+        'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
+        [
+          !isFavorite ? 1 : 0,
+          DateTime.now().toString(),
+          id
+        ]).catchError((error) {
+      print(error);
+    });
+    isFavorite = !isFavorite;
+    showToast(isFavorite ? 'Add to Favorite' : 'Removed from Favorite');
+    return isFavorite;
+  }
 }
 
-void itemFavoriteFun(context, database,
-    {isFavorite, noteId, tableName, isFavoriteItem, index}) {
-  database!.rawUpdate(
-      'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-      [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
-    List<Map<String, dynamic>> temp = isFavoriteItem;
-    Map<String, dynamic> item = temp[index];
-    item['is_favorite'] = !isFavorite == true ? 1 : 0;
-    isFavoriteItem[index] = item;
-
-    // print('$val $isFavorite is done');
-    // emit(AddToFavoriteState());
-    Navigator.pop(context);
-  }).catchError((error) {
-    print(error);
-  });
+Future<void> warmAddSecretToFav(context, addToFavoriteFun) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          'Warning !!',
+          style: Theme.of(context).textTheme.headline1!.copyWith(fontSize: 22),
+        ),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(
+                'Put this item in favorite?',
+                style:
+                    Theme.of(context).textTheme.caption!.copyWith(fontSize: 16),
+              ),
+              Text(
+                'Putting this item in favorite will delete it from secret.',
+                style:
+                    Theme.of(context).textTheme.caption!.copyWith(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline1!.color),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          MaterialButton(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+            color: Theme.of(context).colorScheme.secondary,
+            child: Text(
+              'Add',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: addToFavoriteFun,
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      );
+    },
+  );
 }
 
 void addToSecret(context, id, tableName) {
@@ -186,4 +264,8 @@ void addToSecret(context, id, tableName) {
                   table: tableName,
                 )));
   }
+}
+
+void showToast(text) {
+  BotToast.showText(text: text, align: Alignment(0, .55));
 }

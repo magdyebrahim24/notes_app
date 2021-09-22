@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/secret_states.dart';
-import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/layout/verify/login.dart';
-import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/functions/functions.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -48,11 +48,12 @@ class SecretCubit extends Cubit<SecretStates> {
     // get all notes data
     List<Map<String, dynamic>> notesDataList =
         await database.rawQuery('SELECT * FROM notes WHERE is_secret = ?', [1]);
-    // print(notesDataList);
+
     // get all notes images data
     List cachedNotesImagesList = await database.rawQuery('SELECT notes_images.id,notes_images.link,notes_images.note_id FROM notes_images INNER JOIN notes ON notes.id=notes_images.note_id AND notes.is_secret=? ' ,[1]);
+
     List recordsList = await database.rawQuery('SELECT voices.id,voices.link,voices.note_id FROM voices INNER JOIN notes ON notes.id=voices.note_id AND notes.is_secret=? ' ,[1]);
-   // print(notesDataList);
+
     notes = assignSubListToData(
         notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
     emit(SecretGetDataState());
@@ -84,56 +85,92 @@ class SecretCubit extends Cubit<SecretStates> {
         memoriesDataList, cachedMemoriesImagesList, 'images', 'memory_id');
     emit(SecretGetDataState());
   }
-  void addToFavorite(context,
-      {isFavorite, noteId, tableName, isFavoriteItem, index}) {
-    database.rawUpdate(
-        'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
-        [!isFavorite, DateTime.now().toString(), noteId]).then((val) {
-      List<Map<String, dynamic>> temp = isFavoriteItem;
-      Map<String, dynamic> item = temp[index];
-      item['is_favorite'] = !isFavorite == true ? 1 : 0;
-      isFavoriteItem[index] = item;
 
-      print('$val $isFavorite is done');
-      emit(AddToFavoriteState());
-      Navigator.pop(context);
-    }).catchError((error) {
-      print(error);
-    });
-  }
-  void deleteNote(context,
-      {required int id, tableName, index, listOfData}) async {
-    print(id);
-    await database
-        .rawDelete('DELETE FROM $tableName WHERE id = ?', [id]).then((value) {
-      listOfData.removeAt(index);
-      Navigator.pop(context);
-      emit(DeleteItemState());
-    }).catchError((error) {
-      print(error);
-    });
-  }
-  void addToSecret(context, id, tableName, listOfData, index) {
-    String? pass = CacheHelper.getString(key: 'secret_password');
+  void addToFavorite(context,
+      {isFavorite, itemId, tableName, itemsList, index,required listOfData}) async{
     Navigator.pop(context);
-    if (pass == null) {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CreatePass(
-                id: id,
-                table: tableName,
-              )));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Login(
-                id: id,
-                table: tableName,
-              )));
-    }
-    // listOfData.removeAt(index);
+    showModalBottomSheet<void>(
+    barrierColor: Colors.transparent,
+        context: context,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        builder: (BuildContext context) {
+          return Container(
+            padding: EdgeInsets.only(bottom: 30),
+            decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(32),topRight: Radius.circular(32))),
+            margin: EdgeInsets.fromLTRB(34, 7, 34, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.only(bottom: 22,top: 17),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius: BorderRadius.circular(5)),
+                  height: 3,
+                  width: 80,
+
+                ),
+                 Text('Add To Favorite',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 23)),
+                 Padding(
+                   padding: const EdgeInsets.only(top: 15,bottom: 10),
+                   child: Text('Put this item in favorite?',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 17,fontWeight: FontWeight.w300)),
+                 ),
+                 Text('*Putting this item in Favorite will\ndelete it from the Secret',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 13,fontWeight: FontWeight.w300,height: 1.5),textAlign: TextAlign.center,softWrap: true,),
+                SizedBox(height: 15,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                  TextButton(
+
+                    child:  Text('Close ',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 14,fontWeight: FontWeight.w500),),
+                    onPressed: () { Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(width: 20,),
+                  MaterialButton(
+                    color: Theme.of(context).colorScheme.secondary,
+                    height: 32,
+                    minWidth: 95,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      child:  Text('Favorite',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),),
+                      onPressed: () async{
+                        List<Map<String, dynamic>> temp = itemsList;
+                        Map<String, dynamic> item = temp[index];
+                        await favoriteFun(context,database, tableName, isFavorite, itemId,item['is_secret'],insideSecretHome: true);
+                        removeFromSecret(context, itemId, tableName, listOfData, index);
+                        emit(AddToFavoriteState());
+                        showToast('Add to Favorite');
+                      }
+                  ),
+                ],)
+              ],
+            ),
+          );});
+
+  }
+
+  void deleteFun(context, {required int id, tableName, index, listOfData ,recordsList}) async{
+    await  deleteOneItem(context, database,
+        id: id,
+        tableName: tableName,
+        cachedImagesList: listOfData,
+        recordsList: recordsList ?? [] );
+    listOfData.removeAt(index);
+    emit(DeleteItemState());
+  }
+
+
+  void removeFromSecret(context, id, tableName, listOfData, index) async {
+    await  database.rawUpdate(
+        'UPDATE $tableName SET is_secret = ? WHERE id = ?',
+        [0, id]);
+    listOfData.removeAt(index);
+    Navigator.pop(context);
     emit(AddToSecretItemState());
   }
 
@@ -145,6 +182,13 @@ class SecretCubit extends Cubit<SecretStates> {
             builder: (context) => Login(
                   isUpdate: isUpdated,
                 )));
+  }
+
+
+  int? selectedItemIndex;
+  void toggleLongTap(index){
+    selectedItemIndex =index;
+    emit(ToggleFABState());
   }
 }
 

@@ -93,6 +93,7 @@ ThemeData lightTheme = ThemeData(
     caption: TextStyle(fontSize: 12 ,color: Color(0xff8F8F8F),fontWeight: FontWeight.w500), // display body and date in cards
   ),
   colorScheme: ColorScheme.light(
+    primary: accentColor,
     background: Color(0xff5BC7D0),// for drawer color
       secondary: accentColor,
     onBackground: Color(0xffF3F3F3), // for audio bg color
@@ -181,6 +182,7 @@ ThemeData darkTheme = ThemeData(
     caption: TextStyle(fontSize: 12 ,color: Color(0xff8F8F8F),fontWeight: FontWeight.w500), // display body and date in cards
   ),
   colorScheme: ColorScheme.dark(
+    primary: accentColor,
     background: Color(0xffA4D7DB), // for drawer background color
       onBackground: Color(0xff222121), // for audio bg color
     secondary: accentColor,
