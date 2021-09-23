@@ -22,11 +22,9 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   List cachedImagesList = [];
   bool isFavorite = false;
   late Database database;
-  bool showDateErrorText = false ;
+  bool showDateErrorText = false;
   final formKey = GlobalKey<FormState>();
-  int? isSecret ;
-
-
+  int? isSecret;
 
   void onBuild(data) async {
     var db = await openDatabase('database.db');
@@ -58,33 +56,38 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   onTextChange() {
     emit(OnMemoryTextChangedState());
   }
+
   void datePicker(context) async {
-      await TimeAndDate.getDatePicker(
+    titleFocus.unfocus();
+    bodyFocus.unfocus();
+    await TimeAndDate.getDatePicker(
       context,
       firstDate: DateTime.parse('1900-09-22'),
       lastDate: DateTime.now(),
     ).then((value) {
-      if(value != null) {memoryDate = value ;
-      showDateErrorText = false ;
-      emit(TimePickerState());}
+      if (value != null) {
+        memoryDate = value;
+        showDateErrorText = false;
+        emit(TimePickerState());
+      }
     });
-
   }
 
   pickMultiImageFromGallery(context) {
-      pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
-        if (memoryID != null){
-          savePickedImages();
-        }else{
-          emit(ShowUnSavedPickedImagesState());
-        }
-      });
-}
-void deleteUnSaveImage(index){
-  pickedGalleryImagesList.removeAt(index);
-  emit(DeleteUnSaveImageState());
+    pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
+      if (memoryID != null) {
+        savePickedImages();
+      } else {
+        emit(ShowUnSavedPickedImagesState());
+      }
+    });
+  }
 
-}
+  void deleteUnSaveImage(index) {
+    pickedGalleryImagesList.removeAt(index);
+    emit(DeleteUnSaveImageState());
+  }
+
   void savePickedImages() => savePickedImagesToPhoneCacheAndDataBase(
               database,
               pickedGalleryImagesList,
@@ -126,15 +129,17 @@ void deleteUnSaveImage(index){
         print(error.toString());
       });
     });
-    titleFocus.unfocus();
-    bodyFocus.unfocus();
-   if(pickedGalleryImagesList.isNotEmpty) savePickedImages();
+    if(titleFocus.hasFocus || bodyFocus.hasFocus){
+      titleFocus.unfocus();
+      bodyFocus.unfocus();
+    }
+    if (pickedGalleryImagesList.isNotEmpty) savePickedImages();
 
     emit(InsertDatabaseState());
     return memoryID;
   }
 
-  void updateMemory(context,
+  Future updateMemory(context,
       {required String title,
       required String body,
       required String memoryDate,
@@ -153,8 +158,10 @@ void deleteUnSaveImage(index){
           id
         ]).then((value) {
       getMemoryImagesFromDatabase(memoryID);
-      titleFocus.unfocus();
-      bodyFocus.unfocus();
+      if(titleFocus.hasFocus || bodyFocus.hasFocus){
+        titleFocus.unfocus();
+        bodyFocus.unfocus();
+      }
     });
     emit(UpdateTitleAndBodyState());
   }
@@ -181,15 +188,16 @@ void deleteUnSaveImage(index){
   }
 
   addToFavorite(context) async {
-    isFavorite = await favoriteFun(context,database, 'memories', isFavorite, memoryID,isSecret);
+    isFavorite = await favoriteFun(
+        context, database, 'memories', isFavorite, memoryID, isSecret);
     emit(FavoriteState());
   }
 
   void addNoteToSecret(context) => addToSecret(context, memoryID, 'memories');
 
   void saveButton(context) {
-    if (formKey.currentState!.validate() && memoryDate != null) {
-      showDateErrorText = false ;
+    if (formKey.currentState!.validate() && memoryDate != null ) {
+      showDateErrorText = false;
       if (memoryID == null) {
         insertNewMemory(
           context,
@@ -205,40 +213,134 @@ void deleteUnSaveImage(index){
             title: titleController.text);
       }
       showToast('Saved');
-    }else{
-      showDateErrorText = true ;
+    } else {
+      if(memoryDate == null ) showDateErrorText = true;
+
     }
     emit(ShowDateErrorText());
   }
 
-  Future<bool> onCloseSave(context) async{
+  Future<bool> onCloseSave(context) async {
+    // return false ;
+    if(titleFocus.hasFocus || bodyFocus.hasFocus){
+      titleFocus.unfocus();
+      bodyFocus.unfocus();
+    }
 
     if (formKey.currentState!.validate() && memoryDate != null) {
-      showDateErrorText = false ;
+      print('true -----------------');
+      showDateErrorText = false;
       if (memoryID == null) {
-        insertNewMemory(
+        await insertNewMemory(
           context,
           memoryDate: memoryDate.toString(),
           title: titleController.text,
           body: memoryTextController.text,
         );
+        print('insert');
       } else {
-        updateMemory(context,
+        await updateMemory(context,
             id: memoryID!,
             body: memoryTextController.text,
             memoryDate: memoryDate.toString(),
             title: titleController.text);
+        print('update');
       }
-    }else{
-      showDateErrorText = true ;
-      if(memoryID != null && titleController.text.isEmpty && memoryTextController.text.isEmpty && cachedImagesList.isEmpty){
+      return true;
+    } else {
+      print('false -----------------');
+      showDateErrorText = true;
+      if (
+          titleController.text.isEmpty &&
+          memoryTextController.text.isEmpty &&
+          cachedImagesList.isEmpty&& memoryDate == null) {
         // delete
-      }else{
+        if(memoryID != null){ print('delete --------------------');
+        deleteMemory(context);
+        }
+
+        return true;
+      } else {
+        if(memoryDate == null ) showDateErrorText = true;
+        print('show alert');
+        await discardAndSaveAlert(context, () {});
         // show alert
+        return false;
       }
-      return false ;
     }
-    return true ;
+  }
+
+  Future<void> discardAndSaveAlert(context, addToFavoriteFun) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Warning !!',
+            style:
+                Theme.of(context).textTheme.headline1!.copyWith(fontSize: 22),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                  'Title Or Memory Date can\'t be empty.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption!
+                      .copyWith(fontSize: 16),
+                ),
+                SizedBox(
+                  height: 3,
+                ),
+                Padding(
+                  padding: const EdgeInsetsDirectional.only(start: 5),
+                  child: Text(
+                    '- if you discard you will continue and go back\n,- if you cancel you will continue edit your memory.',
+                    style: Theme.of(context)
+                        .textTheme
+                        .caption!
+                        .copyWith(fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                    color: Theme.of(context).textTheme.headline1!.color),
+              ),
+              onPressed: () => Navigator.pop(context),
+            ),
+            SizedBox(
+              width: 15,
+            ),
+            MaterialButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7)),
+              color: Theme.of(context).colorScheme.secondary,
+              child: Text(
+                'Discard',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              },
+            ),
+            SizedBox(
+              width: 10,
+            )
+          ],
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        );
+      },
+    );
   }
 
   @override
