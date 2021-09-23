@@ -34,15 +34,6 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
             child: Scaffold(
               key: _scaffoldKey,
               appBar: AppBar(
-                leading: IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios_rounded,
-                    size: 20,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                ),
                 actions: [
                   cubit.titleController.text.isNotEmpty ||
                           cubit.noteTextController.text.isNotEmpty ||

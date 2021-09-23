@@ -26,7 +26,6 @@ class AddTask extends StatelessWidget {
             child: Scaffold(
               key: _scaffoldKey,
               appBar: AppBar(
-                leading: IconButton(onPressed: ()=>Navigator.pop(context),icon: Icon(Icons.arrow_back_ios),iconSize: 20,),
                 actions: [
                   IconButton(
                       onPressed: ()=> cubit.saveTaskBTNFun(context) ,
