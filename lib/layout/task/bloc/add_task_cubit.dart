@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/layout/memories/bloc/memory_cubit.dart';
 import 'package:notes_app/layout/task/bloc/add_task_states.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
@@ -265,6 +266,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
          taskTime: taskTime.toString(),
        );
        if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+
      } else {
        updateTask(context,
            id: taskID!,
@@ -274,12 +276,26 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
        if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
        updateSubTasks();
      }
-     showToast('Saved');
+     return true;
    } else {
-     if (taskDate == null) showTaskDateValidateText = true;
-     if (taskTime == null) showTaskTimeValidateText = true;
-   }
-  return true;
+     if(taskDate==null&&taskTime==null&&titleController.text.isEmpty){
+       return true;
+     }else{
+
+     if (taskDate == null){
+       showTaskDateValidateText = true;
+       await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
+       return false;
+     }
+     if (taskTime == null) {
+       showTaskTimeValidateText = true;
+       await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
+       return false;
+     }
+     await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
+     return false;
+   }}
+
   }
   @override
   Future<void> close() {

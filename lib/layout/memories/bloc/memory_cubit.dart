@@ -263,89 +263,90 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       } else {
         if(memoryDate == null ) showDateErrorText = true;
         print('show alert');
-        await discardAndSaveAlert(context, () {});
+        await discardAndSaveAlert(context, 'memory','Title Or Memory Date');
         // show alert
         return false;
       }
     }
   }
 
-  Future<void> discardAndSaveAlert(context, addToFavoriteFun) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(
-            'Warning !!',
-            style:
-                Theme.of(context).textTheme.headline1!.copyWith(fontSize: 22),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(
-                  'Title Or Memory Date can\'t be empty.',
-                  style: Theme.of(context)
-                      .textTheme
-                      .caption!
-                      .copyWith(fontSize: 16),
-                ),
-                SizedBox(
-                  height: 3,
-                ),
-                Padding(
-                  padding: const EdgeInsetsDirectional.only(start: 5),
-                  child: Text(
-                    '- if you discard you will continue and go back\n,- if you cancel you will continue edit your memory.',
-                    style: Theme.of(context)
-                        .textTheme
-                        .caption!
-                        .copyWith(fontSize: 14),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: TextStyle(
-                    color: Theme.of(context).textTheme.headline1!.color),
-              ),
-              onPressed: () => Navigator.pop(context),
-            ),
-            SizedBox(
-              width: 15,
-            ),
-            MaterialButton(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7)),
-              color: Theme.of(context).colorScheme.secondary,
-              child: Text(
-                'Discard',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pop(context);
-              },
-            ),
-            SizedBox(
-              width: 10,
-            )
-          ],
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        );
-      },
-    );
-  }
+
 
   @override
   Future<void> close() async {
     // database.close();
     return super.close();
   }
+}
+Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          'Warning !!',
+          style:
+          Theme.of(context).textTheme.headline1!.copyWith(fontSize: 22),
+        ),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text(
+                '$dataCantBeEmpty can\'t be empty.',
+                style: Theme.of(context)
+                    .textTheme
+                    .caption!
+                    .copyWith(fontSize: 16),
+              ),
+              SizedBox(
+                height: 3,
+              ),
+              Padding(
+                padding: const EdgeInsetsDirectional.only(start: 5),
+                child: Text(
+                  '- if you discard you will continue and go back\n,- if you cancel you will continue edit your $nameOfPage.',
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption!
+                      .copyWith(fontSize: 14),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.headline1!.color),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+          SizedBox(
+            width: 15,
+          ),
+          MaterialButton(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7)),
+            color: Theme.of(context).colorScheme.secondary,
+            child: Text(
+              'Discard',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+          SizedBox(
+            width: 10,
+          )
+        ],
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      );
+    },
+  );
 }

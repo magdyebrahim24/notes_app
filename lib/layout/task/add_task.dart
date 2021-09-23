@@ -9,7 +9,7 @@ import 'bloc/add_task_states.dart';
 
 class AddTask extends StatelessWidget {
   final data;
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
 
   AddTask({this.data});
 
@@ -24,7 +24,6 @@ class AddTask extends StatelessWidget {
           return WillPopScope(
             onWillPop: ()=> cubit.onCloseSave(context),
             child: Scaffold(
-              key: _scaffoldKey,
               appBar: AppBar(
                 actions: [
                   IconButton(
