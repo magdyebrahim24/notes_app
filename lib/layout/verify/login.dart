@@ -4,6 +4,7 @@ import 'package:notes_app/layout/verify/bloc/state.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
 import 'package:notes_app/shared/components/shake_animation.dart';
 import 'package:notes_app/shared/constants.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'bloc/cubit.dart';
 
 class Login extends StatelessWidget {
@@ -27,10 +28,6 @@ class Login extends StatelessWidget {
           LoginCubit cubit = LoginCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios_rounded,size: 20,),
-                onPressed: () {Navigator.pop(context);},
-              ),
             ),
             body: SingleChildScrollView(
               child: Center(
@@ -43,11 +40,6 @@ class Login extends StatelessWidget {
                         SizedBox(
                           height: size.height * .05,
                         ),
-                        IconButton(
-                            onPressed: () {
-                              cubit.z(context);
-                            },
-                            icon: Icon(Icons.remove)),
                         Image.asset('assets/images/password.png'),
                         SizedBox(
                           height: 30,
@@ -55,13 +47,13 @@ class Login extends StatelessWidget {
                         cubit.inCorrectPassword ?  Padding(
                           padding: EdgeInsets.symmetric(vertical: 7.5),
                           child: Text(
-                            'Password is in correct, try again',
+                            Languages.of(context)!.secret['error'],
                             textAlign: TextAlign.center,
                             style: them.headline4!.copyWith(
                                 fontSize: 18,fontWeight: FontWeight.w400),
                           ),
                         ) : Text(
-                          'Enter Password',
+                          Languages.of(context)!.secret['enterPass'],
                           style: them.headline4!.copyWith(
                               fontSize: 31,fontWeight: FontWeight.w400),
                         ) ,

@@ -10,6 +10,7 @@ import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
 class Secret extends StatefulWidget {
@@ -36,7 +37,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                       SliverAppBar(
                         elevation: 0.0,
                         title: Text(
-                          'Secret',
+                          Languages.of(context)!.drawer['secret'],
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         centerTitle: true,
@@ -61,11 +62,11 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                           controller: cubit.tabBarController,
                           tabs: [
                             Tab(
-                              text: 'Notes',
+                              text: Languages.of(context)!.home['notes'],
                             ),
-                            Tab(text: 'Tasks'),
+                            Tab(text: Languages.of(context)!.home['tasks']),
                             Tab(
-                              text: 'Memories',
+                              text: Languages.of(context)!.home['memories'],
                             ),
                           ],
                           isScrollable: true,
@@ -238,7 +239,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
               // padding: EdgeInsets.symmetric(horizontal: 50),
               value: 1,
               child: Text(
-                "Update Password",
+                Languages.of(context)!.secret['updatePass'],
                 style: TextStyle(color: Theme.of(context).textTheme.headline1!.color),
               ),
 

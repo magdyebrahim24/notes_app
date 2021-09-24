@@ -8,10 +8,15 @@ abstract class Languages {
   Map get setting;
   Map get home;
   Map get search;
+  Map get drawer;
+  Map get secret;
+  Map get addTask;
+  Map get alertBottomSheetForAddItemInFavorite;
   Map get addNote;
   Map get toast;
   Map get addMemory;
   Map get discardAndSaveAlert;
+  Map get onBoarding;
   String get cancelBtn;
   String get discardBtn;
 

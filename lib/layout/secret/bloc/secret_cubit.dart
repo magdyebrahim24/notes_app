@@ -116,19 +116,19 @@ class SecretCubit extends Cubit<SecretStates> {
                   width: 80,
 
                 ),
-                 Text('Add To Favorite',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 23)),
+                 Text(Languages.of(context)!.alertBottomSheetForAddItemInFavorite['alertTitle'],style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 23)),
                  Padding(
                    padding: const EdgeInsets.only(top: 15,bottom: 10),
-                   child: Text('Put this item in favorite?',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 17,fontWeight: FontWeight.w300)),
+                   child: Text(Languages.of(context)!.alertBottomSheetForAddItemInFavorite['alertQuestion'],style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 17,fontWeight: FontWeight.w300)),
                  ),
-                 Text('*Putting this item in Favorite will\ndelete it from the Secret',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 13,fontWeight: FontWeight.w300,height: 1.5),textAlign: TextAlign.center,softWrap: true,),
+                 Text(Languages.of(context)!.alertBottomSheetForAddItemInFavorite['massage'],style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 13,fontWeight: FontWeight.w300,height: 1.5),textAlign: TextAlign.center,softWrap: true,),
                 SizedBox(height: 15,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                   TextButton(
 
-                    child:  Text('Close ',style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 14,fontWeight: FontWeight.w500),),
+                    child:  Text( Languages.of(context)!.alertBottomSheetForAddItemInFavorite['closeButton'],style: Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 14,fontWeight: FontWeight.w500),),
                     onPressed: () { Navigator.pop(context);
                     },
                   ),
@@ -138,7 +138,7 @@ class SecretCubit extends Cubit<SecretStates> {
                     height: 32,
                     minWidth: 95,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      child:  Text('Favorite',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),),
+                      child:  Text(Languages.of(context)!.alertBottomSheetForAddItemInFavorite['favoriteButton'],style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 16),),
                       onPressed: () async{
                         List<Map<String, dynamic>> temp = itemsList;
                         Map<String, dynamic> item = temp[index];

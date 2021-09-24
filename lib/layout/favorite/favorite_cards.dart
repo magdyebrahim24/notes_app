@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/layout/note/note_preview.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class FavoriteNoteCard extends StatelessWidget {
   final data, onTapFun, onLongTapFun;
@@ -97,7 +98,7 @@ class FavoriteNoteCard extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Notes',
+                  Languages.of(context)!.search['note'],
                   maxLines: 1,
                   style: Theme.of(context)
                       .textTheme
@@ -206,7 +207,7 @@ class FavoriteMemoryCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Memory',
+                Languages.of(context)!.search['memory'],
                 maxLines: 1,
                 style: Theme.of(context)
                     .textTheme

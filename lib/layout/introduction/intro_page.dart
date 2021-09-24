@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/introduction/bloc/intro_cubit.dart';
 import 'package:notes_app/layout/introduction/bloc/intro_states.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class IntroPage extends StatelessWidget {
 
@@ -10,23 +11,7 @@ class IntroPage extends StatelessWidget {
     'assets/intro/tasks.png',
     'assets/intro/memories.png',
   ];
-  final List text = [
-    {
-      'title': 'Notes',
-      'body':
-          'You can write whatever you want, put a picture or an audio recording to hear it whenever you want !'
-    },
-    {
-      'title': 'Tasks',
-      'body':
-          'Add your Missions as a tasks to motivate you to complete them and organize your tasks'
-    },
-    {
-      'title': 'Memories',
-      'body':
-          'Put all your memories here to always remember them whenever you want!'
-    },
-  ];
+
 
 
   @override
@@ -38,6 +23,23 @@ class IntroPage extends StatelessWidget {
         listener: (context, state) {},
         builder: (context, state) {
           var cubit = IntroCubit.get(context);
+          final List text = [
+            {
+              'title': Languages.of(context)!.onBoarding['notes'].toString(),
+              'body':
+              Languages.of(context)!.onBoarding['notesBody'].toString()
+            },
+            {
+              'title': Languages.of(context)!.onBoarding['tasks'].toString(),
+              'body':
+              Languages.of(context)!.onBoarding['tasksBody'].toString()
+            },
+            {
+              'title': Languages.of(context)!.onBoarding['memories'].toString(),
+              'body':
+              Languages.of(context)!.onBoarding['memoriesBody'].toString()
+            },
+          ];
           return  Scaffold(
               body: PageView.builder(
                 physics: PageScrollPhysics(),
@@ -99,7 +101,7 @@ class IntroPage extends StatelessWidget {
                       height: 60,
                       minWidth: MediaQuery.of(context).size.width * .8,
                       child: Text(
-                       cubit.currentPage != 2 ? 'NEXT' : 'GET STARTED',
+                       cubit.currentPage != 2 ? Languages.of(context)!.onBoarding['nextButton'].toString() : Languages.of(context)!.onBoarding['startedButton'].toString(),
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.white,

@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/layout/memories/add%20memory.dart';
 import 'package:notes_app/layout/note/add_note.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class NoteSearchCard extends StatelessWidget {
   final data;
@@ -29,7 +30,7 @@ class NoteSearchCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Note',style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
+                  Text(Languages.of(context)!.search['note'],style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
                   data['is_favorite'] == 1
                       ? Padding(
                     padding: const EdgeInsets.only(top: 10,right: 10,left: 10),
@@ -134,7 +135,7 @@ final onTap ;
               !isUsedAgain ?    Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Task',style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
+                  Text(Languages.of(context)!.search['task'],style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
                   data['is_favorite'] == 1
                       ? Padding(
                     padding: const EdgeInsets.only(top: 10,right: 10,left: 10),
@@ -203,7 +204,7 @@ final onTap ;
               ),
            isUsedAgain ?   Align(alignment: Alignment.centerRight,
                 child: Text(
-                  'Task',
+                  Languages.of(context)!.search['task'],
                   maxLines: 1,
                   style: Theme.of(context)
                       .textTheme
@@ -244,7 +245,7 @@ class MemorySearchCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Memory',style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
+                  Text(Languages.of(context)!.search['memory'],style: TextStyle(color: Theme.of(context).hintColor,fontWeight: FontWeight.w500,fontSize: 13),),
                   data['is_favorite'] == 1
                       ? Padding(
                     padding: const EdgeInsets.only(top: 10,right: 10,left: 10),

@@ -6,6 +6,7 @@ import 'package:notes_app/layout/search_screen/bloc/search_cubit.dart';
 import 'package:notes_app/layout/search_screen/bloc/search_states.dart';
 import 'package:notes_app/layout/search_screen/search_cards.dart';
 import 'package:notes_app/layout/task/add_task.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class SearchScreen extends StatelessWidget {
   @override
@@ -48,7 +49,7 @@ class SearchScreen extends StatelessWidget {
                       ),
                       contentPadding: EdgeInsets.all(10),
                       filled: true,
-                      hintText: 'Search',
+                      hintText: Languages.of(context)!.search['search'],
                     ),
                     style: Theme.of(context)
                         .textTheme
@@ -117,7 +118,7 @@ class SearchScreen extends StatelessWidget {
             ),
             showNoResultTxt
                 ? Text(
-                    'No Result For $text',
+                    Languages.of(context)!.search['searchResult']+'$text',
                     style: TextStyle(fontSize: 20),
                     softWrap: true,
                     textAlign: TextAlign.center,

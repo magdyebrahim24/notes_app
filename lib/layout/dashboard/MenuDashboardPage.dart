@@ -10,6 +10,7 @@ import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/layout/setting/setting.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 
 class MenuDashboardPage extends StatefulWidget {
@@ -136,10 +137,10 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                           Expanded(
                             child: Text(
                                 tabBarIndex == 0
-                                    ? 'Notes'
+                                    ? Languages.of(context)!.drawer['notes']
                                     : tabBarIndex == 1
-                                        ? 'Tasks'
-                                        : 'Memories',
+                                        ? Languages.of(context)!.drawer['tasks']
+                                        : Languages.of(context)!.drawer['memories'],
                                 overflow: TextOverflow.visible,
                                 softWrap: true,
                                 style: Theme.of(context).textTheme.headline3),
@@ -148,7 +149,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                       ),
                     ),
                     _drawerItem(
-                        text: 'Favorite',
+                        text: Languages.of(context)!.drawer['favorite'],
                         leadingPath: 'assets/icons/star.svg',
                         fun: () => Navigator.push(
                                 context,
@@ -158,7 +159,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                               rebuildFunction();
                             })),
                     _drawerItem(
-                        text: 'Secret',
+                        text: Languages.of(context)!.drawer['secret'],
                         leadingPath: 'assets/icons/unlock.svg',
                         fun: () {
                           String? pass =
@@ -174,7 +175,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                           }
                         }),
                     _drawerItem(
-                        text: 'Setting',
+                        text: Languages.of(context)!.drawer['setting'],
                         leadingPath: 'assets/icons/setting.svg',
                         fun: () => Navigator.push(context,
                             MaterialPageRoute(builder: (context) => Setting()))),

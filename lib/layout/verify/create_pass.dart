@@ -5,6 +5,7 @@ import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/components/icon_for_secret.dart';
 import 'package:notes_app/shared/components/shake_animation.dart';
 import 'package:notes_app/shared/constants.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'bloc/cubit.dart';
 
 class CreatePass extends StatelessWidget {
@@ -49,15 +50,15 @@ class CreatePass extends StatelessWidget {
                         cubit.inCorrectPassword ?  Padding(
                           padding: EdgeInsets.symmetric(vertical: 7.5),
                           child: Text(
-                            'Passwords isn\'t identical, try again',
+                            Languages.of(context)!.secret['confirmError'],
                             textAlign: TextAlign.center,
                             style: them.headline4!.copyWith(
                                 fontSize: 18,fontWeight: FontWeight.w400),
                           ),
                         ) : Text(
                           cubit.verifyPass == null
-                              ? 'Create Password'
-                              : 'Confirm Password',
+                              ? Languages.of(context)!.secret['createPass']
+                              : Languages.of(context)!.secret['confirmPass'],
                           style: them.headline4!.copyWith(
                               fontSize: 31, fontWeight: FontWeight.w400),
                         ) ,

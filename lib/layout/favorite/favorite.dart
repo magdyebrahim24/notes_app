@@ -9,6 +9,7 @@ import 'package:notes_app/layout/note/add_note.dart';
 import 'package:notes_app/layout/search_screen/search_cards.dart';
 import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class FavoriteScreen extends StatelessWidget {
   @override
@@ -21,15 +22,7 @@ class FavoriteScreen extends StatelessWidget {
           FavoriteCubit cubit = FavoriteCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              title: Text('Favorite'),
-              leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  size: 20,
-                ),
-                tooltip: 'Back',
-              ),
+              title: Text(Languages.of(context)!.drawer['favorite']),
             ),
             body: cubit.isLoading
                 ? Center(child: circleProcessInductor())

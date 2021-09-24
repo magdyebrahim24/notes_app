@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 import 'bloc/add_task_cubit.dart';
 import 'bloc/add_task_states.dart';
@@ -41,7 +42,7 @@ class AddTask extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Title',style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),),
+                        Text(Languages.of(context)!.addTask['title'],style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),),
                         Container(
                           margin: EdgeInsets.only(bottom: 20,top: 15),
                           padding: EdgeInsets.fromLTRB(15, 0, 15, 4),
@@ -55,10 +56,10 @@ class AddTask extends StatelessWidget {
                             controller: cubit.titleController,
                             maxLines: 3,
                             minLines: 2,
-                            hintText: 'Your title...',
+                            hintText: Languages.of(context)!.addTask['titleBody'].toString(),
                             validator: (value) {
                               if (value.toString().isEmpty)
-                                return 'task title can\'t be empty';
+                                return Languages.of(context)!.addTask['titleError'].toString();
                             },
                           ),
                         ),
@@ -66,9 +67,9 @@ class AddTask extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(child: dateTimeWidget(context,label: 'Date',errorText:cubit.showTaskDateValidateText ? 'date required' : null,fun: ()=> cubit.datePicker(context) ,height: 48.0,text: cubit.taskDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg')),
+                            Expanded(child: dateTimeWidget(context,label: Languages.of(context)!.addTask['date'],errorText:cubit.showTaskDateValidateText ? Languages.of(context)!.addTask['dateError'] : null,fun: ()=> cubit.datePicker(context) ,height: 48.0,text: cubit.taskDate ?? 'MM DD,YYYY' ,iconPath: 'assets/icons/date.svg')),
                             SizedBox(width: MediaQuery.of(context).size.width * .1,),
-                            Expanded(child: dateTimeWidget(context,label: 'Time',errorText:cubit.showTaskTimeValidateText ? 'time required' : null,fun: ()=> cubit.timePicker(context) ,height: 48.0,text: cubit.taskTime ?? '00:00 AM' ,iconPath: 'assets/icons/date.svg')),
+                            Expanded(child: dateTimeWidget(context,label: Languages.of(context)!.addTask['time'],errorText:cubit.showTaskTimeValidateText ? Languages.of(context)!.addTask['timeError'] : null,fun: ()=> cubit.timePicker(context) ,height: 48.0,text: cubit.taskTime ?? '00:00 AM' ,iconPath: 'assets/icons/time.svg')),
                           ],
                         ),
                         SizedBox(height: 30,),
@@ -99,7 +100,7 @@ class AddTask extends StatelessWidget {
                                           decoration: InputDecoration(
                                             focusedBorder: InputBorder.none,
                                             enabledBorder: InputBorder.none,
-                                            hintText: 'Your text...',
+                                            hintText: Languages.of(context)!.addTask['bodySubTask'].toString(),
                                             disabledBorder: InputBorder.none,
                                             hintStyle: TextStyle(
                                                 color: Theme.of(context).hintColor,
@@ -110,7 +111,7 @@ class AddTask extends StatelessWidget {
                                           autovalidateMode: AutovalidateMode.onUserInteraction,
                                           validator: (text) {
                                             if (text.toString().isEmpty)
-                                              return 'can\'t be empty';
+                                              return Languages.of(context)!.addTask['bodySubTaskError'].toString();
                                           }),
                                     ),
                                     IconButton(
@@ -145,7 +146,7 @@ class AddTask extends StatelessWidget {
                                           decoration: InputDecoration(
                                             focusedBorder: InputBorder.none,
                                             enabledBorder: InputBorder.none,
-                                            hintText: 'write sub task',
+                                            hintText: Languages.of(context)!.addTask['bodySubTask'],
                                             disabledBorder: InputBorder.none,
                                             hintStyle: TextStyle(
                                                 color: Theme.of(context).hintColor,
@@ -158,7 +159,7 @@ class AddTask extends StatelessWidget {
                                           autovalidateMode: AutovalidateMode.onUserInteraction,
                                           validator: (text) {
                                             if (text.toString().isEmpty)
-                                              return 'can\'t be empty';
+                                              return Languages.of(context)!.addTask['bodySubTaskError'];
                                           }),
                                     ),
                                     IconButton(
@@ -185,7 +186,7 @@ class AddTask extends StatelessWidget {
                               Icon(Icons.add,size: 28,color: Theme.of(context).textTheme.headline6!.color,),
                               SizedBox(width: 15,),
                               Text(
-                                'Add SubTask',
+                                Languages.of(context)!.addTask['addSubTask'],
                                 style: Theme.of(context).textTheme.headline6,
                               ),
                             ],
