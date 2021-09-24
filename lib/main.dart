@@ -6,7 +6,6 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
-import 'package:notes_app/layout/splash/splash.dart';
 import 'package:notes_app/shared/bloc_observer.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
@@ -73,7 +72,7 @@ class _MyAppState extends State<MyApp> {
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: cubit.darkMode ? ThemeMode.dark : ThemeMode.light,
-            home: Splash(),
+            home: MenuDashboardPage(),
             navigatorObservers: [BotToastNavigatorObserver()],
             builder: BotToastInit(),
             // builder: (context, child) {

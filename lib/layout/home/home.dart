@@ -33,60 +33,59 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 headerSliverBuilder:
                     (BuildContext context, bool innerBoxIsScrolled) {
                   return [
-                    SliverAppBar(
-                      elevation: 0.0,
-                      title: Text(
-                        'Notes',
-                        style: Theme.of(context).textTheme.headline5,
-                      ),
-                      centerTitle: true,
-                      leading: IconButton(
-                          onPressed: () => cubit.isDrawerCollapsed
-                              ? cubit.openDrawer()
-                              : null,
-                          icon: SvgPicture.asset(
-                            'assets/icons/drawer.svg',
-                            color: Theme.of(context).primaryColorLight,
-                          )),
-                      actions: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SearchScreen()));
-                            },
+                    Directionality(
+                      textDirection: TextDirection.ltr,
+                      child: SliverAppBar(
+                        elevation: 0.0,
+                        title: Text(
+                          'Notes',
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                        centerTitle: true,
+                        leading: IconButton(
+                            onPressed: () => cubit.isDrawerCollapsed
+                                ? cubit.openDrawer()
+                                : null,
                             icon: SvgPicture.asset(
-                              'assets/icons/search.svg',
+                              'assets/icons/drawer.svg',
                               color: Theme.of(context).primaryColorLight,
                             )),
-                        SizedBox(
-                          width: 10,
-                        )
-                      ],
-                      pinned: true,
-                      snap: true,
-                      floating: true,
-                      expandedHeight: 120,
-                      bottom: TabBar(
-                        controller: cubit.tabBarController,
-                        tabs: [
-                          Tab(
-                            text: 'Notes',
-                          ),
-                          Tab(text: 'Tasks'),
-                          Tab(
-                            text: 'Memories',
-                          ),
+                        actions: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SearchScreen()));
+                              },
+                              icon: SvgPicture.asset(
+                                'assets/icons/search.svg',
+                                color: Theme.of(context).primaryColorLight,
+                              )),
+                          SizedBox(
+                            width: 10,
+                          )
                         ],
-                        isScrollable: true,
-                        indicatorPadding: EdgeInsets.symmetric(
-                          horizontal: 17,
-                        ),
+                        pinned: true,
+                        snap: true,
+                        floating: true,
+                        expandedHeight: 120,
+                        bottom: TabBar(
+                          controller: cubit.tabBarController,
+                          tabs: [
+                            Tab(text: 'Notes',),
+                            Tab(text: 'Tasks'),
+                            Tab(text: 'Memories',),
+                          ],
+                          isScrollable: true,
+                          indicatorPadding: EdgeInsets.symmetric(
+                            horizontal: 17,
+                          ),
 
-                        labelPadding: EdgeInsets.symmetric(horizontal: 25),
-                        indicatorWeight: 3,
-                        indicatorSize: TabBarIndicatorSize.label,
+                          labelPadding: EdgeInsets.symmetric(horizontal: 25),
+                          indicatorWeight: 3,
+                          indicatorSize: TabBarIndicatorSize.label,
+                        ),
                       ),
                     ),
                   ];
