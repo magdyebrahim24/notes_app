@@ -99,7 +99,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 },
                 body: TabBarView(
                     controller: cubit.tabBarController,
-                    physics: BouncingScrollPhysics(),
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
                       NotePreview(
                         selectedItemIndex: cubit.selectedItemIndex,

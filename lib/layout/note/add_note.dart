@@ -7,6 +7,7 @@ import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/records_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/components/speedDial_FAB/speedDialFAB.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
 class AddNote extends StatefulWidget {
@@ -69,7 +70,7 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                               maxLines: 3,
                               minLines: 1,
                               fillColor: Theme.of(context).primaryColor,
-                              hintText: 'Title...',
+                              hintText: Languages.of(context)!.addNote['titleHint'].toString(),
                               hintStyle: Theme.of(context)
                                   .textTheme
                                   .headline4!
@@ -86,7 +87,7 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                             maxLines: null,
                             minLines: null,
                             keyboardType: TextInputType.multiline,
-                            hintText: 'Your text...',
+                            hintText: Languages.of(context)!.addNote['bodyHint'].toString(),
                             fillColor: Theme.of(context).primaryColor,
                             hintStyle: Theme.of(context).textTheme.subtitle2,
                           ),
@@ -98,7 +99,6 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                                   cubit.deleteSavedImage(
                                       imageID: id, index: index);
                                 },
-                                expansionTileHeader: 'Images',
                               )
                             : SizedBox(),
                         cubit.recordsList.isNotEmpty

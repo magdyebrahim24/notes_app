@@ -6,6 +6,7 @@ import 'package:notes_app/layout/memories/bloc/memory_cubit.dart';
 import 'package:notes_app/layout/task/bloc/add_task_states.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddTaskCubit extends Cubit<AppTaskStates> {
@@ -207,7 +208,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
         if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
         updateSubTasks();
       }
-      showToast('Saved');
+      showToast(Languages.of(context)!.toast['saved']);
     } else {
       if (taskDate == null) showTaskDateValidateText = true;
       if (taskTime == null) showTaskTimeValidateText = true;
@@ -287,18 +288,17 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       } else {
         if (taskDate == null) {
           showTaskDateValidateText = true;
-          await discardAndSaveAlert(
-              context, 'tasks', 'Title, Task Date, Or Task Date ');
+          await discardAndSaveAlert(context, Languages.of(context)!.discardAndSaveAlert['taskMessage'],Languages.of(context)!.discardAndSaveAlert['taskEmpty']);
           return false;
         }
         if (taskTime == null) {
           showTaskTimeValidateText = true;
-          await discardAndSaveAlert(
-              context, 'tasks', 'Title, Task Date, Or Task Date ');
+          await discardAndSaveAlert(context, Languages.of(context)!.discardAndSaveAlert['taskMessage'],Languages.of(context)!.discardAndSaveAlert['taskEmpty']);
+
           return false;
         }
-        await discardAndSaveAlert(
-            context, 'tasks', 'Title, Task Date, Or Task Date ');
+        await discardAndSaveAlert(context, Languages.of(context)!.discardAndSaveAlert['taskMessage'],Languages.of(context)!.discardAndSaveAlert['taskEmpty']);
+
         return false;
       }
     }

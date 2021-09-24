@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/show_full_image.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
 class GridViewForImages extends StatelessWidget {
   final List imagesList;
   final deleteFun;
-  final expansionTileHeader;
   GridViewForImages(this.imagesList,
-      {required this.deleteFun, required this.expansionTileHeader});
+      {required this.deleteFun});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class GridViewForImages extends StatelessWidget {
               childrenPadding: EdgeInsets.zero,
               tilePadding: EdgeInsets.zero,
               title: Text(
-                expansionTileHeader.toString(),
+               Languages.of(context)!.addNote['images'].toString(),
                 style: TextStyle(
                     color: Theme.of(context).textTheme.headline4!.color, fontSize: 17),
               ),

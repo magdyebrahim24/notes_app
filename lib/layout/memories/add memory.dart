@@ -7,6 +7,7 @@ import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
 class AddMemory extends StatelessWidget {
@@ -51,11 +52,8 @@ class AddMemory extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 37),
                               child: Text(
-                                'Title',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline5!
-                                    .copyWith(fontSize: 28),
+                              Languages.of(context)!.addMemory['titleHint'].toString(),
+                                style: Theme.of(context).textTheme.headline5!.copyWith(fontSize: 28),
                               ),
                             ),
                             Container(
@@ -83,10 +81,10 @@ class AddMemory extends StatelessWidget {
                                 controller: cubit.titleController,
                                 maxLines: 3,
                                 minLines: 1,
-                                hintText: 'Title',
+                                hintText: Languages.of(context)!.addMemory['titleHint'].toString(),
                                 validator: (value) {
                                   if (value.toString().isEmpty)
-                                    return 'Memory title can\'t be empty';
+                                    return Languages.of(context)!.addMemory['titleValidateText'].toString();
                                 },
                               ),
                             ),
@@ -119,7 +117,7 @@ class AddMemory extends StatelessWidget {
                                 maxLines: 10,
                                 minLines: 4,
                                 keyboardType: TextInputType.multiline,
-                                hintText: 'Memory details',
+                                hintText: Languages.of(context)!.addMemory['detailsHint'].toString(),
                                 fillColor: Theme.of(context).primaryColor,
                                 // hintStyle: TextStyle(color: Theme.of(context).hintColor, fontSize: 20),
                               ),
@@ -130,9 +128,9 @@ class AddMemory extends StatelessWidget {
                               width: MediaQuery.of(context).size.width * .45,
                               child: dateTimeWidget(context,
                                   errorText: cubit.showDateErrorText
-                                      ? 'memory Date Required'
+                                      ? Languages.of(context)!.addMemory['dateValidateText'].toString()
                                       : null,
-                                  label: 'Date',
+                                  label: Languages.of(context)!.addMemory['date'].toString(),
                                   textSize: 14.0,
                                   height: 62.0,
                                   fun: () => cubit.datePicker(context),
@@ -146,7 +144,6 @@ class AddMemory extends StatelessWidget {
                                       cubit.deleteImage(
                                           imageID: id, index: index);
                                     },
-                                    expansionTileHeader: 'Images',
                                   )
                                 : SizedBox(),
                             cubit.pickedGalleryImagesList.isNotEmpty
@@ -155,7 +152,6 @@ class AddMemory extends StatelessWidget {
                                     deleteFun: (id, index) {
                                       cubit.deleteUnSaveImage(index);
                                     },
-                                    expansionTileHeader: 'Images',
                                   )
                                 : SizedBox(),
                           ],

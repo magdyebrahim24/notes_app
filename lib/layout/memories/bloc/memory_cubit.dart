@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/memories/bloc/memory_states.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AddMemoryCubit extends Cubit<AppMemoryStates> {
@@ -212,7 +213,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
             memoryDate: memoryDate.toString(),
             title: titleController.text);
       }
-      showToast('Saved');
+      showToast(Languages.of(context)!.toast['saved']);
     } else {
       if(memoryDate == null ) showDateErrorText = true;
 
@@ -228,7 +229,6 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     }
 
     if (formKey.currentState!.validate() && memoryDate != null) {
-      print('true -----------------');
       showDateErrorText = false;
       if (memoryID == null) {
         await insertNewMemory(
@@ -237,33 +237,29 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
           title: titleController.text,
           body: memoryTextController.text,
         );
-        print('insert');
       } else {
         await updateMemory(context,
             id: memoryID!,
             body: memoryTextController.text,
             memoryDate: memoryDate.toString(),
             title: titleController.text);
-        print('update');
       }
       return true;
     } else {
-      print('false -----------------');
       showDateErrorText = true;
       if (
           titleController.text.isEmpty &&
           memoryTextController.text.isEmpty &&
           cachedImagesList.isEmpty&& memoryDate == null) {
         // delete
-        if(memoryID != null){ print('delete --------------------');
-        deleteMemory(context);
+        if(memoryID != null){
+          deleteMemory(context);
         }
-
         return true;
       } else {
         if(memoryDate == null ) showDateErrorText = true;
         print('show alert');
-        await discardAndSaveAlert(context, 'memory','Title Or Memory Date');
+        await discardAndSaveAlert(context, Languages.of(context)!.discardAndSaveAlert['memoryMessage'],Languages.of(context)!.discardAndSaveAlert['memoryEmpty']);
         // show alert
         return false;
       }
@@ -278,14 +274,14 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     return super.close();
   }
 }
-Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
+Future<void> discardAndSaveAlert(context,subHeadText,head) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: true, // user must tap button!
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(
-          'Warning !!',
+          Languages.of(context)!.discardAndSaveAlert['warning'],
           style:
           Theme.of(context).textTheme.headline1!.copyWith(fontSize: 22),
         ),
@@ -293,7 +289,7 @@ Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
           child: ListBody(
             children: <Widget>[
               Text(
-                '$dataCantBeEmpty can\'t be empty.',
+                head ,
                 style: Theme.of(context)
                     .textTheme
                     .caption!
@@ -304,8 +300,7 @@ Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
               ),
               Padding(
                 padding: const EdgeInsetsDirectional.only(start: 5),
-                child: Text(
-                  '- if you discard you will continue and go back\n,- if you cancel you will continue edit your $nameOfPage.',
+                child: Text(subHeadText,
                   style: Theme.of(context)
                       .textTheme
                       .caption!
@@ -318,7 +313,7 @@ Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
         actions: <Widget>[
           TextButton(
             child: Text(
-              'Cancel',
+              Languages.of(context)!.cancelBtn,
               style: TextStyle(
                   color: Theme.of(context).textTheme.headline1!.color),
             ),
@@ -332,7 +327,7 @@ Future<void> discardAndSaveAlert(context,nameOfPage,dataCantBeEmpty) async {
                 borderRadius: BorderRadius.circular(7)),
             color: Theme.of(context).colorScheme.secondary,
             child: Text(
-              'Discard',
+              Languages.of(context)!.discardBtn,
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () {

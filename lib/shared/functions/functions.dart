@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/cache_helper.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:path_provider/path_provider.dart';
 
 // fun to convert RawQuery type to List<Map<String, dynamic>>
@@ -141,7 +142,7 @@ Future deleteOneItem(context, database,
   }).catchError((error) {
     print(error);
   });
-  showToast('Deleted Successfully');
+  showToast(Languages.of(context)!.toast['delete']);
 }
 
 Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
@@ -152,8 +153,7 @@ Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
           'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
           [!isFavorite ? 1 : 0, DateTime.now().toString(), id]);
       isFavorite = !isFavorite;
-    }
-    else {
+    } else {
       // show dialog
       await warmAddSecretToFav(context, () async {
         await database.rawUpdate(
@@ -164,7 +164,9 @@ Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
         isFavorite = !isFavorite;
         Navigator.pop(context);
         Navigator.pop(context);
-        showToast(isFavorite ? 'Add to Favorite' : 'Removed from Favorite');
+        showToast(isFavorite
+            ? Languages.of(context)!.toast['addToFav']
+            : Languages.of(context)!.toast['removeFav']);
       });
     }
     return isFavorite;
@@ -179,7 +181,9 @@ Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
       print(error);
     });
     isFavorite = !isFavorite;
-    showToast(isFavorite ? 'Add to Favorite' : 'Removed from Favorite');
+    showToast(isFavorite
+        ? Languages.of(context)!.toast['addToFav']
+        : Languages.of(context)!.toast['removeFav']);
     return isFavorite;
   }
 }

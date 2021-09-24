@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'package:notes_app/shared/components/reusable/time_date.dart';
 import 'package:notes_app/shared/functions/functions.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
@@ -215,7 +216,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
           body: noteTextController.text,
           title: titleController.text);
     }
-    showToast('Saved');
+    showToast(Languages.of(context)!.toast['saved']);
   }
 
   Future<bool> onClosePageSave(context) async {

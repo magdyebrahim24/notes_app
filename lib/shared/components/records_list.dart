@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/shared/audio/player.dart';
 import 'package:just_audio/just_audio.dart' as ap;
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class RecordsList extends StatelessWidget {
 
@@ -31,7 +32,7 @@ class RecordsList extends StatelessWidget {
                 childrenPadding: EdgeInsets.zero,
                 tilePadding: EdgeInsets.zero,
                 title: Text(
-                  'Records',
+                  Languages.of(context)!.addNote['records'].toString(),
                   style: TextStyle(
                       color: Theme.of(context).textTheme.headline4!.color, fontSize: 18),
                 ),

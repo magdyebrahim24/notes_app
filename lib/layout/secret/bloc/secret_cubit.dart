@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/layout/secret/bloc/secret_states.dart';
 import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/functions/functions.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:sqflite/sqflite.dart';
 
 class SecretCubit extends Cubit<SecretStates> {
@@ -144,7 +145,7 @@ class SecretCubit extends Cubit<SecretStates> {
                         await favoriteFun(context,database, tableName, isFavorite, itemId,item['is_secret'],insideSecretHome: true);
                         removeFromSecret(context, itemId, tableName, listOfData, index);
                         emit(AddToFavoriteState());
-                        showToast('Add to Favorite');
+                        showToast(Languages.of(context)!.toast['addToFav']);
                       }
                   ),
                 ],)

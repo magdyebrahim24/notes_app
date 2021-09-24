@@ -250,8 +250,8 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
               ),
             ),
             borderRadius: cubit.isDrawerCollapsed
-                ? BorderRadius.all(Radius.circular(0))
-                : BorderRadius.all(Radius.circular(25)),
+                ? BorderRadius.circular(0)
+                : BorderRadius.circular(25),
           ),
         ),
       ),

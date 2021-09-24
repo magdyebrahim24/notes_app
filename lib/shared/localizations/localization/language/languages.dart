@@ -8,5 +8,12 @@ abstract class Languages {
   Map get setting;
   Map get home;
   Map get search;
+  Map get addNote;
+  Map get toast;
+  Map get addMemory;
+  Map get discardAndSaveAlert;
+  String get cancelBtn;
+  String get discardBtn;
+
 
 }

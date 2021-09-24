@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:notes_app/layout/note/bloc/add_note_cubit.dart';
 import 'package:notes_app/layout/note/bloc/add_note_states.dart';
 import 'dart:math' as math;
-
 import 'package:notes_app/shared/components/speedDial_FAB/bloc/cubit.dart';
 import 'package:notes_app/shared/components/speedDial_FAB/bloc/states.dart';
 import 'package:notes_app/shared/constants.dart';
@@ -35,7 +34,7 @@ class _ExpandableFabState extends State<ExpandableFab>
           SpeedDialFABCubit cubit = SpeedDialFABCubit.get(context);
           return SizedBox.expand(
             child: Stack(
-              alignment: Alignment.bottomRight,
+              alignment: AlignmentDirectional.bottomEnd,
               clipBehavior: Clip.none,
               children: [
                 ..._buildExpandingActionButtons(cubit.fabExpandAnimation),
@@ -74,7 +73,7 @@ class _ExpandableFabState extends State<ExpandableFab>
       builder: (context, state) {
         AddNoteCubit cubit = AddNoteCubit.get(context);
         return Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
           child: AnimatedBuilder(
             animation: cubit.pulsatingAnimation!,
             builder: (context, _) {
@@ -105,7 +104,7 @@ class _ExpandableFabState extends State<ExpandableFab>
                         : !open
                             ? Icons.add
                             : Icons.close,
-                    size: 36,
+                    size: 37,color: Colors.black,
                   ),
                   color: Theme.of(context).colorScheme.secondary,
                   height: 96,
@@ -146,8 +145,8 @@ class _ExpandingActionButton extends StatelessWidget {
           progress.value * maxDistance,
         );
         return Positioned(
-          right: 25.0 + offset.dx,
-          bottom: 50.0 + offset.dy,
+          // right : 25.0 + offset.dx,
+          bottom: 45.0 + offset.dy,
           child: Transform.rotate(
             angle: (1.0 - progress.value) * math.pi / 2,
             child: child!,
@@ -179,21 +178,24 @@ class ActionButton extends StatelessWidget {
       listener: (context, state) {},
       builder: (context, state) {
         SpeedDialFABCubit cubit = SpeedDialFABCubit.get(context);
-        return MaterialButton(
-          padding: EdgeInsets.all(15),
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          minWidth: 64,
-          height: 64,
-          color: Theme.of(context).colorScheme.secondary,
-          shape: CircleBorder(),
-          onPressed: () {
-            onPressed!();
-            cubit.fABToggle();
-          },
-          child: SvgPicture.asset(
-            iconPath,
-            width: 24,
-            height: 24,
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24),
+          child: MaterialButton(
+            padding: EdgeInsets.all(15),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            minWidth: 64,
+            height: 64,
+            color: Theme.of(context).colorScheme.secondary,
+            shape: CircleBorder(),
+            onPressed: () {
+              onPressed!();
+              cubit.fABToggle();
+            },
+            child: SvgPicture.asset(
+              iconPath,
+              width: 24,
+              height: 24,
+            ),
           ),
         );
       },

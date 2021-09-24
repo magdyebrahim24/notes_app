@@ -34,10 +34,10 @@ class AppCubit extends Cubit<AppStates> {
   bool isLoading = true;
   int tabBarSelectedIndex = 0;
 
-  bool showFAB = true ;
+  bool showFAB = true;
 
   // init state function
-  void onBuildPage(x){
+  void onBuildPage(x) {
     createDatabase();
     drawerController = AnimationController(vsync: x, duration: drawerDuration);
     drawerScaleAnimation =
@@ -47,8 +47,10 @@ class AppCubit extends Cubit<AppStates> {
     drawerSlideAnimation =
         Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0))
             .animate(drawerController!);
-    tabBarController = TabController(length: 3, vsync: x,);
-    // tabBarController!.animation = AnimationController(vsync: vsync);
+    tabBarController = TabController(
+      length: 3,
+      vsync: x,
+    );
     tabBarController!.addListener(() {
       if (tabBarSelectedIndex != tabBarController!.index) {
         tabBarSelectedIndex = tabBarController!.index;
@@ -68,8 +70,19 @@ class AppCubit extends Cubit<AppStates> {
 
     emit(OpenDrawerState());
   }
+  closeDrawer(){
+    if (isDrawerCollapsed)
+      drawerController!.forward();
+    else
+      drawerController!.reverse();
 
-  void createDatabase()  {
+    isDrawerCollapsed = !isDrawerCollapsed;
+
+    emit(OpenDrawerState());
+
+  }
+
+  void createDatabase() {
     openDatabase(
       'database.db',
       version: 1,
@@ -127,7 +140,7 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppLoaderState());
     await getAllNotesData();
     await getAllTasksDataWithItSubTasks();
-    await  getAllMemoriesDataWithItsImages();
+    await getAllMemoriesDataWithItsImages();
     isLoading = false;
     emit(AppLoaderState());
   }
@@ -139,11 +152,11 @@ class AppCubit extends Cubit<AppStates> {
     // get notes images data
     List cachedNotesImagesList =
         await database!.rawQuery('SELECT * FROM notes_images');
-   List recordsList=
-        await database!.rawQuery('SELECT * FROM voices');
+    List recordsList = await database!.rawQuery('SELECT * FROM voices');
 
     allNotesDataList = assignSubListToData(
-        notesDataList, cachedNotesImagesList, 'images', 'note_id',voices: recordsList,voiceKey: 'voices',voiceId: 'note_id');
+        notesDataList, cachedNotesImagesList, 'images', 'note_id',
+        voices: recordsList, voiceKey: 'voices', voiceId: 'note_id');
     // print(allNotesDataList);
     emit(GetNotesData());
   }
@@ -175,9 +188,7 @@ class AppCubit extends Cubit<AppStates> {
     emit(GetTasksData());
   }
 
-  void addFABBtnRoutes(context) async{
-
-
+  void addFABBtnRoutes(context) async {
     tabBarController!.addListener(() {
       if (tabBarSelectedIndex != tabBarController!.index) {
         tabBarSelectedIndex = tabBarController!.index;
@@ -206,24 +217,26 @@ class AppCubit extends Cubit<AppStates> {
   }
 
   void addToFavorite(context,
-      {isFavorite, itemId, tableName, itemsList, index}) async{
+      {isFavorite, itemId, tableName, itemsList, index}) async {
     List<Map<String, dynamic>> temp = itemsList;
     Map<String, dynamic> item = temp[index];
-    await favoriteFun(context,database, tableName, isFavorite, itemId,item['is_secret']);
-      item['is_favorite'] = !isFavorite == true ? 1 : 0;
-      itemsList[index] = item;
-      emit(AddToFavoriteState());
-      Navigator.pop(context);
+    await favoriteFun(
+        context, database, tableName, isFavorite, itemId, item['is_secret']);
+    item['is_favorite'] = !isFavorite == true ? 1 : 0;
+    itemsList[index] = item;
+    emit(AddToFavoriteState());
+    Navigator.pop(context);
   }
 
-  void deleteFun(context, {required int id, tableName, index, listOfData ,recordsList}) async{
-  await  deleteOneItem(context, database,
+  void deleteFun(context,
+      {required int id, tableName, index, listOfData, recordsList}) async {
+    await deleteOneItem(context, database,
         id: id,
         tableName: tableName,
         cachedImagesList: listOfData,
-        recordsList: recordsList ?? [] );
-  listOfData.removeAt(index);
-  emit(DeleteItemState());
+        recordsList: recordsList ?? []);
+    listOfData.removeAt(index);
+    emit(DeleteItemState());
   }
 
   void addToSecret(context, id, tableName, listOfData, index) {
@@ -249,17 +262,17 @@ class AppCubit extends Cubit<AppStates> {
     // listOfData.removeAt(index);
     emit(AddToSecretItemState());
   }
+
   int? selectedItemIndex;
-  void toggleFAB(index){
-    if(showFAB){
+  void toggleFAB(index) {
+    if (showFAB) {
       showFAB = false;
-    }else{
+    } else {
       showFAB = true;
     }
-    selectedItemIndex =index;
+    selectedItemIndex = index;
     emit(ToggleFABState());
   }
-
 
   @override
   Future<void> close() {
@@ -268,5 +281,3 @@ class AppCubit extends Cubit<AppStates> {
     return super.close();
   }
 }
-
-
