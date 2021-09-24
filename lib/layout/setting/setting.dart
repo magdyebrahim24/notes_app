@@ -33,12 +33,12 @@ class Setting extends StatelessWidget {
                   // version
                   ListTile(
                     subtitle: Text("10.1.6", style: theme.bodyText2),
-                    title: Text('Version', style: theme.headline6),
+                    title: Text(Languages.of(context)!.setting['version'], style: theme.headline6),
                     contentPadding: EdgeInsets.symmetric(vertical: 10,horizontal: 25),
                   ),
                   tileItem(context,
                       fun: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => About(),)),
-                      title: 'About',
+                      title: Languages.of(context)!.setting['about'],
                       leadingIconPath: 'assets/icons/about.svg' ,),
                   tileItem(context, fun: () {
                     Navigator.push(
@@ -47,19 +47,19 @@ class Setting extends StatelessWidget {
                           builder: (context) => TermsOfUse(),
                         ));
                   },
-                      title: 'Terms Of Use',
+                      title: Languages.of(context)!.setting['termsOfUse'],
                       leadingIconPath: 'assets/icons/terms_of_use.svg'),
                   tileItem(context,
                       fun: () => cubit.shareApp(context),
-                      title: 'Share App',
+                      title: Languages.of(context)!.setting['shareApp'],
                       leadingIconPath: 'assets/icons/share.svg'),
                   tileItem(context,
                       fun: () => cubit.languageBottomSheet(context),
-                      title: 'Language',
+                      title:  Languages.of(context)!.setting['language'],
                       leadingIconPath: 'assets/icons/language.svg'),
 
                   SwitchListTile(
-                    title: Text('Dark Mode', style: theme.headline6),
+                    title: Text( Languages.of(context)!.setting['darkMode'], style: theme.headline6),
                     value: cubit.darkMode,
                     onChanged: cubit.onChangeMode,
                     activeColor: Color(0xff73D3DA),
@@ -84,7 +84,7 @@ class Setting extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15,horizontal: 25),
                     child: Text(
-                      'Contact Us',
+                      Languages.of(context)!.setting['contact'],
                       style: theme.headline6!.copyWith(fontSize: 25,),
                     ),
                   ),

@@ -6,5 +6,7 @@ abstract class Languages {
   }
 
   Map get setting;
+  Map get home;
+  Map get search;
 
 }

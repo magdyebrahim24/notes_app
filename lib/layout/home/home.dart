@@ -13,6 +13,7 @@ import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
 
 class Home extends StatefulWidget {
@@ -73,13 +74,19 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         bottom: TabBar(
                           controller: cubit.tabBarController,
                           tabs: [
-                            Tab(text: 'Notes',),
-                            Tab(text: 'Tasks'),
-                            Tab(text: 'Memories',),
+                            Tab(
+                              text: Languages.of(context)!.home['notes'],
+                            ),
+                            Tab(text: Languages.of(context)!.home['tasks']),
+                            Tab(
+                              text: Languages.of(context)!.home['memories'],
+                            ),
                           ],
                           isScrollable: true,
-                          indicatorPadding: EdgeInsets.symmetric(
-                            horizontal: 17,
+                          indicatorPadding: EdgeInsets.only(
+                            top: 15,
+                            left: 15,
+                            right: 15,
                           ),
 
                           labelPadding: EdgeInsets.symmetric(horizontal: 25),
