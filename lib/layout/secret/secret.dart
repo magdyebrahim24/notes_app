@@ -10,6 +10,7 @@ import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/layout/task/tasks_preview.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 
 class Secret extends StatefulWidget {
   @override
@@ -88,6 +89,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                           onLongPress: (data, index) {
                             cubit.toggleLongTap(index);
                             showOptionBar(context,
+                              shareFun: ()=> shareNoteAndMemory(cubit.notes[index]['images']??[]  ,cubit.notes[index]['title'],cubit.notes[index]['body'],'note'),
                                 favFun: () => cubit.addToFavorite(context,
                                     listOfData: cubit.notes,
                                     isFavorite: cubit.notes[index]
@@ -132,6 +134,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                             onLongPress: (data, index) {
                               cubit.toggleLongTap(index);
                               showOptionBar(context,
+                                shareFun: ()=> shareTask(cubit.tasks[index]['title'], cubit.tasks[index]['title'], cubit.tasks[index]['taskDate'], cubit.tasks[index]['subTasks'] ?? []),
                                 favFun: () => cubit.addToFavorite(context,
                                     listOfData: cubit.tasks,
                                     isFavorite: cubit.tasks[index]
@@ -177,6 +180,7 @@ class _SecretState extends State<Secret>  with TickerProviderStateMixin{
                             onLongPress: (data, index) {
                               cubit.toggleLongTap(index);
                               showOptionBar(context,
+                                shareFun: ()=> shareNoteAndMemory(cubit.memories[index]['images'] ?? []  ,cubit.memories[index]['title'],cubit.memories[index]['body'],'memory',memoryDate:cubit.memories[index]['memoryDate'] ),
                                 favFun: () => cubit.addToFavorite(context,
                                     listOfData: cubit.memories,
                                     isFavorite: cubit.memories[index]

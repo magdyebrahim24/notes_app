@@ -7,8 +7,6 @@ import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/terms_of_use/terms_of_use.dart';
 import 'package:notes_app/shared/localizations/localization/language/languages.dart';
-import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
-import 'package:notes_app/shared/localizations/localization_models/language_data.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Setting extends StatelessWidget {
@@ -21,15 +19,8 @@ class Setting extends StatelessWidget {
         SettingCubit cubit = SettingCubit.get(context);
         return Scaffold(
           appBar: AppBar(
-            leading: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: Icon(
-                Icons.arrow_back_ios,
-                size: 18,
-              ),
-            ),
             title: Text(
-              'Setting',
+              Languages.of(context)!.setting['title'],
               style: theme.headline5,
             ),
           ),
@@ -63,7 +54,7 @@ class Setting extends StatelessWidget {
                       title: 'Share App',
                       leadingIconPath: 'assets/icons/share.svg'),
                   tileItem(context,
-                      fun: () => cubit.shareApp(context),
+                      fun: () => cubit.languageBottomSheet(context),
                       title: 'Language',
                       leadingIconPath: 'assets/icons/language.svg'),
 
@@ -112,75 +103,12 @@ class Setting extends StatelessWidget {
                       title: 'Gmail',
                       fun: () => launch('mailto:<migoamasha27@gmail.com>?subject=<Contact To Nota App Team>&body=<type your problem here .>')
                   ),
-
                 ],
               ),
             ),
           ),
         );
       },
-    );
-  }
-
-  createLanguageDropDown(context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.language, color: Colors.grey),
-              SizedBox(
-                width: 33,
-              ),
-              Text(
-                Languages.of(context)!.setting['language'],
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 55),
-            child: Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<LanguageData>(
-                      iconSize: 30,
-                      hint: Text(Languages.of(context)!
-                          .setting['labelSelectLanguage']),
-                      onChanged: (language) {
-                        changeLanguage(context, language!.languageCode);
-                      },
-                      isDense: false,
-                      items: LanguageData.languageList()
-                          .map<DropdownMenuItem<LanguageData>>(
-                            (e) => DropdownMenuItem<LanguageData>(
-                              value: e,
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: <Widget>[
-                                  Text(
-                                    e.flag,
-                                    style: TextStyle(fontSize: 30),
-                                  ),
-                                  Text(e.name)
-                                ],
-                              ),
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 
