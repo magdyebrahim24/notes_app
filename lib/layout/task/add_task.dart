@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 import 'bloc/add_task_cubit.dart';
 import 'bloc/add_task_states.dart';
 
@@ -197,6 +198,7 @@ class AddTask extends StatelessWidget {
               ),
               bottomNavigationBar: cubit.taskID != null
                   ? AddTaskBottomIconBar(
+                shareFun: ()=> shareTask(cubit.titleController.text, cubit.taskDate, cubit.taskTime, cubit.subTasksList),
                       deleteFun: () => cubit.deleteTask(context),
                       addToFavoriteFun: () => cubit.addToFavorite(context),
                       isFavorite: cubit.isFavorite,

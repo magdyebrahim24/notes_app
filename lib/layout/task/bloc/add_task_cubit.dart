@@ -20,7 +20,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   List subTasksStoredDBList = [];
   late Database database;
   bool isFavorite = false;
-  int? isSecret = 0 ;
+  int? isSecret = 0;
   FocusNode titleFocus = new FocusNode();
   TextEditingController titleController = TextEditingController();
   final formKey = GlobalKey<FormState>();
@@ -39,7 +39,7 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
       if (data['taskTime'].toString() != 'null') taskTime = data['taskTime'];
       subTasksList = modifySubTasksList(data['subTasks']);
       isFavorite = data['is_favorite'] == 1 ? true : false;
-      isSecret = data['is_secret'] ;
+      isSecret = data['is_secret'];
     }
     emit(AppTaskBuildState());
   }
@@ -182,6 +182,8 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
     });
   }
 
+
+
   void saveTaskBTNFun(context) {
     if (formKey.currentState!.validate() &&
         taskTime != null &&
@@ -245,58 +247,63 @@ class AddTaskCubit extends Cubit<AppTaskStates> {
   }
 
   addToFavorite(context) async {
-    isFavorite = await favoriteFun(context,database, 'tasks', isFavorite, taskID,isSecret);
+    isFavorite = await favoriteFun(
+        context, database, 'tasks', isFavorite, taskID, isSecret);
     emit(TaskFavoriteState());
   }
 
   void addTaskToSecret(context) => addToSecret(context, taskID, 'tasks');
 
-
- Future<bool> onCloseSave(context) async{
-   if (formKey.currentState!.validate() &&
-       taskTime != null &&
-       taskDate != null) {
-     showTaskTimeValidateText = false;
-     showTaskDateValidateText = false;
-     if (taskID == null) {
-       insertNewTask(
-         context,
-         title: titleController.text,
-         taskDate: taskDate.toString(),
-         taskTime: taskTime.toString(),
-       );
-       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
-
-     } else {
-       updateTask(context,
-           id: taskID!,
-           taskDate: taskDate.toString(),
-           taskTime: taskTime.toString(),
-           title: titleController.text);
-       if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
-       updateSubTasks();
-     }
-     return true;
-   } else {
-     if(taskDate==null&&taskTime==null&&titleController.text.isEmpty){
-       return true;
-     }else{
-
-     if (taskDate == null){
-       showTaskDateValidateText = true;
-       await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
-       return false;
-     }
-     if (taskTime == null) {
-       showTaskTimeValidateText = true;
-       await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
-       return false;
-     }
-     await discardAndSaveAlert(context, 'tasks','Title, Task Date, Or Task Date ');
-     return false;
-   }}
-
+  Future<bool> onCloseSave(context) async {
+    if (titleFocus.hasFocus) titleFocus.unfocus();
+    if (formKey.currentState!.validate() &&
+        taskTime != null &&
+        taskDate != null) {
+      showTaskTimeValidateText = false;
+      showTaskDateValidateText = false;
+      if (taskID == null) {
+        insertNewTask(
+          context,
+          title: titleController.text,
+          taskDate: taskDate.toString(),
+          taskTime: taskTime.toString(),
+        );
+        if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+      } else {
+        updateTask(context,
+            id: taskID!,
+            taskDate: taskDate.toString(),
+            taskTime: taskTime.toString(),
+            title: titleController.text);
+        if (newTasksList.isNotEmpty) insertSubTasks(newTasks: newTasksList);
+        updateSubTasks();
+      }
+      return true;
+    } else {
+      if (taskDate == null &&
+          taskTime == null &&
+          titleController.text.isEmpty) {
+        return true;
+      } else {
+        if (taskDate == null) {
+          showTaskDateValidateText = true;
+          await discardAndSaveAlert(
+              context, 'tasks', 'Title, Task Date, Or Task Date ');
+          return false;
+        }
+        if (taskTime == null) {
+          showTaskTimeValidateText = true;
+          await discardAndSaveAlert(
+              context, 'tasks', 'Title, Task Date, Or Task Date ');
+          return false;
+        }
+        await discardAndSaveAlert(
+            context, 'tasks', 'Title, Task Date, Or Task Date ');
+        return false;
+      }
+    }
   }
+
   @override
   Future<void> close() {
     titleFocus.dispose();

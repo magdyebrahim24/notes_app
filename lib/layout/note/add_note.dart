@@ -7,6 +7,7 @@ import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/records_list.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
 import 'package:notes_app/shared/components/speedDial_FAB/speedDialFAB.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 
 class AddNote extends StatefulWidget {
   final data;
@@ -116,6 +117,7 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                       ? Positioned(
                           bottom: 0,
                           child: BottomIconBar(
+                            shareFun: ()=> shareNoteAndMemory(cubit.cachedImagesList  ,cubit.titleController.text ,cubit.noteTextController.text,'note'),
                             isRecording: cubit.isRecording,
                             isFavorite: cubit.isFavorite,
                             deleteFun: () => cubit.deleteNote(context),

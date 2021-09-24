@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:notes_app/layout/verify/create_pass.dart';
 import 'package:notes_app/layout/verify/login.dart';
 import 'package:notes_app/shared/cache_helper.dart';
-import 'package:notes_app/shared/constants.dart';
 import 'package:path_provider/path_provider.dart';
 
 // fun to convert RawQuery type to List<Map<String, dynamic>>
@@ -149,8 +148,6 @@ Future<bool> favoriteFun(context, database, tableName, isFavorite, id, isSecret,
     {insideSecretHome = false}) async {
   if (isSecret == 1) {
     if (insideSecretHome) {
-      // await database.rawUpdate(
-      //     'UPDATE $tableName SET is_secret = ? WHERE id = ?', [0, id]);
       await database.rawUpdate(
           'UPDATE $tableName SET is_favorite = ? , favorite_add_date = ? WHERE id = ?',
           [!isFavorite ? 1 : 0, DateTime.now().toString(), id]);

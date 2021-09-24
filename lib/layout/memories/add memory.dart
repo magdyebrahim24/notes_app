@@ -7,6 +7,7 @@ import 'package:notes_app/layout/task/add_task.dart';
 import 'package:notes_app/shared/components/bottom_icon_bar.dart';
 import 'package:notes_app/shared/components/images_gridview.dart';
 import 'package:notes_app/shared/components/reusable/reusable.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 
 class AddMemory extends StatelessWidget {
   final data;
@@ -165,6 +166,7 @@ class AddMemory extends StatelessWidget {
                         ? Positioned(
                             bottom: 0,
                             child: BottomIconBar(
+                              shareFun: ()=> shareNoteAndMemory(cubit.cachedImagesList ,cubit.titleController.text,cubit.memoryTextController.text,'memory',memoryDate:cubit.memoryDate ),
                               isFavorite: cubit.isFavorite,
                               deleteFun: () => cubit.deleteMemory(context),
                               addImageFun: () =>

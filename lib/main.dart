@@ -6,15 +6,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
-import 'package:notes_app/shared/audio/player.dart';
-import 'package:notes_app/shared/audio/recorder.dart';
 import 'package:notes_app/shared/bloc_observer.dart';
 import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/localizations/localization/localizations_delegate.dart';
 import 'package:notes_app/shared/theme/theme.dart';
 import 'package:flutter/widgets.dart';
-import 'package:just_audio/just_audio.dart' as ap;
 
 // favorite illustrate image
 // secret illustrate images
@@ -105,43 +102,6 @@ class _MyAppState extends State<MyApp> {
             },
           );
         },
-      ),
-    );
-  }
-}
-
-class Audio extends StatefulWidget {
-  @override
-  _AudioState createState() => _AudioState();
-}
-
-class _AudioState extends State<Audio> {
-  bool showPlayer = false;
-  ap.AudioSource? audioSource;
-
-  @override
-  void initState() {
-    showPlayer = false;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: showPlayer
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25),
-                  child: CustomAudioPlayer(
-                    source: audioSource!,
-                    onDelete: () {
-                      setState(() => showPlayer = false);
-                    },
-                  ),
-                )
-              : AudioRecorder(),
-        ),
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:notes_app/layout/dashboard/bloc/app_cubit.dart';
 import 'package:notes_app/layout/dashboard/bloc/app_states.dart';
 import 'package:notes_app/shared/components/bottom_option_bar.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:notes_app/shared/share/share_functions.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -100,6 +101,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         onLongPress: (data, index) {
                           cubit.toggleFAB(index);
                           showOptionBar(context,
+                              shareFun: ()=> shareNoteAndMemory(cubit.allNotesDataList[index]['images']??[]  ,cubit.allNotesDataList[index]['title'],cubit.allNotesDataList[index]['body'],'note'),
                               favFun: () => cubit.addToFavorite(context,
                                   isFavorite: cubit.allNotesDataList[index]
                                               ['is_favorite'] ==
@@ -147,6 +149,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onLongPress: (data, index) {
                             cubit.toggleFAB(index);
                             showOptionBar(context,
+                                shareFun: ()=> shareTask(cubit.allTasksDataList[index]['title'], cubit.allTasksDataList[index]['title'], cubit.allTasksDataList[index]['taskDate'], cubit.allTasksDataList[index]['subTasks'] ?? []),
                                 onCloseFun: cubit.toggleFAB,
                                 favFun: () => cubit.addToFavorite(context,
                                     isFavorite: cubit.allTasksDataList[index]
@@ -191,6 +194,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           onLongPress: (data, index) {
                             cubit.toggleFAB(index);
                             showOptionBar(context,
+                                shareFun: ()=> shareNoteAndMemory(cubit.allMemoriesDataList[index]['images'] ?? []  ,cubit.allMemoriesDataList[index]['title'],cubit.allMemoriesDataList[index]['body'],'memory',memoryDate:cubit.allMemoriesDataList[index]['memoryDate'] ),
                                 onCloseFun: cubit.toggleFAB,
                                 favFun: () => cubit.addToFavorite(context,
                                     isFavorite: cubit.allMemoriesDataList[index]

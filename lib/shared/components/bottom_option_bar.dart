@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 showOptionBar(context,
-    {secretFun, favFun, deleteFun, isFavorite = 0, onCloseFun}) {
+    {secretFun, favFun, deleteFun, isFavorite = 0, onCloseFun ,shareFun}) {
   return showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
@@ -25,17 +25,6 @@ showOptionBar(context,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(30), topRight: Radius.circular(30)),
 
-              // border:  Border(
-              //   bottom: BorderSide(),
-              //   top: BorderSide(
-              //       color: Theme.of(context).scaffoldBackgroundColor,
-              //       width: 10),
-              //   right: BorderSide(
-              //       color: Theme.of(context).scaffoldBackgroundColor,
-              //       width: 10),
-              //   left: BorderSide(
-              //       color: Theme.of(context).scaffoldBackgroundColor,
-              //       width: 10),),
               color: Theme.of(context).cardTheme.color,
              ),
             padding: EdgeInsets.symmetric(horizontal: 15),
@@ -45,9 +34,7 @@ showOptionBar(context,
               children: [
                 Expanded(
                   child: IconButton(
-                    onPressed: () {
-                      print('share');
-                    },
+                    onPressed: (){Navigator.pop(context);shareFun();},
                     icon: SvgPicture.asset('assets/icons/share.svg',
                         width: 23,
                         height: 23,
