@@ -17,8 +17,10 @@ abstract class Languages {
   Map get addMemory;
   Map get discardAndSaveAlert;
   Map get onBoarding;
+  Map get appInfo;
   String get cancelBtn;
   String get discardBtn;
+  Map get terms;
 
 
 }

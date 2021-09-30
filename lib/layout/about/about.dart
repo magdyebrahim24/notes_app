@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/layout/introduction/intro_page.dart';
 import 'package:notes_app/layout/terms_of_use/terms_of_use.dart';
+import 'package:notes_app/shared/localizations/localization/language/languages.dart';
 
 class About extends StatelessWidget {
   @override
@@ -10,7 +11,7 @@ class About extends StatelessWidget {
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'About',
+          Languages.of(context)!.appInfo['title'],
           style: theme.headline5,
         ),
         leading: IconButton(
@@ -35,7 +36,7 @@ class About extends StatelessWidget {
                       builder: (context) => IntroPage(),
                     )),
                 title: Text(
-                  'On Boarding Page',
+                    Languages.of(context)!.appInfo['onBoarding'],
                   style: theme.headline6
                 ),
                 trailing: Icon(
@@ -46,9 +47,9 @@ class About extends StatelessWidget {
                 contentPadding: EdgeInsets.symmetric(horizontal: 25),
               ),
               divider(indent: 7.0),
-              title('APP Info', context),
+              title(Languages.of(context)!.appInfo['info'], context),
               subtext(
-                "These Terms of Use govern your use of MEGA MAR,and any information, text, graphics, photos or other materials uploaded, downloaded or appearing on the the medical solution,referencing these Terms. You can’t use our the medical solution  unless you agree to them, so please read them carefully. Before using any of the the medical solution , you are required to read, understand and agree to these terms. You may only access the medical solution after reading and accepting these Terms of Use.",
+               Languages.of(context)!.appInfo['appInfoBody'],
               ),
             ],
           ),
