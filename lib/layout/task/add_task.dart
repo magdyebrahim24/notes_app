@@ -199,6 +199,7 @@ class AddTask extends StatelessWidget {
               ),
               bottomNavigationBar: cubit.taskID != null
                   ? AddTaskBottomIconBar(
+                isSecret: cubit.isSecret == 0 ? false : true,
                 shareFun: ()=> shareTask(cubit.titleController.text, cubit.taskDate, cubit.taskTime, cubit.subTasksList),
                       deleteFun: () => cubit.deleteTask(context),
                       addToFavoriteFun: () => cubit.addToFavorite(context),

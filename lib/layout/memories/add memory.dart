@@ -162,6 +162,7 @@ class AddMemory extends StatelessWidget {
                         ? Positioned(
                             bottom: 0,
                             child: BottomIconBar(
+                              isSecret: cubit.isSecret == 0 ? false : true,
                               shareFun: ()=> shareNoteAndMemory(cubit.cachedImagesList ,cubit.titleController.text,cubit.memoryTextController.text,'memory',memoryDate:cubit.memoryDate ),
                               isFavorite: cubit.isFavorite,
                               deleteFun: () => cubit.deleteMemory(context),

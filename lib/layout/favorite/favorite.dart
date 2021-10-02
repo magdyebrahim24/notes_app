@@ -22,7 +22,9 @@ class FavoriteScreen extends StatelessWidget {
           FavoriteCubit cubit = FavoriteCubit.get(context);
           return Scaffold(
             appBar: AppBar(
-              title: Text(Languages.of(context)!.drawer['favorite']),
+              title: Text(Languages.of(context)!.drawer['favorite'],
+                style: Theme.of(context).textTheme.headline5,),
+
             ),
             body: cubit.isLoading
                 ? Center(child: circleProcessInductor())
@@ -74,7 +76,7 @@ class FavoriteScreen extends StatelessWidget {
                         mainAxisSpacing: 12.0,
                         crossAxisSpacing: 12.0,
                       )
-                    : shadedImage('assets/intro/memories.png'),
+                    : shadedImage('assets/images/favorite.png'),
           );
         },
       ),

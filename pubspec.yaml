@@ -17,7 +17,7 @@ dependencies:
 
 
   cupertino_icons: ^1.0.2
-  image_picker: ^0.8.4+2
+  image_picker: ^0.8.3+3
   flutter_bloc: ^7.0.1
   bloc: ^7.0.0
   flutter_svg: ^0.22.0
@@ -31,7 +31,6 @@ dependencies:
   shared_preferences: ^2.0.6
   just_audio: ^0.9.11
   record: ^3.0.0
-#  fluttertoast: ^8.0.8
   bot_toast: ^4.0.1
 
 dev_dependencies:

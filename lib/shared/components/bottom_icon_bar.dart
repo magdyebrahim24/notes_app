@@ -5,6 +5,7 @@ import 'package:notes_app/shared/audio/recorder.dart';
 class BottomIconBar extends StatelessWidget {
   final deleteFun, addImageFun, addToFavoriteFun, addToSecretFun,isRecording,shareFun;
 
+  final bool isSecret;
   final bool isFavorite;
 
   const BottomIconBar(
@@ -13,7 +14,7 @@ class BottomIconBar extends StatelessWidget {
       this.addImageFun,
       this.addToFavoriteFun,
       this.addToSecretFun,
-      this.isFavorite = false,required this.shareFun});
+      this.isFavorite = false,required this.shareFun,required this.isSecret});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,7 +55,7 @@ class BottomIconBar extends StatelessWidget {
             Expanded(
               child: IconButton(
                 onPressed: addToSecretFun,
-                icon: SvgPicture.asset('assets/icons/unlock.svg',
+                icon: SvgPicture.asset(isSecret ? 'assets/icons/lock.svg' :'assets/icons/unlock.svg' ,
                     color: Theme.of(context).textTheme.headline6!.color),
                 splashColor: Colors.transparent,
                 focusColor: Colors.transparent,
@@ -98,7 +99,7 @@ class BottomIconBar extends StatelessWidget {
 
             // Expanded(flex: 2,child: SizedBox(),)
           ],
-        ):AudioRecorder(),
+        ): AudioRecorder(),
       ),
     );
   }
@@ -107,12 +108,14 @@ class BottomIconBar extends StatelessWidget {
 class AddTaskBottomIconBar extends StatelessWidget {
   final deleteFun, addToFavoriteFun, addToSecretFun,shareFun;
   final bool isFavorite;
+  final bool isSecret;
+
 
   const AddTaskBottomIconBar(
       {this.deleteFun,
       this.addToFavoriteFun,
       this.addToSecretFun,
-      this.isFavorite = false, this.shareFun});
+      this.isFavorite = false, this.shareFun,required this.isSecret});
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +145,7 @@ class AddTaskBottomIconBar extends StatelessWidget {
               Expanded(
                 child: IconButton(
                   onPressed: addToSecretFun,
-                  icon: SvgPicture.asset('assets/icons/unlock.svg',
+                  icon: SvgPicture.asset(isSecret ? 'assets/icons/lock.svg' :'assets/icons/unlock.svg' ,
                       color: Theme.of(context).textTheme.headline6!.color),
                   splashColor: Colors.transparent,
                   focusColor: Colors.transparent,

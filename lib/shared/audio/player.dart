@@ -24,9 +24,16 @@ class CustomAudioPlayer extends StatefulWidget {
   CustomAudioPlayerState createState() => CustomAudioPlayerState();
 }
 
-class CustomAudioPlayerState extends State<CustomAudioPlayer> {
+class CustomAudioPlayerState extends State<CustomAudioPlayer> with SingleTickerProviderStateMixin{
   int? openedRecord;
 
+  AnimationController? playPauseAnimationController ;
+
+  @override
+  void initState() {
+    playPauseAnimationController =AnimationController(vsync: this, duration: Duration(milliseconds: 250));
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddNoteCubit, AddNoteStates>(
@@ -80,29 +87,33 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
 
   Widget _buildControl(
       audioPlayer, pauseFun, playFun, index, recordIndex, fun) {
-    Widget icon;
 
     if (audioPlayer.playerState.playing && index == recordIndex) {
-      icon = Icon(
-        Icons.pause_circle_outline,
-        color: Color(0xffA5A5A5).withOpacity(.7),
-        size: 27,
-      );
+      playPauseAnimationController!.forward();
     } else {
-      icon = SvgPicture.asset(
-        'assets/icons/play.svg',
-        color: Color(0xffA5A5A5),
-        width: 24,
-        height: 24,
-        fit: BoxFit.scaleDown,
-      );
+      playPauseAnimationController!.reverse();
     }
 
     return InkWell(
-      child: SizedBox(width: 30, height: 30, child: icon),
+      child: Container(
+        height: 27,width: 27,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(width: 2,color: Color(0xffA5A5A5),),
+        ),
+        child: AnimatedIcon(
+          size: 20,
+          icon: AnimatedIcons.play_pause,
+          progress: playPauseAnimationController!,
+          semanticLabel: 'Play Pause',
+            color: Color(0xffA5A5A5).withOpacity(.7),
+        ),
+      ),
       onTap: () {
         fun();
         if (audioPlayer.playerState.playing) {
+
           pauseFun();
         } else {
           playFun();
@@ -137,5 +148,12 @@ class CustomAudioPlayerState extends State<CustomAudioPlayer> {
             : 0.0,
       ),
     );
+  }
+
+
+  @override
+  void dispose() {
+    playPauseAnimationController!.dispose();
+    super.dispose();
   }
 }

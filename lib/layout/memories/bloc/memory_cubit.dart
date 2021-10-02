@@ -25,7 +25,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
   late Database database;
   bool showDateErrorText = false;
   final formKey = GlobalKey<FormState>();
-  int? isSecret;
+  int? isSecret = 0;
 
   void onBuild(data) async {
     var db = await openDatabase('database.db');

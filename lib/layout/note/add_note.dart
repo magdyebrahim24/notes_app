@@ -92,6 +92,7 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                             hintStyle: Theme.of(context).textTheme.subtitle2,
                           ),
                         ),
+
                         cubit.cachedImagesList.isNotEmpty
                             ? GridViewForImages(
                                 cubit.cachedImagesList,
@@ -117,6 +118,7 @@ class _AddNoteState extends State<AddNote> with SingleTickerProviderStateMixin {
                       ? Positioned(
                           bottom: 0,
                           child: BottomIconBar(
+                            isSecret: cubit.isSecret == 0 ? false : true,
                             shareFun: ()=> shareNoteAndMemory(cubit.cachedImagesList  ,cubit.titleController.text ,cubit.noteTextController.text,'note'),
                             isRecording: cubit.isRecording,
                             isFavorite: cubit.isFavorite,

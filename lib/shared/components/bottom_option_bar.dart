@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 showOptionBar(context,
-    {secretFun, favFun, deleteFun, isFavorite = 0, onCloseFun ,shareFun}) {
+    {secretFun, favFun, deleteFun, isFavorite = 0, onCloseFun ,shareFun,required isSecret}) {
   return showModalBottomSheet<void>(
       context: context,
       barrierColor: Colors.transparent,
@@ -48,8 +48,11 @@ showOptionBar(context,
                 Expanded(
                   child: IconButton(
                     onPressed: secretFun,
-                    icon: SvgPicture.asset('assets/icons/unlock.svg',
-                        color: Theme.of(context).textTheme.headline6!.color),
+                    icon: SvgPicture.asset(isSecret == 1 ? 'assets/icons/lock.svg' :'assets/icons/unlock.svg' ,
+                        color: Theme.of(context).textTheme.headline6!.color,
+                      height: 20,width: 20,
+
+                    ),
                     splashColor: Colors.transparent,
                     focusColor: Colors.transparent,
                     hoverColor: Colors.transparent,

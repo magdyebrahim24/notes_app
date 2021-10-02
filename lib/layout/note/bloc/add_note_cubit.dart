@@ -90,6 +90,7 @@ class AddNoteCubit extends Cubit<AddNoteStates> {
       emit(DurationChangedSubscription());
     });
 
+
     emit(OnBuildAddNoteState());
   }
 

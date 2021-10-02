@@ -9,51 +9,51 @@ class AudioRecorder extends StatefulWidget {
   _AudioRecorderState createState() => _AudioRecorderState();
 }
 
-class _AudioRecorderState extends State<AudioRecorder> {
+class _AudioRecorderState extends State<AudioRecorder>
+    with SingleTickerProviderStateMixin {
+  AnimationController? playPauseAnimationController;
 
   @override
   void initState() {
+    playPauseAnimationController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 250));
     super.initState();
   }
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocConsumer<AddNoteCubit,AddNoteStates>(
-      listener: (context, state) {
-
-      },builder: (context, state) {
+    return BlocConsumer<AddNoteCubit, AddNoteStates>(
+      listener: (context, state) {},
+      builder: (context, state) {
         var cubit = AddNoteCubit.get(context);
-     return
-       // Column(
-       //  mainAxisAlignment: MainAxisAlignment.center,
-       //  children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // _buildRecordStopControl(cubit.isRecording,cubit.isPaused,()=>cubit.stop(context),cubit.start),
-              // const SizedBox(width: 20),
-              _buildPauseResumeControl(cubit.isRecording,cubit.isPaused, cubit.resume, cubit.pauseRecorder),
-              const SizedBox(width: 20),
-              _buildText(cubit.isRecording,cubit.isPaused,cubit.recordDuration),
-              SizedBox(
-                width: 125,
-              ),
-            ],
-          );
-          // if (cubit.amplitude != null) ...[
-          //   const SizedBox(height: 40),
-          //   Text('Current: ${cubit.amplitude?.current ?? 0.0}'),
-          //   Text('Max: ${cubit.amplitude?.max ?? 0.0}'),
-          // ],
+        return
+            // Column(
+            //  mainAxisAlignment: MainAxisAlignment.center,
+            //  children: [
+            Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // _buildRecordStopControl(cubit.isRecording,cubit.isPaused,()=>cubit.stop(context),cubit.start),
+            // const SizedBox(width: 20),
+            _buildPauseResumeControl(cubit.isRecording, cubit.isPaused,
+                cubit.resume, cubit.pauseRecorder),
+            const SizedBox(width: 20),
+            _buildText(cubit.isRecording, cubit.isPaused, cubit.recordDuration),
+            SizedBox(
+              width: 125,
+            ),
+          ],
+        );
+        // if (cubit.amplitude != null) ...[
+        //   const SizedBox(height: 40),
+        //   Text('Current: ${cubit.amplitude?.current ?? 0.0}'),
+        //   Text('Max: ${cubit.amplitude?.max ?? 0.0}'),
         // ],
-      // );
+        // ],
+        // );
       },
-    );}
+    );
+  }
 
   // Widget _buildRecordStopControl(isRecording,isPaused,stopFun,startFun) {
   //   late Icon icon;
@@ -81,38 +81,49 @@ class _AudioRecorderState extends State<AudioRecorder> {
   //   );
   // }
 
-  Widget _buildPauseResumeControl(isRecording,isPaused,resumeFun,pauseFun) {
+  Widget _buildPauseResumeControl(isRecording, isPaused, resumeFun, pauseFun) {
     if (!isRecording && !isPaused) {
       return const SizedBox.shrink();
     }
 
-    late Widget icon;
-
     if (!isPaused) {
-      icon = Icon(
-        Icons.pause_circle_outline,
-        color: Theme.of(context).textTheme.headline6!.color,
-        size: 43.5,
-      );
+      playPauseAnimationController!.reverse();
     } else {
-      icon = SvgPicture.asset(
-        'assets/icons/play.svg',
-        color: Theme.of(context).textTheme.headline6!.color,
-        // width: 100,
-        // height: 100,
-        fit: BoxFit.fitWidth,
-      );
+      playPauseAnimationController!.forward();
     }
 
     return InkWell(
-      child: SizedBox(width: 40, height: 40, child: icon),
+      child: Container(
+        width: 35,
+        height: 35,
+        alignment: Alignment.center,
+        padding: EdgeInsets.all(2.5),
+        decoration: BoxDecoration(
+          color: Theme.of(context).textTheme.headline6!.color,
+          shape: BoxShape.circle,
+        ),
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardTheme.color,
+            shape: BoxShape.circle,
+          ),
+          child: AnimatedIcon(
+            size: 24,
+            icon: AnimatedIcons.pause_play,
+            progress: playPauseAnimationController!,
+            semanticLabel: 'Play Pause',
+            color: Theme.of(context).textTheme.headline6!.color,
+          ),
+        ),
+      ),
       onTap: () {
         isPaused ? resumeFun() : pauseFun();
       },
     );
   }
 
-  Widget _buildText(isRecording,isPaused,recordDuration) {
+  Widget _buildText(isRecording, isPaused, recordDuration) {
     if (isRecording || isPaused) {
       return _buildTimer(recordDuration);
     }
@@ -126,7 +137,10 @@ class _AudioRecorderState extends State<AudioRecorder> {
 
     return Text(
       '$minutes : $seconds',
-      style: TextStyle(color: Theme.of(context).textTheme.headline6!.color,fontSize: 20),
+      style: TextStyle(
+          color: Theme.of(context).textTheme.headline6!.color,
+          fontSize: 20,
+          fontWeight: FontWeight.w500),
     );
   }
 
@@ -139,4 +153,9 @@ class _AudioRecorderState extends State<AudioRecorder> {
     return numberStr;
   }
 
+  @override
+  void dispose() {
+    playPauseAnimationController!.dispose();
+    super.dispose();
+  }
 }

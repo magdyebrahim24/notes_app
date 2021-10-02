@@ -14,12 +14,14 @@ class SettingCubit extends Cubit<SettingStates> {
 
   static SettingCubit get(context) => BlocProvider.of(context);
 
+  bool? firstOpen ;
   bool darkMode = true;
 
   bool? checkMode;
 
   String language = "en";
   void onBuild() async{
+    firstOpen = CacheHelper.getBool(key: 'intro');
     checkMode = CacheHelper.getBool(key: 'mode');
     if (checkMode != null) {
       darkMode = checkMode!;

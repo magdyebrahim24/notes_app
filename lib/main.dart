@@ -3,6 +3,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:notes_app/layout/introduction/intro_page.dart';
 import 'package:notes_app/layout/setting/bloc/setting_cubit.dart';
 import 'package:notes_app/layout/setting/bloc/setting_states.dart';
 import 'package:notes_app/layout/dashboard/MenuDashboardPage.dart';
@@ -13,13 +14,6 @@ import 'package:notes_app/shared/localizations/localization/localizations_delega
 import 'package:notes_app/shared/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 
-// favorite illustrate image
-// secret illustrate images
-// pause icon
-// lock fill icon
-// discus home page made
-// discus recording shape
-// discus images show shape
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +23,7 @@ void main() async {
 }
 
 class MyApp extends StatefulWidget {
+
   static void setLocale(BuildContext context, Locale newLocale) {
     var state = context.findAncestorStateOfType<_MyAppState>();
     state!.setLocale(newLocale);
@@ -72,15 +67,9 @@ class _MyAppState extends State<MyApp> {
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: cubit.darkMode ? ThemeMode.dark : ThemeMode.light,
-            home: MenuDashboardPage(),
+            home: cubit.firstOpen == true ? MenuDashboardPage() : IntroPage(),
             navigatorObservers: [BotToastNavigatorObserver()],
             builder: BotToastInit(),
-            // builder: (context, child) {
-            //   return MediaQuery(
-            //     child: child!,
-            //     data: MediaQuery.of(context),
-            //   );
-            // },
             locale: _locale,
             supportedLocales: [
               Locale('en', ''),

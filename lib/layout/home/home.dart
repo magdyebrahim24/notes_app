@@ -106,7 +106,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         data: cubit.allNotesDataList,
                         onLongPress: (data, index) {
                           cubit.toggleFAB(index);
-                          showOptionBar(context,
+                          showOptionBar(context,isSecret: cubit.allNotesDataList[index]['is_secret'],
                               shareFun: ()=> shareNoteAndMemory(cubit.allNotesDataList[index]['images']??[]  ,cubit.allNotesDataList[index]['title'],cubit.allNotesDataList[index]['body'],'note'),
                               favFun: () => cubit.addToFavorite(context,
                                   isFavorite: cubit.allNotesDataList[index]
@@ -154,7 +154,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           body: cubit.allTasksDataList,
                           onLongPress: (data, index) {
                             cubit.toggleFAB(index);
-                            showOptionBar(context,
+                            showOptionBar(context,isSecret: cubit.allTasksDataList[index]['is_secret'],
                                 shareFun: ()=> shareTask(cubit.allTasksDataList[index]['title'], cubit.allTasksDataList[index]['title'], cubit.allTasksDataList[index]['taskDate'], cubit.allTasksDataList[index]['subTasks'] ?? []),
                                 onCloseFun: cubit.toggleFAB,
                                 favFun: () => cubit.addToFavorite(context,
@@ -199,7 +199,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           data: cubit.allMemoriesDataList,
                           onLongPress: (data, index) {
                             cubit.toggleFAB(index);
-                            showOptionBar(context,
+                            showOptionBar(context,isSecret: cubit.allMemoriesDataList[index]['is_secret'],
                                 shareFun: ()=> shareNoteAndMemory(cubit.allMemoriesDataList[index]['images'] ?? []  ,cubit.allMemoriesDataList[index]['title'],cubit.allMemoriesDataList[index]['body'],'memory',memoryDate:cubit.allMemoriesDataList[index]['memoryDate'] ),
                                 onCloseFun: cubit.toggleFAB,
                                 favFun: () => cubit.addToFavorite(context,
