@@ -160,7 +160,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                             })),
                     _drawerItem(
                         text: Languages.of(context)!.drawer['secret'],
-                        leadingPath: 'assets/icons/unlock.svg',
+                        leadingPath: 'assets/icons/lock.svg',
                         fun: () {
                           String? pass =
                               CacheHelper.getString(key: 'secret_password');

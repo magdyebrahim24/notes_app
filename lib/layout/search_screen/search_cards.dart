@@ -164,7 +164,7 @@ final onTap ;
                 padding: EdgeInsetsDirectional.only(start: !isUsedAgain ? 15 : 0,bottom: 15),
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: data['subTasks'].length,
+                itemCount: data['subTasks'].length > 4 ? 4 :  data['subTasks'].length,
                 itemBuilder: (context, i) {
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.center,

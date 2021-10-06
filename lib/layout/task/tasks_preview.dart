@@ -100,7 +100,7 @@ class TaskCard extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: data['subTasks'].length,
+                    itemCount: data['subTasks'].length < 10 ? data['subTasks'].length : 10,
                     itemBuilder: (context, i) {
                       return Row(
                         crossAxisAlignment: CrossAxisAlignment.center,

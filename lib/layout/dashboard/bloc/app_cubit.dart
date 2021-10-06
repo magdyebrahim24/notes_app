@@ -171,7 +171,6 @@ class AppCubit extends Cubit<AppStates> {
 
     allTasksDataList = assignSubListToData(
         tasksDataList, subTasksList, 'subTasks', 'tasks_id');
-    print(allTasksDataList);
     emit(GetTasksData());
   }
 
@@ -239,11 +238,11 @@ class AppCubit extends Cubit<AppStates> {
     emit(DeleteItemState());
   }
 
-  void addToSecret(context, id, tableName, listOfData, index) {
+  Future addToSecret(context, id, tableName, listOfData, index) async{
     String? pass = CacheHelper.getString(key: 'secret_password');
     Navigator.pop(context);
     if (pass == null) {
-      Navigator.push(
+    await  Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => CreatePass(
@@ -251,7 +250,7 @@ class AppCubit extends Cubit<AppStates> {
                     table: tableName,
                   )));
     } else {
-      Navigator.push(
+    await  Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => Login(
@@ -259,7 +258,13 @@ class AppCubit extends Cubit<AppStates> {
                     table: tableName,
                   )));
     }
-    // listOfData.removeAt(index);
+    if(tableName == 'notes'){
+    await  getAllNotesData();
+    }else if(tableName == 'tasks'){
+      await getAllTasksDataWithItSubTasks();
+    }else if(tableName == 'memories'){
+      await getAllMemoriesDataWithItsImages();
+    }
     emit(AddToSecretItemState());
   }
 

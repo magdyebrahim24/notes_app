@@ -74,10 +74,10 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     });
   }
 
-  pickMultiImageFromGallery(context) {
+  pickMultiImageFromGallery(context) async{
     pickMultiImagesFromGallery(pickedGalleryImagesList).then((value) async {
       if (memoryID != null) {
-        savePickedImages();
+       await savePickedImages();
       } else {
         emit(ShowUnSavedPickedImagesState());
       }
@@ -89,7 +89,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
     emit(DeleteUnSaveImageState());
   }
 
-  void savePickedImages() => savePickedImagesToPhoneCacheAndDataBase(
+  Future savePickedImages() async=> savePickedImagesToPhoneCacheAndDataBase(
               database,
               pickedGalleryImagesList,
               memoryID,
@@ -134,7 +134,7 @@ class AddMemoryCubit extends Cubit<AppMemoryStates> {
       titleFocus.unfocus();
       bodyFocus.unfocus();
     }
-    if (pickedGalleryImagesList.isNotEmpty) savePickedImages();
+    if (pickedGalleryImagesList.isNotEmpty) await savePickedImages();
 
     emit(InsertDatabaseState());
     return memoryID;

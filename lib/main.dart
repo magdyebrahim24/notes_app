@@ -14,7 +14,7 @@ import 'package:notes_app/shared/localizations/localization/localizations_delega
 import 'package:notes_app/shared/theme/theme.dart';
 import 'package:flutter/widgets.dart';
 
-
+// review app version
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocObserver();

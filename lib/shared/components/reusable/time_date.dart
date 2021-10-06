@@ -35,6 +35,7 @@ class TimeAndDate{
     await  showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
+
       // initialEntryMode: TimePickerEntryMode.input,
     ).then((value) {
       time = value!.format(context).toString();

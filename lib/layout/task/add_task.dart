@@ -108,6 +108,8 @@ class AddTask extends StatelessWidget {
                                                 fontWeight: FontWeight.w400),
                                             border: InputBorder.none,
                                           ),
+                                          maxLines: null,
+                                          minLines: null,
                                           autovalidateMode: AutovalidateMode.onUserInteraction,
                                           validator: (text) {
                                             if (text.toString().isEmpty)
@@ -156,6 +158,8 @@ class AddTask extends StatelessWidget {
                                                 Theme.of(context).primaryColor,
                                             border: InputBorder.none,
                                           ),
+                                          maxLines: null,
+                                          minLines: null,
                                           autovalidateMode: AutovalidateMode.onUserInteraction,
                                           validator: (text) {
                                             if (text.toString().isEmpty)
