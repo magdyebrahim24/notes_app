@@ -21,7 +21,6 @@ class _PlayPauseAnimatedIconState extends State<PlayPauseAnimatedIcon> with Sing
       listener: (context, state) {
       },
       builder: (context, state) {
-        AddNoteCubit cubit = AddNoteCubit.get(context);
       return  InkWell(
         onTap: widget.onTaFun,
         child: Container(
