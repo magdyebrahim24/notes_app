@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -117,13 +118,17 @@ class SearchScreen extends StatelessWidget {
               height: 20,
             ),
             showNoResultTxt
-                ? Text(
-                    Languages.of(context)!.search['searchResult']+'$text',
-                    style: TextStyle(fontSize: 20),
-                    softWrap: true,
-                    textAlign: TextAlign.center,
-                  )
-                : SizedBox(),
+                ?RichText(
+              softWrap: true,
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text: Languages.of(context)!.search['searchResult'],
+                style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500),
+                children:  <TextSpan>[
+                  TextSpan(text: '$text', style: TextStyle(fontSize: 18,fontWeight: FontWeight.normal)),
+                ],
+              ),
+            ) : SizedBox(),
           ],
         ),
       ),

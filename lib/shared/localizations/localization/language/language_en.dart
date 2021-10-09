@@ -11,6 +11,7 @@ class LanguageEn extends Languages {
         'language': 'Language',
         'darkMode': 'Dark Mode',
         'contact': 'Contact Us',
+    'privacy':'Privacy Policy'
       };
 
   Map get home => {
@@ -21,7 +22,7 @@ class LanguageEn extends Languages {
 
   Map get search => {
         'search': 'Search',
-        'searchResult': 'No Result For',
+        'searchResult': 'No Result For ',
         'note': 'Note',
         'task': 'Task',
         'memory': 'Memory',
@@ -111,7 +112,7 @@ class LanguageEn extends Languages {
         'info': 'APP Info',
         'appInfoBody':
             'NOTA app the free app that you can write whatever you want, put a picture or an audio recording to hear it whenever you want, Add your Missions as a tasks to motivate you to complete them and organize your tasks, Put all your memories details and photo to always remember them whenever you want\n\n'
-                'Save your private note ,task and memory in secret to be the only one how can with owin password you created.'
+                'Save your private note ,task and memory in secret to be the only one how can with own password you created.'
                 '\n\nYou can save your preferable note, task and memory in favorite to get in any time.'
       };
   String get cancelBtn => 'Cancel';

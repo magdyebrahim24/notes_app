@@ -16,6 +16,11 @@ class IntroCubit extends Cubit<IntroStates> {
   emit(OnPageChangedState());
   }
 
+  void changePage(pageIndex){
+    pageController.animateToPage(pageIndex,
+        duration: Duration(milliseconds: 200), curve: Curves.easeInOut);
+  }
+
   void nextBTN(context) async {
     if (currentPage == 2) {
       CacheHelper.putBool(key: 'intro', value: true);

@@ -11,6 +11,7 @@ class LanguageAr extends Languages {
         'language': 'اللغة',
         'darkMode': 'الوضع الليلى',
         'contact': 'تواصل معنا',
+    'privacy':'سياسة الخصوصية'
       };
 
   Map get home => {

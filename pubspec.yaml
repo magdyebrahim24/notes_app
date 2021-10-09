@@ -1,8 +1,5 @@
 name: notes_app
-description: A new Flutter project.
-
-
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+description: Save your Notes , Tasks and Memories .
 
 version: 1.0.0+1
 
@@ -45,10 +42,7 @@ flutter:
     - assets/icons/
     - assets/intro/
     - assets/images/
+    - assets/logo/
 
 
-#  fonts:
-#    - family: PT_Sans
-#      fonts:
-#        - asset: fonts/PTSans-Regular.ttf
 

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,8 @@ import 'package:notes_app/shared/cache_helper.dart';
 import 'package:notes_app/shared/localizations/localization/locale_constant.dart';
 import 'package:notes_app/shared/localizations/localization_models/language_data.dart';
 import 'package:notes_app/shared/share/share_functions.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 class SettingCubit extends Cubit<SettingStates> {
   SettingCubit() : super(SettingInitialState());
@@ -41,9 +44,22 @@ class SettingCubit extends Cubit<SettingStates> {
     emit(SettingChangeModeState());
   }
 
-  shareApp(context)=> shareText(text: 'Download Nota App From AppStore .\nTo save your notes , memories and tasks',
-      subject: 'Download Notes App Application Via Link https://www.facebook.com/migoamasha224',
-  );
+  shareApp(context) async{
+    File logo = await getImageFileFromAssets('assets/logo/logo.png');
+    share([logo.path],text: 'Download Nota App From Google play store .\nTo save your notes , memories and tasks',
+      subject: 'Download Notes App Application ',
+  );}
+
+
+
+  Future<File> getImageFileFromAssets(String path) async {
+    final byteData = await rootBundle.load('$path');
+    final file = File('${(await getTemporaryDirectory()).path}/$path');
+    await file.create(recursive: true);
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    return file;
+  }
 
   languageBottomSheet(context){
     return showModalBottomSheet<void>(

@@ -39,7 +39,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                       child: SliverAppBar(
                         elevation: 0.0,
                         title: Text(
-                          'Notes',
+                          'Nota',
                           style: Theme.of(context).textTheme.headline5,
                         ),
                         centerTitle: true,
